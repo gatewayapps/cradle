@@ -5,5 +5,6 @@ export default {
     DateTime: 'DATETIME',
     String: 'STRING',
     Object: 'OBJECT',
-    Binary: 'BINARY'
+    Binary: 'BINARY',
+    UniqueIdentifier: 'UNIQUEIDENTIFIER'
 }

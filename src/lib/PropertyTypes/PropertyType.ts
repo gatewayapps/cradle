@@ -5,12 +5,14 @@ export default abstract class PropertyType implements IPropertyType {
     public IsPrimaryKey: boolean
     public AllowNull: boolean
     public DefaultValue: any
+    public Unique: boolean
 
-    constructor(typeName: string, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue: any = null) {
+    constructor(typeName: string, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue: any = null, unique: boolean = false) {
         this.TypeName = typeName
         this.IsPrimaryKey = isPrimaryKey
         this.AllowNull = allowNull
         this.DefaultValue = defaultValue
+        this.Unique = unique
     }
 
     public toString(): string {
@@ -19,10 +21,11 @@ export default abstract class PropertyType implements IPropertyType {
 
     public equals(other: PropertyType): boolean {
         return (
-            this.toString() === other.toString() &&
+            this.TypeName === other.TypeName &&
             this.IsPrimaryKey === other.IsPrimaryKey &&
             this.AllowNull === other.AllowNull &&
-            this.DefaultValue === other.DefaultValue
+            this.DefaultValue === other.DefaultValue &&
+            this.Unique === other.Unique
         )
     }
 }
