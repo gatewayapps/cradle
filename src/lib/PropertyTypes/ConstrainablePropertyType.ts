@@ -4,8 +4,8 @@ export default abstract class ConstrainablePropertyType extends PropertyType {
     public MinimumValue?: number
     public MaximumValue?: number
 
-    constructor(typeName: string, minimumValue?: number, maximumValue?: number, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue: any = null) {
-        super(typeName, allowNull, isPrimaryKey, defaultValue)
+    constructor(typeName: string, minimumValue?: number, maximumValue?: number, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue: any = null, unique: boolean = false) {
+        super(typeName, allowNull, isPrimaryKey, defaultValue, unique)
         this.MinimumValue = minimumValue
         this.MaximumValue = maximumValue
     }

@@ -3,8 +3,8 @@ import constants from "./constants";
 
 export default abstract class EnumerablePropertyType extends PropertyType {
     AllowedValues?: any[]
-    constructor(typeName: string, allowedValues?: any[], allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue: any = null) {
-        super(typeName, allowNull, isPrimaryKey, defaultValue)
+    constructor(typeName: string, allowedValues?: any[], allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue: any = null, unique: boolean = false) {
+        super(typeName, allowNull, isPrimaryKey, defaultValue, unique)
         this.AllowedValues = allowedValues
     }
     public equals(other: PropertyType): boolean {

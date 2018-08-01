@@ -14,8 +14,8 @@ export class AutogenerateOptions {
 
 export default class IntegerPropertyType extends ConstrainablePropertyType {
     public Autogenerate?: AutogenerateOptions
-    constructor(minimumValue?: number, maximumValue?: number, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue: any = null, autogenerateOptions?: AutogenerateOptions) {
-        super(constants.Integer, minimumValue, maximumValue, allowNull, isPrimaryKey, defaultValue)
+    constructor(minimumValue?: number, maximumValue?: number, autogenerateOptions?: AutogenerateOptions, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue: any = null, unique: boolean = false) {
+        super(constants.Integer, minimumValue, maximumValue, allowNull, isPrimaryKey, defaultValue, unique)
         this.Autogenerate = autogenerateOptions
     }
 }
