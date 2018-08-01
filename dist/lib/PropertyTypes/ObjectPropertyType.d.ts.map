@@ -1,1 +1,0 @@
-{"version":3,"file":"ObjectPropertyType.d.ts","sourceRoot":"","sources":["../../../src/lib/PropertyTypes/ObjectPropertyType.ts"],"names":[],"mappings":"AAAA,OAAO,YAAY,MAAM,gBAAgB,CAAC;AAG1C,MAAM,CAAC,OAAO,OAAO,kBAAmB,SAAQ,YAAY;IAEjD,OAAO,EAAE,YAAY,EAAE,CAAA;gBAElB,OAAO,EAAE,YAAY,EAAE,EAAE,SAAS,GAAE,OAAe,EAAE,YAAY,GAAE,OAAe,EAAE,YAAY,GAAE,GAAU;CAI3H"}
