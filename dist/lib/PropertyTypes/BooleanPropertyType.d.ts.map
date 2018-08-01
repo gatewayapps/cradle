@@ -1,0 +1,1 @@
+{"version":3,"file":"BooleanPropertyType.d.ts","sourceRoot":"","sources":["../../../src/lib/PropertyTypes/BooleanPropertyType.ts"],"names":[],"mappings":"AAAA,OAAO,YAAY,MAAM,gBAAgB,CAAA;AAGzC,MAAM,CAAC,OAAO,OAAO,mBAAoB,SAAQ,YAAY;gBAC7C,SAAS,GAAE,OAAe,EAAE,YAAY,GAAE,OAAe,EAAE,YAAY,GAAE,OAAe;CAGvG"}

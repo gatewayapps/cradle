@@ -1,0 +1,1 @@
+{"version":3,"file":"BooleanPropertyType.js","sourceRoot":"","sources":["../../../src/lib/PropertyTypes/BooleanPropertyType.ts"],"names":[],"mappings":";;;;;AAAA,kEAAyC;AACzC,4DAAoC;AAEpC,MAAqB,mBAAoB,SAAQ,sBAAY;IACzD,YAAY,YAAqB,KAAK,EAAE,eAAwB,KAAK,EAAE,eAAwB,KAAK;QAChG,KAAK,CAAC,mBAAS,CAAC,OAAO,EAAE,SAAS,EAAE,YAAY,EAAE,YAAY,CAAC,CAAA;IACnE,CAAC;CACJ;AAJD,sCAIC"}

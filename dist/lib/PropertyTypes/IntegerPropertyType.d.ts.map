@@ -1,0 +1,1 @@
+{"version":3,"file":"IntegerPropertyType.d.ts","sourceRoot":"","sources":["../../../src/lib/PropertyTypes/IntegerPropertyType.ts"],"names":[],"mappings":"AAEA,OAAO,yBAAyB,MAAM,6BAA6B,CAAC;AAGpE,MAAM,CAAC,OAAO,OAAO,mBAAoB,SAAQ,yBAAyB;gBAC1D,YAAY,CAAC,EAAE,MAAM,EAAE,YAAY,CAAC,EAAE,MAAM,EAAE,SAAS,GAAE,OAAe,EAAE,YAAY,GAAE,OAAe,EAAE,YAAY,GAAE,GAAU;CAIhJ"}
