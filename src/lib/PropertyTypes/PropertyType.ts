@@ -1,4 +1,5 @@
 import IPropertyType from "./IPropertyType"
+import constants from "./constants";
 
 export default abstract class PropertyType implements IPropertyType {
     public TypeName: string
@@ -8,11 +9,15 @@ export default abstract class PropertyType implements IPropertyType {
     public Unique: boolean
 
     constructor(typeName: string, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue: any = null, unique: boolean = false) {
-        this.TypeName = typeName
-        this.IsPrimaryKey = isPrimaryKey
-        this.AllowNull = allowNull
-        this.DefaultValue = defaultValue
-        this.Unique = unique
+        if (!(typeName in constants)) {
+            throw new TypeError(`${typeName} is not a valid property type`)
+        } else {
+            this.TypeName = typeName
+            this.IsPrimaryKey = isPrimaryKey
+            this.AllowNull = allowNull
+            this.DefaultValue = defaultValue
+            this.Unique = unique
+        }
     }
 
     public toString(): string {

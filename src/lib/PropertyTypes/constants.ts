@@ -1,10 +1,22 @@
-export default {
-    Boolean: 'BOOLEAN',
-    Integer: 'INTEGER',
-    Decimal: 'DECIMAL',
-    DateTime: 'DATETIME',
-    String: 'STRING',
-    Object: 'OBJECT',
-    Binary: 'BINARY',
-    UniqueIdentifier: 'UNIQUEIDENTIFIER'
+const PropertyTypes = {
+    Boolean: 'Boolean',
+    Integer: 'Integer',
+    Decimal: 'Decimal',
+    DateTime: 'DateTime',
+    String: 'String',
+    Object: 'Object',
+    Binary: 'Binary',
+    UniqueIdentifier: 'UniqueIdentifier'
 }
+export default PropertyTypes
+
+// export default {
+//     Boolean: 'BOOLEAN',
+//     Integer: 'INTEGER',
+//     Decimal: 'DECIMAL',
+//     DateTime: 'DATETIME',
+//     String: 'STRING',
+//     Object: 'OBJECT',
+//     Binary: 'BINARY',
+//     UniqueIdentifier: 'UNIQUEIDENTIFIER'
+// }
