@@ -1,22 +1,48 @@
-import {expect} from 'chai'
+import { expect } from 'chai'
 import 'mocha'
 import PropertyType from "./PropertyType";
-import * as TypeMoq from 'typemoq'
 import constants from "./constants";
 
 
 class MockPropertyType extends PropertyType {
-  constructor () {
-    super(constants.Object)
+  constructor(typeName: string, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue: any = null, unique: boolean = false) {
+    super(typeName, allowNull, isPrimaryKey, defaultValue, unique)
   }
 }
-const mock: TypeMoq.IMock<PropertyType> = TypeMoq.Mock.ofType(MockPropertyType)
 
-describe('PropertyType', ()=>{
-  it('Should return a new PropertyType with the correct type name', ()=>{
-    expect(mock.object.TypeName).to.equal(constants.Object)
+
+describe('PropertyType', () => {
+  describe('constructor', () => {
+
+
+    it('Should return a new PropertyType with the correct type name', () => {
+      const mock = new MockPropertyType(constants.Object)
+      expect(mock.TypeName).to.equal(constants.Object)
+    })
+    it('Should throw a TypeError if an unknown property type name is used', () => {
+      expect(() => { new MockPropertyType('Unknown') }).to.throw(TypeError)
+    })
   })
-  it('Should not allow a PropertyType to be created with an unknown type name', ()=>{
-    mock.callBase.
+  describe('Equals', () => {
+    it('Should return true when both types are equal', () => {
+      const mockA = new MockPropertyType(constants.Object)
+      const mockB = new MockPropertyType(constants.Object)
+      expect(mockA.equals(mockB)).to.equal(true)
+    })
+    it('Should not return true when type names are not equal', () => {
+      expect(new MockPropertyType(constants.Object).equals(new MockPropertyType(constants.String))).to.equal(false)
+    })
+    it('Should not return true when allowNull is not equal', () => {
+      expect(new MockPropertyType(constants.Object, false).equals(new MockPropertyType(constants.Object, true)))
+    })
+    it('Should not return true when isPrimaryKey is not equal', () => {
+      expect(new MockPropertyType(constants.Object, false, false).equals(new MockPropertyType(constants.Object, false, true)))
+    })
+    it('Should not return true when defaultValue is not equal', () => {
+      expect(new MockPropertyType(constants.Object, false, false, false).equals(new MockPropertyType(constants.Object, false, false, true)))
+    })
+    it('Should not return true when unique is not equal', () => {
+      expect(new MockPropertyType(constants.Object, false, false, null, false).equals(new MockPropertyType(constants.Object, false, false, null, true)))
+    })
   })
 })
