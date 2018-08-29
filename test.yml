@@ -1,0 +1,81 @@
+Training:
+  properties:
+    trainingId: integer auto(1,1) primary
+    name: string(100)
+    description: string?
+    commonNameId:
+      type: integer?
+      ref: CommonName.id
+    attachmentLink: string?
+    equipmentType: integer?
+    isRecurring: boolean? default(0)
+    recurringInterval: integer?
+    recurringPeriod: string(10)?
+
+    #nested object
+    # for Mongo and other no-sql, we can leave as is
+    # for sql server we can turn sub properties into:
+    # gracePeriod_HasGracePeriod
+    # gracePeriod_duration
+    # gracePeriod_period
+    gracePeriod:
+      properties:
+        hasGracePeriod: boolean? default(0)
+        duration: integer?
+        period: string(10)?
+
+    requiresSignOff: boolean? default(0)
+    isDeleted: boolean default(0) delete
+    createdBy: integer
+    createdDate: datetime
+    modifiedBy: integer
+    modifiedDate: datetime
+    externalCompletionPackage: string(255)?
+    externalCompletionId: int?
+    isDocumentReview: boolean? default(0)
+  references:
+    Categories: multiple of Category via TrainingCategories
+    CommonName: single on commonNameId
+
+User:
+  properties:
+    birthday: datetime max(NOW)
+
+CommonName:
+  properties:
+    id: integer auto(1,1) primary
+    commonName: string(100)
+    deleted: boolean default(0)
+    createdBy: integer
+    createdDate: datetime default(NOW)
+    modifiedBy: integer
+    modifiedDate: datetime default(NOW)
+
+Category:
+  tableName: Categories
+  properties:
+    categoryId: integer auto(1,1) primary
+    categoryName: string(100) allow('fun category', 'not fun category')
+    categoryDescription: string?
+    deleted: boolean default(0)
+    createdBy: integer
+    createdDate: datetime
+    modifiedBy: integer
+    modifiedDate: datetime
+  references:
+    Trainings: multiple of Training via TrainingCategories
+
+TrainingCategories:
+  properties:
+    trainingId:
+      type: integer
+      ref: Training.trainingId
+    categoryId:
+      type: integer
+      ref: Category.id
+  references:
+    Training: single on trainingId
+    Category: single on categoryId
+
+TrainingAssignment: ./TrainingAssignment.yaml#TrainingAssignment
+UserTrainingDueDate: ./UserTrainingDueDate.yaml#UserTrainingDueDate

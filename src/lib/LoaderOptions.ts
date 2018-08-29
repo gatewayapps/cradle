@@ -1,5 +1,5 @@
 import { IConsole, isConsole } from './IConsole'
-import InvalidConsoleError from '../Errors/InvalidConsoleError'
+import InvalidConsoleError from './Errors/InvalidConsoleError'
 
 export default class LoaderOptions {
     public args: string

@@ -1,5 +1,5 @@
 import LoaderOptions from './LoaderOptions'
-import PropertyType from './PropertyTypes/PropertyType';
+import PropertyType from './PropertyTypes/PropertyType'
 
 export default interface ICradleLoader {
     /**

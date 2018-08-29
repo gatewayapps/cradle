@@ -1,4 +1,6 @@
 {
+    "tslint.run": "onType",
+    "tslint.autoFixOnSave": true,
     "files.exclude": {
         "node_modules": true,
         "dist": true

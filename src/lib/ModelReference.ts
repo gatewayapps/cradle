@@ -8,7 +8,7 @@ export default class ModelReference {
     public ForeignModel: string
     public ForeignProperty: string
     public RelationType: RelationTypes
-    public LocalProperty: string
+    public LocalProperty?: string
     public ProxyModel?: string
 
 

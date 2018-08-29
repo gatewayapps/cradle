@@ -3,15 +3,12 @@
 import program from 'commander'
 const packageInfo = require('../../package.json')
 
+function collect(val: any, memo: any) {
+    memo.push(val)
+    return memo
+  }
 
 program
     .version(packageInfo.version)
-    
-
-export class CradleCLI {
-    static log(message: String) {
-        console.log(message)
-    }
-}
-
-CradleCLI.log('testing')
+    .command('verify', 'verify a cradle input')
+    .parse(process.argv)

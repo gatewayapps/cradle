@@ -2,7 +2,7 @@ import LoaderOptions from './LoaderOptions'
 
 import {expect} from 'chai'
 import 'mocha'
-import InvalidConsoleError from '../Errors/InvalidConsoleError';
+import InvalidConsoleError from './Errors/InvalidConsoleError';
 
 describe('LoaderOptions constructor', ()=>{
     it('Should create a new LoaderOptions instance when passed arguments and a console', ()=>{
