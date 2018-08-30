@@ -34,8 +34,8 @@ async function getLoader(): Promise<ICradleLoader> {
 }
 
 getLoader().then(async (loader) => {
-  const modelNames = await loader.readModelNames()
-  console.log('Model names are ', modelNames)
+  const schema = await loader.loadSchema()
+  console.log(schema)
 }).catch((err) => {
   console.log(colors.red(err))
 })

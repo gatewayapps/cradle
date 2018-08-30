@@ -52,7 +52,8 @@ CommonName:
     modifiedDate: datetime default(NOW)
 
 Category:
-  tableName: Categories
+  meta:
+    tableName: Categories
   properties:
     categoryId: integer auto(1,1) primary
     categoryName: string(100) allow('fun category', 'not fun category')

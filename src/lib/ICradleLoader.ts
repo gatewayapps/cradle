@@ -9,4 +9,5 @@ export default interface ICradleLoader {
     readModelNames: () => Promise<string[]>
     readModelPropertyNames: (modelName: string) => Promise<string[]>
     readModelPropertyType: (modelName: string, propertyName: string) => Promise<PropertyType>
+    loadSchema: () => Promise<object>
 }

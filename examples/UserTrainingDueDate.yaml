@@ -1,0 +1,8 @@
+UserTrainingDueDate:
+  properties:
+    trainingId:
+      type: integer
+      ref: Training.trainingId
+    userAccountId: integer
+    dueDate: datetime
+    

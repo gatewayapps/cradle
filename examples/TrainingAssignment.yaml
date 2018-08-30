@@ -1,0 +1,6 @@
+TrainingAssignment:
+  properties:
+    trainingId:
+      type: integer
+      ref: Training.trainingId
+    nodeId: integer

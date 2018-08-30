@@ -1,5 +1,5 @@
-import PropertyType from "./PropertyType";
-import constants from "./constants";
+import constants from './constants'
+import PropertyType from './PropertyType'
 
 export default class ObjectPropertyType extends PropertyType {
 
