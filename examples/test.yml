@@ -31,7 +31,7 @@ Training:
     modifiedBy: integer
     modifiedDate: datetime
     externalCompletionPackage: string(255)?
-    externalCompletionId: int?
+    externalCompletionId: integer?
     isDocumentReview: boolean? default(0)
   references:
     Categories: multiple of Category via TrainingCategories

@@ -1,44 +1,63 @@
-import BooleanPropertyType from '../PropertyTypes/BooleanPropertyType'
-import PropertyType from '../PropertyTypes/PropertyType'
 
-const KNOWN_PROPERTY_TYPES = [
-  'integer',
-  'datetime',
-  'decimal',
-  'string',
-  'boolean',
-]
+import chevrotain from 'chevrotain'
+const createToken = chevrotain.createToken
 
-export default function parsePropertyType(typeDef: string): PropertyType {
-  const parts = typeDef.split(' ', 2)
-  const typeName = parts[0].toLowerCase()
-  const baseTypeName = typeName.replace('?', '').trim()
+const PropertyType = createToken({
+  name: 'PropertyType',
+  pattern: /(integer|string\(\s*\d+\s*\)|string|boolean|datetime|decimal)\??/
+})
 
-  if (KNOWN_PROPERTY_TYPES.indexOf(baseTypeName) === -1) {
-    throw new Error(`Invalid property type '${typeName}'`)
-  }
+const IntegerDefault = createToken({
+  name: 'IntegerDefault',
+  pattern: /default\s*\(\s*-?\d+\s*\)/
+})
 
-}
+const StringDefault  = createToken({
+  name: 'StringDefault',
+  pattern: /default\s*\(\s*(["'])(?:(?=(\\?))\2.)*?\1\s*\)/
+})
 
-function createBooleanProperty(typeName: string, def?: string): BooleanPropertyType {
-  const nullable = typeName.indexOf('?') > -1
+const BooleanDefault = createToken({
+  name: 'BooleanDefault',
+  pattern: /default\s*\(\s*(0|1|true|false)\s*\)/
+})
 
-}
+const DecimalDefault = createToken({
+  name: 'DecimalDefault',
+  pattern: /default\s*\(\s*-?\d+(\.\d+)?\s*\)/
+})
 
-function getNextToken(input: string, startPosition: number = 0): {token: string, start: number, end: number} {
-  let i = currentPosition
-  let token = ''
-  while (i < input.length) {
-    if (/\b/.test(input[i])) {
-      break
-    } else {
-      token += input[i]
-      i++
-    }
-  }
-  return {
-    end: i,
-    start: startPosition,
-    token,
-  }
-}
+// const StringAllow = createToken({
+//   name: 'StringAllow',
+//   pattern: /allow\s*\(\s*(["'])(?:(?=(\\?))\2.)*?\1\s*(,\s*((["'])(?:(?=(\\?))\2.)*?\1\s*))*\s*\)/
+// })
+
+const IntegerAuto = createToken({
+  name: 'IntegerAuto',
+  pattern: /auto\s*\(\s*-?\d+,\s*\d+\s*\)/
+})
+
+const Primary = createToken({
+  name: 'Primary',
+  pattern: /primary/
+})
+const Delete = createToken({
+  name: 'Delete',
+  pattern: /delete/
+})
+const IntegerMax = createToken({
+  name: 'IntegerMax',
+  pattern: /max\s*\(\s*-?\d+\s*\)/
+})
+const IntegerMin = createToken({
+  name: 'IntegerMin',
+  pattern: /min\s*\(\s*-?\d+\s*\)/
+})
+const DecimalMax = createToken({
+  name: 'DecimalMax',
+  pattern: /max\s*\(\s*-?\d+(\.\d+)?\s*\)/
+})
+const DecimalMin = createToken({
+  name: 'DecimalMin',
+  pattern: /min\s*\(\s*-?\d+(\.\d+)?\s*\)/
+})
