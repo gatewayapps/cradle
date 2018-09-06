@@ -6,7 +6,13 @@ import { IConsole } from '../IConsole'
 import ICradleLoader from '../ICradleLoader'
 import LoaderOptions from '../LoaderOptions'
 import BooleanPropertyType from '../PropertyTypes/BooleanPropertyType'
+import constants from '../PropertyTypes/constants'
+import DateTimePropertyType from '../PropertyTypes/DateTimePropertyType'
+import DecimalPropertyType from '../PropertyTypes/DecimalPropertyType'
 import PropertyType from '../PropertyTypes/PropertyType'
+import SpecProperty from './SpecProperty'
+import ParseProperty from './SpecPropertyTypeParser'
+import IntegerPropertyType from '../PropertyTypes/IntegerPropertyType';
 
 export default class SpecLoader extends CradleLoaderBase  {
 
@@ -14,7 +20,23 @@ export default class SpecLoader extends CradleLoaderBase  {
   private specObject ?: object
 
   public  readModelPropertyType(modelName: string, propertyName: string): Promise < PropertyType > {
-    return Promise.resolve(new BooleanPropertyType())
+    return new Promise((resolve, reject) => {
+      if (this.specObject) {
+        const model = this.specObject[modelName]
+
+        const property = model.properties[propertyName]
+
+        if (typeof(property) === typeof('')) {
+
+          ParseProperty(property)
+          return resolve(new BooleanPropertyType())
+        } else {
+          return resolve(new BooleanPropertyType())
+        }
+      }
+      return reject('Screw you creepo')
+
+    })
   }
 
   public  readModelNames(): Promise < string[] > {
@@ -75,5 +97,14 @@ export default class SpecLoader extends CradleLoaderBase  {
     }
 
     return Promise.resolve()
+  }
+
+  private createPropertyTypeFromSpecResult(spec: SpecProperty): PropertyType {
+    switch (spec.PropertyType) {
+      case constants.Boolean: return new BooleanPropertyType(spec.Nullable, spec.PrimaryKey, spec.DefaultValue, spec.Unique)
+      case constants.DateTime: return new DateTimePropertyType(spec.Nullable, spec.PrimaryKey, spec.DefaultValue, spec.Unique)
+      case constants.Decimal: return new DecimalPropertyType(undefined, undefined, spec.MinValue, spec.MaxValue, spec.Nullable, spec.PrimaryKey, spec.DefaultValue, spec.Unique)
+      case constants.Integer: return new IntegerPropertyType(spec.MinValue, spec.MaxValue, spec.auto)
+    }
   }
 }

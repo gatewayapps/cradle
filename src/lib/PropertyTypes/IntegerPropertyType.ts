@@ -1,9 +1,8 @@
 
-import constants from "./constants";
-import ConstrainablePropertyType from "./ConstrainablePropertyType";
+import constants from './constants'
+import ConstrainablePropertyType from './ConstrainablePropertyType'
 
-
-export class AutogenerateOptions {
+export class IntegerAutogenerateOptions {
     public Seed: number
     public Increment: number
     constructor(seed: number = 1, increment: number = 1) {
@@ -13,8 +12,8 @@ export class AutogenerateOptions {
 }
 
 export default class IntegerPropertyType extends ConstrainablePropertyType {
-    public Autogenerate?: AutogenerateOptions
-    constructor(minimumValue?: number, maximumValue?: number, autogenerateOptions?: AutogenerateOptions, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue: any = null, unique: boolean = false) {
+    public Autogenerate?: IntegerAutogenerateOptions
+    constructor(minimumValue?: number, maximumValue?: number, autogenerateOptions?: IntegerAutogenerateOptions, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue: any = null, unique: boolean = false) {
         super(constants.Integer, minimumValue, maximumValue, allowNull, isPrimaryKey, defaultValue, unique)
         this.Autogenerate = autogenerateOptions
     }

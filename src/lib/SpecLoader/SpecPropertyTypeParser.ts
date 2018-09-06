@@ -1,63 +1,304 @@
 
-import chevrotain from 'chevrotain'
+import chevrotain, { IToken, Lexer, Parser, TokenType } from 'chevrotain'
+import SpecProperty from './SpecProperty'
 const createToken = chevrotain.createToken
 
 const PropertyType = createToken({
   name: 'PropertyType',
-  pattern: /(integer|string\(\s*\d+\s*\)|string|boolean|datetime|decimal)\??/
+  pattern: /(uniqueidentifier|integer|string\(\s*\d+\s*\)|string|boolean|datetime|decimal)\??/i
 })
 
-const IntegerDefault = createToken({
-  name: 'IntegerDefault',
-  pattern: /default\s*\(\s*-?\d+\s*\)/
+const BooleanValue = createToken({
+  name: 'BooleanValue',
+  pattern: /(true|false)/i
 })
 
-const StringDefault  = createToken({
-  name: 'StringDefault',
-  pattern: /default\s*\(\s*(["'])(?:(?=(\\?))\2.)*?\1\s*\)/
+const Default = createToken({
+  name: 'Default',
+  pattern: /default/i
 })
 
-const BooleanDefault = createToken({
-  name: 'BooleanDefault',
-  pattern: /default\s*\(\s*(0|1|true|false)\s*\)/
+const DecimalValue = createToken({
+  name: 'DecimalValue',
+  pattern: /-?\d+\.\d+/i
 })
 
-const DecimalDefault = createToken({
-  name: 'DecimalDefault',
-  pattern: /default\s*\(\s*-?\d+(\.\d+)?\s*\)/
+const IntegerValue = createToken({
+  name: 'IntegerValue',
+  pattern: /\d+/i
 })
 
-// const StringAllow = createToken({
-//   name: 'StringAllow',
-//   pattern: /allow\s*\(\s*(["'])(?:(?=(\\?))\2.)*?\1\s*(,\s*((["'])(?:(?=(\\?))\2.)*?\1\s*))*\s*\)/
-// })
+const Now = createToken({
+  name: 'DateTimeNowValue',
+  pattern: /now/i
+})
 
-const IntegerAuto = createToken({
-  name: 'IntegerAuto',
-  pattern: /auto\s*\(\s*-?\d+,\s*\d+\s*\)/
+const DateTimeValue = createToken({
+  name: 'DateTimeValue',
+  pattern: /(\d{4})\D?(0[1-9]|1[0-2])\D?([12]\d|0[1-9]|3[01])(\D?([01]\d|2[0-3])\D?([0-5]\d)\D?([0-5]\d)?\D?(\d{3})?([zZ]|([\+-])([01]\d|2[0-3])\D?([0-5]\d)?)?)?/i
+})
+
+const Min = createToken({
+  name: 'MinValue',
+  pattern: /min/i
+})
+const Max = createToken({
+  name: 'MaxValue',
+  pattern: /max/i
+})
+const Comma = createToken({
+  name: 'Comma',
+  pattern: /,/i
+})
+
+const OpenParentheses = createToken({
+  name: 'OpenParentheses',
+  pattern: /\(/i
+})
+const CloseParentheses = createToken({
+  name: 'CloseParentheses',
+  pattern: /\)/i
+})
+
+const Allow = createToken({
+  name: 'Allow',
+  pattern: /allow/i
+})
+
+const Unique = createToken({
+  name: 'Unique',
+  pattern: /unique/i
+})
+
+const StringValue = createToken({
+  name: 'StringValue',
+  pattern: /"([^"\\]*(\\.[^"\\]*)*)"|\'([^\'\\]*(\\.[^\'\\]*)*)\'/i
+})
+
+const Auto = createToken({
+  name: 'Auto',
+  pattern: /auto/i
 })
 
 const Primary = createToken({
   name: 'Primary',
-  pattern: /primary/
+  pattern: /primary/i
 })
 const Delete = createToken({
   name: 'Delete',
-  pattern: /delete/
+  pattern: /delete/i
 })
-const IntegerMax = createToken({
-  name: 'IntegerMax',
-  pattern: /max\s*\(\s*-?\d+\s*\)/
+const UuidValue = createToken({
+  name: 'UuidValue',
+  pattern: /(?:[0-9a-f]{8}-?[0-9a-f]{4}-?[1-5][0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)/i
 })
-const IntegerMin = createToken({
-  name: 'IntegerMin',
-  pattern: /min\s*\(\s*-?\d+\s*\)/
+
+const WhiteSpace = createToken({
+  group: chevrotain.Lexer.SKIPPED,
+  name: 'WhiteSpace',
+  pattern: /\s+/
 })
-const DecimalMax = createToken({
-  name: 'DecimalMax',
-  pattern: /max\s*\(\s*-?\d+(\.\d+)?\s*\)/
+const Invalid = createToken({
+  name: 'Invalid',
+  pattern: /.+/
 })
-const DecimalMin = createToken({
-  name: 'DecimalMin',
-  pattern: /min\s*\(\s*-?\d+(\.\d+)?\s*\)/
-})
+
+const allTokens = [
+  StringValue,
+  WhiteSpace,
+  PropertyType,
+  OpenParentheses,
+  Comma,
+  CloseParentheses,
+  UuidValue,
+  DateTimeValue,
+  Now,
+  DecimalValue,
+  IntegerValue,
+  Auto,
+  Unique,
+  Max,
+  Min,
+  Default,
+  Allow,
+  Primary,
+  Delete,
+  Invalid
+]
+
+const SpecLexer = new Lexer(allTokens)
+
+class SpecParser extends Parser {
+  public propertyStatement: any
+  private propertyDeclaration: any
+  private defaultDeclaration: any
+  private deleteDeclaration: any
+  private primaryDeclaration: any
+  private minDeclaration: any
+  private maxDeclaration: any
+  private autoDeclaration: any
+
+  constructor(input) {
+    super(input, allTokens)
+    const $ = this
+
+    $.RULE('propertyStatement', () => {
+      $.SUBRULE($.propertyDeclaration)
+    })
+    $.RULE('propertyDeclaration', () => {
+      $.CONSUME(PropertyType)
+    })
+    this.performSelfAnalysis()
+  }
+}
+
+const localParser = new SpecParser([])
+
+export default function ParseProperty(definition: string) {
+  try {
+    const lexingResult = SpecLexer.tokenize(definition)
+    if (lexingResult.tokens.length === 0) {
+      throw new Error('Unable to parse empty or null string')
+    }
+    const propertyType = lexingResult.tokens[0].image
+    let autoDefinition: any = null
+    let unique: boolean = false
+    let primaryKey: boolean = false
+    let deleteFlag: boolean = false
+    let defaultValue: any = null
+    let length: number | null = null
+    const nullable = propertyType.indexOf('?') > -1
+    const strippedPropertyType = propertyType.replace(/[^0-9]/ig, '')
+    if (strippedPropertyType.length > 0) {
+      length = parseInt(strippedPropertyType, 10)
+    }
+    let allowedValues: any = null
+
+    let minValue = null
+    let maxValue = null
+
+    for (let i = 1; i < lexingResult.tokens.length; i++) {
+      const token = lexingResult.tokens[i]
+      if (token && token.tokenType) {
+        switch (token.tokenType.name) {
+          case Auto.name: {
+            const nextToken = peekNextToken(lexingResult.tokens, i)
+            if (nextToken && nextToken.tokenType!.name === OpenParentheses.name) {
+              const contents = getTokensFromParentheses(lexingResult.tokens, i, [IntegerValue, DecimalValue, StringValue, DateTimeValue, UuidValue, BooleanValue])
+              i = contents.endIndex
+              autoDefinition = contents.values
+            } else {
+              autoDefinition = true
+            }
+            break
+          }
+          case Default.name: {
+            const defaultContents = getTokensFromParentheses(lexingResult.tokens, i, [IntegerValue, DecimalValue, StringValue, DateTimeValue, UuidValue, BooleanValue])
+            i = defaultContents.endIndex
+            if (defaultContents.values.length !== 1) {
+              throw new Error(`Expected default to be a single element, got ${defaultContents.values}`)
+            } else {
+              defaultValue = defaultContents.values[0]
+            }
+            break
+          }
+          case Max.name: {
+            const maxContents = getTokensFromParentheses(lexingResult.tokens, i, [IntegerValue, DecimalValue, StringValue, DateTimeValue, UuidValue, BooleanValue])
+            i = maxContents.endIndex
+            if (maxContents.values.length !== 1) {
+              throw new Error(`Expected MAX value to be a single element, got ${maxContents.values}`)
+            } else {
+              maxValue = maxContents.values[0]
+            }
+          }
+          case Min.name: {
+            const minContents = getTokensFromParentheses(lexingResult.tokens, i, [IntegerValue, DecimalValue, StringValue, DateTimeValue, UuidValue, BooleanValue])
+            i = minContents.endIndex
+            if (minContents.values.length !== 1) {
+              throw new Error(`Expected MIN value to be a single element, got ${minContents.values}`)
+            } else {
+              minValue = minContents.values[0]
+            }
+          }
+          case Allow.name: {
+            const allowContents = getTokensFromParentheses(lexingResult.tokens, i, [IntegerValue, DecimalValue, StringValue, DateTimeValue, UuidValue, BooleanValue])
+            i = allowContents.endIndex
+            allowedValues = allowContents.values
+            break
+          }
+          case Primary.name: primaryKey = true; break
+          case Unique.name: unique = true; break
+          case Delete.name: deleteFlag = true; break
+
+        }
+      }
+    }
+    return new SpecProperty(
+      propertyType, nullable, allowedValues, defaultValue, minValue,
+      maxValue, primaryKey, unique, deleteFlag, length)
+
+  } catch (err) {
+    console.log(err)
+  }
+
+}
+
+function peekNextToken(tokens: IToken[], currentIndex: number): IToken | undefined {
+  const nextIndex = currentIndex + 1
+  if (nextIndex < tokens.length) {
+    return tokens[nextIndex]
+  } else {
+    return undefined
+  }
+}
+
+function getTokensFromParentheses(tokens: IToken[], startIndex: number, allowedTypes: TokenType[]) {
+  const allowedTypeNames = allowedTypes.map((t) => t.name)
+  const result: any[] = []
+  if (tokens[startIndex].tokenType!.name === OpenParentheses.name) {
+    for (let i = startIndex + 1; i < tokens.length; i++) {
+      if (tokens[i].tokenType!.name === CloseParentheses.name) {
+        return {
+          endIndex: i,
+          values: result
+        }
+      }
+      if (tokens[i].tokenType!.name !== Comma.name && allowedTypeNames.indexOf(tokens[i].tokenType!.name) === -1) {
+        throw new Error(`Token type ${tokens[i].tokenType!.name} not allowed`)
+      } else {
+        if (tokens[i].tokenType!.name !== Comma.name) {
+          result.push(parseTokenValue(tokens[i]))
+        }
+
+      }
+    }
+   } else {
+     throw new Error(`Expected (, found ${tokens[startIndex].image}`)
+   }
+  throw new Error(`Missing )`)
+}
+
+function parseTokenValue(token: IToken): any {
+  if (token.tokenType) {
+    switch (token.tokenType.name) {
+      case IntegerValue.name: {
+        return parseInt(token.image, 10)
+      }
+      case DecimalValue.name: {
+        return parseFloat(token.image)
+      }
+      case UuidValue.name: {
+        return token.image
+      }
+      case StringValue.name: {
+        return token.image
+      }
+      case BooleanValue.name: {
+        return token.image.toString().toLowerCase() === 'true'
+      }
+      case DateTimeValue.name: {
+        return new Date(token.image.toString())
+      }
+    }
+  }
+}

@@ -8,8 +8,9 @@
         "indent": [true, "spaces", 4],
         "semicolon": [true, "never"],
         "quotemark": [true, "single"],
-        "max-line-length": [true, 150],
+        "max-line-length": [true, 180],
         "trailing-comma": [false],
+        "max-classes-per-file": [false, 1],
         "no-console": [false],
         "no-var-requires": [false]
     },

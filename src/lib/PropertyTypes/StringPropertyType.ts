@@ -1,6 +1,6 @@
-import EnumerablePropertyType from "./EnumerablePropertyType";
-import constants from "./constants";
-import PropertyType from "./PropertyType";
+import constants from './constants'
+import EnumerablePropertyType from './EnumerablePropertyType'
+import PropertyType from './PropertyType'
 
 export default class StringPropertyType extends EnumerablePropertyType {
     public MaximumLength?: number
@@ -19,6 +19,5 @@ export default class StringPropertyType extends EnumerablePropertyType {
         }
         return false
     }
-
 
 }

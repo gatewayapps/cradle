@@ -3,9 +3,7 @@ Training:
     trainingId: integer auto(1,1) primary
     name: string(100)
     description: string?
-    commonNameId:
-      type: integer?
-      ref: CommonName.id
+    commonNameId: integer?
     attachmentLink: string?
     equipmentType: integer?
     isRecurring: boolean? default(0)
@@ -25,7 +23,7 @@ Training:
         period: string(10)?
 
     requiresSignOff: boolean? default(0)
-    isDeleted: boolean default(0) delete
+    isDeleted: boolean default(0) delete adsasdfads
     createdBy: integer
     createdDate: datetime
     modifiedBy: integer
@@ -35,7 +33,7 @@ Training:
     isDocumentReview: boolean? default(0)
   references:
     Categories: multiple of Category via TrainingCategories
-    CommonName: single on commonNameId
+    CommonName: single of CommonName on commonNameId
 
 User:
   properties:
@@ -43,11 +41,13 @@ User:
 
 CommonName:
   properties:
-    id: integer auto(1,1) primary
+    id: integer auto(1,1) primary unique
+    uuid: uniqueidentifier auto unique
+    uuidValue: uniqueidentifier default(00000000-0000-0000-0000-000000000000)
     commonName: string(100)
     deleted: boolean default(0)
     createdBy: integer
-    createdDate: datetime default(NOW)
+    createdDate: datetime default(NOW) min(1990-01-01)
     modifiedBy: integer
     modifiedDate: datetime default(NOW)
 
@@ -56,10 +56,10 @@ Category:
     tableName: Categories
   properties:
     categoryId: integer auto(1,1) primary
-    categoryName: string(100) allow('fun category', 'not fun category')
+    categoryName: string(100) allow("test", "test2")
     categoryDescription: string?
     deleted: boolean default(0)
-    createdBy: integer
+    createdBy: integer allow(1, 2, 3, 4)
     createdDate: datetime
     modifiedBy: integer
     modifiedDate: datetime
@@ -68,12 +68,8 @@ Category:
 
 TrainingCategories:
   properties:
-    trainingId:
-      type: integer
-      ref: Training.trainingId
-    categoryId:
-      type: integer
-      ref: Category.id
+    trainingId: integer
+    categoryId: integer
   references:
     Training: single on trainingId
     Category: single on categoryId
