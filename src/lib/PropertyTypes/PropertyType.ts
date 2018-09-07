@@ -5,10 +5,10 @@ export default abstract class PropertyType implements IPropertyType {
     public TypeName: string
     public IsPrimaryKey: boolean
     public AllowNull: boolean
-    public DefaultValue: any
+    public DefaultValue!: any
     public Unique: boolean
 
-    constructor(typeName: string, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue: any = null, unique: boolean = false) {
+    constructor(typeName: string, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean = false) {
         if (!(typeName in constants)) {
             throw new TypeError(`${typeName} is not a valid property type`)
         } else {

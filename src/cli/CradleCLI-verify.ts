@@ -35,7 +35,9 @@ async function getLoader(): Promise<ICradleLoader> {
 
 getLoader().then(async (loader) => {
   const schema = await loader.loadSchema()
-  console.log(schema)
-}).catch((err) => {
-  console.log(colors.red(err))
+  const modelNames = Object.keys(schema)
+  console.log(colors.yellow(JSON.stringify(schema, null, 2)))
+  console.log(colors.green(`Schema is valid`))
+}).catch((err: Error) => {
+  console.log(colors.red(err.message))
 })

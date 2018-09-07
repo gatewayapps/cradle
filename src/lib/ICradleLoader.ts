@@ -1,4 +1,5 @@
 import LoaderOptions from './LoaderOptions'
+import ModelReference from './ModelReference'
 import PropertyType from './PropertyTypes/PropertyType'
 
 export default interface ICradleLoader {
@@ -9,5 +10,8 @@ export default interface ICradleLoader {
     readModelNames: () => Promise<string[]>
     readModelPropertyNames: (modelName: string) => Promise<string[]>
     readModelPropertyType: (modelName: string, propertyName: string) => Promise<PropertyType>
+    readModelReferenceNames: (modelName: string) => Promise<string[]>
+    readModelReferenceType: (modelName: string, referenceName: string) => Promise<ModelReference>
+    readModelMetadata: (modelName: string) => Promise<object>
     loadSchema: () => Promise<object>
 }

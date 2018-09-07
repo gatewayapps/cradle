@@ -1,6 +1,6 @@
 Training:
   properties:
-    trainingId: integer auto(1,1) primary
+    trainingId: integer primary auto(1,1)
     name: string(100)
     description: string?
     commonNameId: integer?
@@ -18,21 +18,23 @@ Training:
     # gracePeriod_period
     gracePeriod:
       properties:
-        hasGracePeriod: boolean? default(0)
-        duration: integer?
-        period: string(10)?
+        graceInterval: string
+        graceDuration: integer
+        testExtended:
+          properties:
+            extendProperty: uniqueidentifier
 
     requiresSignOff: boolean? default(0)
-    isDeleted: boolean default(0) delete adsasdfads
-    createdBy: integer
+    isDeleted: boolean default(0) delete
+    createdBy: integer default(5)
     createdDate: datetime
-    modifiedBy: integer
+    modifiedBy: integer max(100)
     modifiedDate: datetime
     externalCompletionPackage: string(255)?
     externalCompletionId: integer?
     isDocumentReview: boolean? default(0)
   references:
-    Categories: multiple of Category via TrainingCategories
+    Categories: single of Category via TrainingCategories
     CommonName: single of CommonName on commonNameId
 
 User:
@@ -71,8 +73,8 @@ TrainingCategories:
     trainingId: integer
     categoryId: integer
   references:
-    Training: single on trainingId
-    Category: single on categoryId
+    Training: single of Training on trainingId
+    Category: single of Category on categoryId
 
 TrainingAssignment: ./TrainingAssignment.yaml#TrainingAssignment
 UserTrainingDueDate: ./UserTrainingDueDate.yaml#UserTrainingDueDate

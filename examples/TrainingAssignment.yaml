@@ -1,6 +1,4 @@
 TrainingAssignment:
   properties:
-    trainingId:
-      type: integer
-      ref: Training.trainingId
+    trainingId: integer
     nodeId: integer

@@ -1,9 +1,9 @@
-import PropertyType from "./PropertyType";
-import constants from "./constants";
+import constants from './constants'
+import PropertyType from './PropertyType'
 
 export default abstract class EnumerablePropertyType extends PropertyType {
-    AllowedValues?: any[]
-    constructor(typeName: string, allowedValues?: any[], allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue: any = null, unique: boolean = false) {
+    public AllowedValues: any[] | null
+    constructor(typeName: string, allowedValues: any[] | null, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean = false) {
         super(typeName, allowNull, isPrimaryKey, defaultValue, unique)
         this.AllowedValues = allowedValues
     }
@@ -11,7 +11,7 @@ export default abstract class EnumerablePropertyType extends PropertyType {
         if (!super.equals(other)) {
             return false
         }
-        if (other instanceof EnumerablePropertyType) {
+        if (other instanceof EnumerablePropertyType && this.AllowedValues !== null && other.AllowedValues !== null) {
             return this.arrayEquals(this.AllowedValues, other.AllowedValues)
         }
         return false
@@ -23,16 +23,16 @@ export default abstract class EnumerablePropertyType extends PropertyType {
      * @param b second array
      */
     private arrayEquals(a?: any[], b?: any[]): boolean {
-        if (a === b) return true;
-        if (a == null || b == null) return false;
-        if (a.length != b.length) return false;
+        if (a === b) { return true }
+        if (a == null || b == null) { return false }
+        if (a.length !== b.length) { return false }
 
         // If you don't care about the order of the elements inside
         // the array, you should sort both arrays here.
 
-        for (var i = 0; i < a.length; ++i) {
-            if (a[i] !== b[i]) return false;
+        for (let i = 0; i < a.length; ++i) {
+            if (a[i] !== b[i]) { return false }
         }
-        return true;
+        return true
     }
 }

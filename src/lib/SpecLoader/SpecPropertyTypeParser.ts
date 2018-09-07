@@ -155,27 +155,34 @@ class SpecParser extends Parser {
 const localParser = new SpecParser([])
 
 export default function ParseProperty(definition: string) {
-  try {
+
     const lexingResult = SpecLexer.tokenize(definition)
     if (lexingResult.tokens.length === 0) {
       throw new Error('Unable to parse empty or null string')
     }
+    lexingResult.tokens.map((t) => {
+      if (t.tokenType!.name === Invalid.name) {
+        throw new Error(`Invalid token: ${t.image}`)
+      }
+    })
     const propertyType = lexingResult.tokens[0].image
-    let autoDefinition: any = null
+    const basePropertyType = propertyType.replace(/\(.+\)/ig, '').replace('?', '')
+
+    let autoDefinition: any
     let unique: boolean = false
     let primaryKey: boolean = false
     let deleteFlag: boolean = false
-    let defaultValue: any = null
-    let length: number | null = null
+    let defaultValue: any
+    let length!: number
     const nullable = propertyType.indexOf('?') > -1
     const strippedPropertyType = propertyType.replace(/[^0-9]/ig, '')
     if (strippedPropertyType.length > 0) {
       length = parseInt(strippedPropertyType, 10)
     }
-    let allowedValues: any = null
+    let allowedValues!: any
 
-    let minValue = null
-    let maxValue = null
+    let minValue!: any
+    let maxValue!: any
 
     for (let i = 1; i < lexingResult.tokens.length; i++) {
       const token = lexingResult.tokens[i]
@@ -184,7 +191,7 @@ export default function ParseProperty(definition: string) {
           case Auto.name: {
             const nextToken = peekNextToken(lexingResult.tokens, i)
             if (nextToken && nextToken.tokenType!.name === OpenParentheses.name) {
-              const contents = getTokensFromParentheses(lexingResult.tokens, i, [IntegerValue, DecimalValue, StringValue, DateTimeValue, UuidValue, BooleanValue])
+              const contents = getTokensFromParentheses(lexingResult.tokens, i + 1, [IntegerValue])
               i = contents.endIndex
               autoDefinition = contents.values
             } else {
@@ -193,53 +200,64 @@ export default function ParseProperty(definition: string) {
             break
           }
           case Default.name: {
-            const defaultContents = getTokensFromParentheses(lexingResult.tokens, i, [IntegerValue, DecimalValue, StringValue, DateTimeValue, UuidValue, BooleanValue])
-            i = defaultContents.endIndex
-            if (defaultContents.values.length !== 1) {
-              throw new Error(`Expected default to be a single element, got ${defaultContents.values}`)
-            } else {
-              defaultValue = defaultContents.values[0]
+            const nextToken = peekNextToken(lexingResult.tokens, i)
+            if (nextToken && nextToken.tokenType!.name === OpenParentheses.name) {
+              const defaultContents = getTokensFromParentheses(lexingResult.tokens, i + 1, [IntegerValue, DecimalValue, StringValue, DateTimeValue, UuidValue, BooleanValue, Now])
+              i = defaultContents.endIndex
+              if (defaultContents.values.length !== 1) {
+                throw new Error(`Expected default to be a single element, got ${defaultContents.values}`)
+              } else {
+                defaultValue = defaultContents.values[0]
+              }
             }
             break
           }
           case Max.name: {
-            const maxContents = getTokensFromParentheses(lexingResult.tokens, i, [IntegerValue, DecimalValue, StringValue, DateTimeValue, UuidValue, BooleanValue])
-            i = maxContents.endIndex
-            if (maxContents.values.length !== 1) {
-              throw new Error(`Expected MAX value to be a single element, got ${maxContents.values}`)
-            } else {
-              maxValue = maxContents.values[0]
+            const nextToken = peekNextToken(lexingResult.tokens, i)
+            if (nextToken && nextToken.tokenType!.name === OpenParentheses.name) {
+              const maxContents = getTokensFromParentheses(lexingResult.tokens, i + 1, [IntegerValue, DecimalValue, DateTimeValue, Now])
+              i = maxContents.endIndex
+              if (maxContents.values.length !== 1) {
+                throw new Error(`Expected MAX value to be a single element, got ${maxContents.values}`)
+              } else {
+                maxValue = maxContents.values[0]
+              }
             }
+            break
           }
           case Min.name: {
-            const minContents = getTokensFromParentheses(lexingResult.tokens, i, [IntegerValue, DecimalValue, StringValue, DateTimeValue, UuidValue, BooleanValue])
-            i = minContents.endIndex
-            if (minContents.values.length !== 1) {
-              throw new Error(`Expected MIN value to be a single element, got ${minContents.values}`)
-            } else {
-              minValue = minContents.values[0]
+            const nextToken = peekNextToken(lexingResult.tokens, i)
+            if (nextToken && nextToken.tokenType!.name === OpenParentheses.name) {
+              const minContents = getTokensFromParentheses(lexingResult.tokens, i + 1, [IntegerValue, DecimalValue, DateTimeValue, Now])
+              i = minContents.endIndex
+              if (minContents.values.length !== 1) {
+                throw new Error(`Expected MIN value to be a single element, got ${minContents.values}`)
+              } else {
+                minValue = minContents.values[0]
+              }
             }
+            break
           }
           case Allow.name: {
-            const allowContents = getTokensFromParentheses(lexingResult.tokens, i, [IntegerValue, DecimalValue, StringValue, DateTimeValue, UuidValue, BooleanValue])
-            i = allowContents.endIndex
-            allowedValues = allowContents.values
+            const nextToken = peekNextToken(lexingResult.tokens, i)
+            if (nextToken && nextToken.tokenType!.name === OpenParentheses.name) {
+              const allowContents = getTokensFromParentheses(lexingResult.tokens, i + 1, [IntegerValue, DecimalValue, StringValue, DateTimeValue, UuidValue])
+              i = allowContents.endIndex
+              allowedValues = allowContents.values
+
+            }
             break
           }
           case Primary.name: primaryKey = true; break
           case Unique.name: unique = true; break
           case Delete.name: deleteFlag = true; break
-
+          case Invalid.name: throw new Error(`Invalid token '${token.image}'`)
         }
       }
     }
     return new SpecProperty(
-      propertyType, nullable, allowedValues, defaultValue, minValue,
+      basePropertyType, nullable, autoDefinition, allowedValues, defaultValue, minValue,
       maxValue, primaryKey, unique, deleteFlag, length)
-
-  } catch (err) {
-    console.log(err)
-  }
 
 }
 
@@ -255,6 +273,10 @@ function peekNextToken(tokens: IToken[], currentIndex: number): IToken | undefin
 function getTokensFromParentheses(tokens: IToken[], startIndex: number, allowedTypes: TokenType[]) {
   const allowedTypeNames = allowedTypes.map((t) => t.name)
   const result: any[] = []
+  if (startIndex >= tokens.length) {
+    throw new Error(`Start index cannot be greater than tokens length`)
+
+  }
   if (tokens[startIndex].tokenType!.name === OpenParentheses.name) {
     for (let i = startIndex + 1; i < tokens.length; i++) {
       if (tokens[i].tokenType!.name === CloseParentheses.name) {
@@ -267,14 +289,16 @@ function getTokensFromParentheses(tokens: IToken[], startIndex: number, allowedT
         throw new Error(`Token type ${tokens[i].tokenType!.name} not allowed`)
       } else {
         if (tokens[i].tokenType!.name !== Comma.name) {
-          result.push(parseTokenValue(tokens[i]))
+          const parsedTokenValue = parseTokenValue(tokens[i])
+
+          result.push(parsedTokenValue)
         }
 
       }
     }
-   } else {
-     throw new Error(`Expected (, found ${tokens[startIndex].image}`)
-   }
+  } else {
+    throw new Error(`Expected (, found ${tokens[startIndex].image}`)
+  }
   throw new Error(`Missing )`)
 }
 
@@ -298,6 +322,9 @@ function parseTokenValue(token: IToken): any {
       }
       case DateTimeValue.name: {
         return new Date(token.image.toString())
+      }
+      case Now.name: {
+        return 'DateTimeNow'
       }
     }
   }

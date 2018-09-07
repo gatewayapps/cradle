@@ -1,21 +1,21 @@
-import { IntegerAutogenerateOptions } from "../PropertyTypes/IntegerPropertyType";
+import { IntegerAutogenerateOptions } from '../PropertyTypes/IntegerPropertyType'
 
 export default class SpecProperty {
   public PropertyType: string
-  public AutogenerateOptions: IntegerAutogenerateOptions | any
+  public AutogenerateOptions!: IntegerAutogenerateOptions | boolean
   public Nullable: boolean
-  public AllowedValues: any[] | null
-  public DefaultValue: any | null
-  public MinValue: any | null
-  public MaxValue: any | null
+  public AllowedValues!: any[]
+  public DefaultValue!: any | null
+  public MinValue!: any
+  public MaxValue!: any
   public PrimaryKey: boolean
   public Unique: boolean
   public DeleteFlag: boolean
-  public Length: number | null
+  public Length!: number
 
   constructor(propertyType: string,
               nullable: boolean,
-              autogenerateOptions
+              autogenerateOptions: any,
               allowedValues: any,
               defaultValue: any,
               minValue: any,
@@ -34,5 +34,15 @@ export default class SpecProperty {
     this.Unique = unique
     this.DeleteFlag = deleteFlag
     this.Length = length
+
+    if (Array.isArray(autogenerateOptions)) {
+      if (autogenerateOptions.length !== 2) {
+        throw new Error(`Expected 2 elements in autogenerate options, received ${autogenerateOptions}`)
+      } else {
+        this.AutogenerateOptions = new IntegerAutogenerateOptions(autogenerateOptions[0], autogenerateOptions[1])
+      }
+    } else {
+      this.AutogenerateOptions = autogenerateOptions
+    }
   }
 }

@@ -13,8 +13,10 @@ export class IntegerAutogenerateOptions {
 
 export default class IntegerPropertyType extends ConstrainablePropertyType {
     public Autogenerate?: IntegerAutogenerateOptions
-    constructor(minimumValue?: number, maximumValue?: number, autogenerateOptions?: IntegerAutogenerateOptions, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue: any = null, unique: boolean = false) {
+    constructor(minimumValue?: number, maximumValue?: number, autogenerateOptions?: any, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean = false) {
         super(constants.Integer, minimumValue, maximumValue, allowNull, isPrimaryKey, defaultValue, unique)
-        this.Autogenerate = autogenerateOptions
+        if (autogenerateOptions instanceof IntegerAutogenerateOptions) {
+            this.Autogenerate = autogenerateOptions
+        }
     }
 }
