@@ -5,7 +5,7 @@ export default class SpecProperty {
   public AutogenerateOptions!: IntegerAutogenerateOptions | boolean
   public Nullable: boolean
   public AllowedValues!: any[]
-  public DefaultValue!: any | null
+  public DefaultValue!: any
   public MinValue!: any
   public MaxValue!: any
   public PrimaryKey: boolean
@@ -13,17 +13,8 @@ export default class SpecProperty {
   public DeleteFlag: boolean
   public Length!: number
 
-  constructor(propertyType: string,
-              nullable: boolean,
-              autogenerateOptions: any,
-              allowedValues: any,
-              defaultValue: any,
-              minValue: any,
-              maxValue: any,
-              primaryKey: boolean,
-              unique: boolean,
-              deleteFlag: boolean,
-              length: any) {
+  constructor(propertyType: string, nullable: boolean = false, primaryKey: boolean = false, unique: boolean = false, deleteFlag: boolean = false, autogenerateOptions?: any, allowedValues?: any, defaultValue?: any, minValue?: any, maxValue?: any, length?: any) {
+
     this.PropertyType = propertyType
     this.Nullable = nullable
     this.AllowedValues = allowedValues

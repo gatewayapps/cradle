@@ -1,8 +1,7 @@
 import { expect } from 'chai'
 import 'mocha'
-import PropertyType from "./PropertyType";
-import constants from "./constants";
-
+import constants from './constants'
+import PropertyType from './PropertyType'
 
 class MockPropertyType extends PropertyType {
   constructor(typeName: string, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean = false) {
@@ -10,10 +9,8 @@ class MockPropertyType extends PropertyType {
   }
 }
 
-
 describe('PropertyType', () => {
   describe('constructor', () => {
-
 
     it('Should return a new PropertyType with the correct type name', () => {
       const mock = new MockPropertyType(constants.Object)

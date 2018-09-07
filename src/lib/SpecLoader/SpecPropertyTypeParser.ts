@@ -256,8 +256,8 @@ export default function ParseProperty(definition: string) {
       }
     }
     return new SpecProperty(
-      basePropertyType, nullable, autoDefinition, allowedValues, defaultValue, minValue,
-      maxValue, primaryKey, unique, deleteFlag, length)
+      basePropertyType, nullable, primaryKey, unique, deleteFlag, autoDefinition, allowedValues, defaultValue, minValue,
+      maxValue, length)
 
 }
 
