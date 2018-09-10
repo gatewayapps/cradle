@@ -12,8 +12,9 @@ export default class SpecProperty {
   public Unique: boolean
   public DeleteFlag: boolean
   public Length!: number
+  public IsArray: boolean
 
-  constructor(propertyType: string, nullable: boolean = false, primaryKey: boolean = false, unique: boolean = false, deleteFlag: boolean = false, autogenerateOptions?: any, allowedValues?: any, defaultValue?: any, minValue?: any, maxValue?: any, length?: any) {
+  constructor(propertyType: string, nullable: boolean = false, primaryKey: boolean = false, unique: boolean = false, deleteFlag: boolean = false, autogenerateOptions?: any, allowedValues?: any, defaultValue?: any, minValue?: any, maxValue?: any, length?: any, isArray: boolean = false) {
 
     this.PropertyType = propertyType
     this.Nullable = nullable
@@ -25,10 +26,10 @@ export default class SpecProperty {
     this.Unique = unique
     this.DeleteFlag = deleteFlag
     this.Length = length
-
+    this.IsArray = isArray
     if (Array.isArray(autogenerateOptions)) {
       if (autogenerateOptions.length !== 2) {
-        throw new Error(`Expected 2 elements in autogenerate options, received ${autogenerateOptions}`)
+        throw new RangeError(`Expected 2 elements in autogenerate options, received ${autogenerateOptions}`)
       } else {
         this.AutogenerateOptions = new IntegerAutogenerateOptions(autogenerateOptions[0], autogenerateOptions[1])
       }

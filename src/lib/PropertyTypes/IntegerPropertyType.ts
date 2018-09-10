@@ -17,6 +17,10 @@ export default class IntegerPropertyType extends ConstrainablePropertyType {
         super(constants.Integer, minimumValue, maximumValue, allowNull, isPrimaryKey, defaultValue, unique)
         if (autogenerateOptions instanceof IntegerAutogenerateOptions) {
             this.Autogenerate = autogenerateOptions
+        } else {
+            if (autogenerateOptions !== undefined) {
+            throw new TypeError(`Expected auto options to be of type IntegerAutogenerateOptions, got ${autogenerateOptions}`)
+            }
         }
     }
 }

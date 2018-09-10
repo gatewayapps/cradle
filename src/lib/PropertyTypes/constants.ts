@@ -1,8 +1,10 @@
 const PropertyTypes = {
+    Array: 'Array',
     Boolean: 'Boolean',
     Integer: 'Integer',
     Decimal: 'Decimal',
     DateTime: 'DateTime',
+    ModelReference: 'ModelReference',
     String: 'String',
     Object: 'Object',
     Binary: 'Binary',

@@ -1,6 +1,6 @@
 const program = require('commander')
-
 import colors from 'colors'
+import dot from 'dot'
 import ICradleLoader from '../lib/ICradleLoader'
 import LoaderOptions from '../lib/LoaderOptions'
 import SpecLoader from '../lib/SpecLoader/SpecLoader'
@@ -32,6 +32,19 @@ async function getLoader(): Promise<ICradleLoader> {
   await loader.prepareLoader(new LoaderOptions(program.source, console))
   return loader
 }
+
+console.log(process.cwd())
+
+// const dataObject = {
+//   test: 3,
+//   toDataType() {
+//     return `Hey ${this.test}, ${this.test}`
+//   }
+// }
+
+// const temp = dot.template('{{=it.toDataType()}}')
+// const resultText = temp(dataObject)
+// console.log(resultText)
 
 getLoader().then(async (loader) => {
   const schema = await loader.loadSchema()

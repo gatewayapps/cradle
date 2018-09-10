@@ -13,6 +13,10 @@ export abstract class CradleLoaderBase implements ICradleLoader {
   public abstract readModelMetadata(modelName: string): Promise<object>
   public abstract prepareLoader(options: LoaderOptions): Promise < void >
 
+  public finalizeSchema(schema: object): Promise<object> {
+    return Promise.resolve(schema)
+  }
+
   public async loadSchema(): Promise < object > {
 
     const schema = {}
@@ -41,7 +45,7 @@ export abstract class CradleLoaderBase implements ICradleLoader {
         }))
 
       }))
-    return schema
+    return this.finalizeSchema(schema)
     }
 
 }

@@ -6,11 +6,13 @@ import { IConsole } from '../IConsole'
 import ICradleLoader from '../ICradleLoader'
 import LoaderOptions from '../LoaderOptions'
 import ModelReference, { RelationTypes } from '../ModelReference'
+import ArrayPropertyType from '../PropertyTypes/ArrayPropertyType'
 import BooleanPropertyType from '../PropertyTypes/BooleanPropertyType'
 import constants from '../PropertyTypes/constants'
 import DateTimePropertyType from '../PropertyTypes/DateTimePropertyType'
 import DecimalPropertyType from '../PropertyTypes/DecimalPropertyType'
 import IntegerPropertyType from '../PropertyTypes/IntegerPropertyType'
+import ModelReferenceType from '../PropertyTypes/ModelReferenceType'
 import ObjectPropertyType from '../PropertyTypes/ObjectPropertyType'
 import PropertyType from '../PropertyTypes/PropertyType'
 import StringPropertyType from '../PropertyTypes/StringPropertyType'
@@ -150,6 +152,41 @@ export default class SpecLoader extends CradleLoaderBase {
 
   }
 
+  public finalizeSchema(schema: object): Promise<object> {
+    const modelNames = Object.keys(schema)
+    modelNames.map((k) => {
+
+      const model = schema[k]
+
+      const propertyNames = Object.keys(model.properties)
+      propertyNames.map((pn) => {
+        const prop = model.properties[pn]
+
+        if (prop.TypeName === constants.ModelReference && prop.ModelName) {
+          const modelRef = schema[prop.ModelName]
+          if (modelRef) {
+            console.log('PROPERTIES**************************')
+            console.log(modelRef.properties)
+            schema[k].properties[pn] = new ObjectPropertyType(this.propertiesToArray(modelRef.properties))
+          }
+        }
+        if (prop.TypeName === constants.Array && prop.MemberType && prop.MemberType.TypeName === constants.ModelReference && prop.MemberType.ModelName) {
+          const modelRef = schema[prop.MemberType.ModelName]
+          if (modelRef) {
+            schema[k].properties[pn].MemberType = new ObjectPropertyType(this.propertiesToArray(modelRef.properties))
+          }
+        }
+      })
+
+    })
+    return Promise.resolve(schema)
+  }
+
+  private propertiesToArray(propertyObject: object): Array<{propertyName: string, propertyType: PropertyType}> {
+    const propNames = Object.keys(propertyObject)
+    return propNames.map((pn) => ({propertyName: pn, propertyType: propertyObject[pn]}))
+  }
+
   private readPropertyDefinition(modelName: string, propertyPath: string[]): PropertyType {
     if (this.specObject) {
       const model = this.specObject[modelName]
@@ -164,18 +201,32 @@ export default class SpecLoader extends CradleLoaderBase {
 
       const property = currentProperty
 
-      if (typeof (property) === typeof ('')) {
+      if (typeof (property) === 'string') {
 
         const specProperty = ParseProperty(property)
         if (specProperty) {
 
-          return this.createPropertyTypeFromSpecResult(specProperty)
+          const propertyType = this.createPropertyTypeFromSpecResult(specProperty)
+          if (specProperty.IsArray) {
+            return new ArrayPropertyType(propertyType)
+          } else {
+            return propertyType
+          }
         } else {
           throw new Error(`Unable to parse property ${propertyPath.join('.')}`)
         }
 
       } else {
+        const isArray = property.isArray
+        if (property.modelRef) {
+          if (isArray) {
+            return new ArrayPropertyType(new ModelReferenceType(property.modelRef))
+          } else {
+            return new ModelReferenceType(property.modelRef)
+          }
+        }
         const subProperties = Object.keys(property.properties)
+
         const members: Array<{ propertyName: string, propertyType: PropertyType }> = []
         for (let i = 0; i < subProperties.length; i++) {
           if (!!subProperties[i]) {
@@ -183,7 +234,12 @@ export default class SpecLoader extends CradleLoaderBase {
             members.push({ propertyName: subProperties[i], propertyType: this.readPropertyDefinition(modelName, subPath) })
           }
         }
-        return new ObjectPropertyType(members, true, false, null)
+        const propertyType = new ObjectPropertyType(members, true, false, null)
+        if (isArray) {
+          return new ArrayPropertyType(propertyType)
+        } else {
+          return propertyType
+        }
       }
     } else {
       throw new Error(`No spec file loaded`)

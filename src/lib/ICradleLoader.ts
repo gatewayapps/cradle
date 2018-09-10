@@ -13,5 +13,6 @@ export default interface ICradleLoader {
     readModelReferenceNames: (modelName: string) => Promise<string[]>
     readModelReferenceType: (modelName: string, referenceName: string) => Promise<ModelReference>
     readModelMetadata: (modelName: string) => Promise<object>
+    finalizeSchema: (schema: object) => Promise<object>
     loadSchema: () => Promise<object>
 }

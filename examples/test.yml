@@ -3,7 +3,7 @@ Training:
     trainingId: integer primary auto(1,1)
     name: string(100)
     description: string?
-    commonNameId: integer?
+    commonNameId: integer[]?
     attachmentLink: string?
     equipmentType: integer?
     isRecurring: boolean? default(0)
@@ -17,6 +17,7 @@ Training:
     # gracePeriod_duration
     # gracePeriod_period
     gracePeriod:
+      isArray: true
       properties:
         graceInterval: string
         graceDuration: integer
@@ -26,7 +27,13 @@ Training:
 
     requiresSignOff: boolean? default(0)
     isDeleted: boolean default(0) delete
-    createdBy: integer default(5)
+    createdBy:
+      isArray: true
+      modelRef: User
+    createdBy2:
+      isArray: true
+      properties:
+        birthday: datetime max(NOW)
     createdDate: datetime
     modifiedBy: integer max(100)
     modifiedDate: datetime
@@ -34,7 +41,7 @@ Training:
     externalCompletionId: integer?
     isDocumentReview: boolean? default(0)
   references:
-    Categories: single of Category via TrainingCategories
+    Categories: multiple of Category via TrainingCategories
     CommonName: single of CommonName on commonNameId
 
 User:

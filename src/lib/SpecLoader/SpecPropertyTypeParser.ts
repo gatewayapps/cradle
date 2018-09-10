@@ -1,16 +1,17 @@
 
 import chevrotain, { IToken, Lexer, Parser, TokenType } from 'chevrotain'
+import ArrayPropertyType from '../PropertyTypes/ArrayPropertyType'
 import SpecProperty from './SpecProperty'
 const createToken = chevrotain.createToken
 
 const PropertyType = createToken({
   name: 'PropertyType',
-  pattern: /(uniqueidentifier|integer|string\(\s*\d+\s*\)|string|boolean|datetime|decimal)\??/i
+  pattern: /(uniqueidentifier|integer|string\(\s*\d+\s*\)|string|boolean|datetime|decimal)(\[\])?\??/i
 })
 
 const BooleanValue = createToken({
   name: 'BooleanValue',
-  pattern: /(true|false)/i
+  pattern: /(true)|(false)/i
 })
 
 const Default = createToken({
@@ -25,7 +26,7 @@ const DecimalValue = createToken({
 
 const IntegerValue = createToken({
   name: 'IntegerValue',
-  pattern: /\d+/i
+  pattern: /\-?\d+/i
 })
 
 const Now = createToken({
@@ -113,6 +114,7 @@ const allTokens = [
   UuidValue,
   DateTimeValue,
   Now,
+  BooleanValue,
   DecimalValue,
   IntegerValue,
   Auto,
@@ -158,15 +160,15 @@ export default function ParseProperty(definition: string) {
 
     const lexingResult = SpecLexer.tokenize(definition)
     if (lexingResult.tokens.length === 0) {
-      throw new Error('Unable to parse empty or null string')
+      throw new SyntaxError('Unable to parse empty or null string')
     }
     lexingResult.tokens.map((t) => {
       if (t.tokenType!.name === Invalid.name) {
-        throw new Error(`Invalid token: ${t.image}`)
+        throw new SyntaxError(`Invalid token: ${t.image}`)
       }
     })
     const propertyType = lexingResult.tokens[0].image
-    const basePropertyType = propertyType.replace(/\(.+\)/ig, '').replace('?', '')
+    const basePropertyType = propertyType.replace(/\(.+\)/ig, '').replace('?', '').replace('[]', '')
 
     let autoDefinition: any
     let unique: boolean = false
@@ -174,6 +176,7 @@ export default function ParseProperty(definition: string) {
     let deleteFlag: boolean = false
     let defaultValue: any
     let length!: number
+    const isArray = propertyType.indexOf('[]') > -1
     const nullable = propertyType.indexOf('?') > -1
     const strippedPropertyType = propertyType.replace(/[^0-9]/ig, '')
     if (strippedPropertyType.length > 0) {
@@ -205,8 +208,9 @@ export default function ParseProperty(definition: string) {
               const defaultContents = getTokensFromParentheses(lexingResult.tokens, i + 1, [IntegerValue, DecimalValue, StringValue, DateTimeValue, UuidValue, BooleanValue, Now])
               i = defaultContents.endIndex
               if (defaultContents.values.length !== 1) {
-                throw new Error(`Expected default to be a single element, got ${defaultContents.values}`)
+                throw new SyntaxError(`Expected default to be a single element, got ${defaultContents.values}`)
               } else {
+                ensureValueTypes(basePropertyType, defaultContents.values)
                 defaultValue = defaultContents.values[0]
               }
             }
@@ -218,8 +222,9 @@ export default function ParseProperty(definition: string) {
               const maxContents = getTokensFromParentheses(lexingResult.tokens, i + 1, [IntegerValue, DecimalValue, DateTimeValue, Now])
               i = maxContents.endIndex
               if (maxContents.values.length !== 1) {
-                throw new Error(`Expected MAX value to be a single element, got ${maxContents.values}`)
+                throw new SyntaxError(`Expected MAX value to be a single element, got ${maxContents.values}`)
               } else {
+                ensureValueTypes(basePropertyType, maxContents.values)
                 maxValue = maxContents.values[0]
               }
             }
@@ -231,8 +236,9 @@ export default function ParseProperty(definition: string) {
               const minContents = getTokensFromParentheses(lexingResult.tokens, i + 1, [IntegerValue, DecimalValue, DateTimeValue, Now])
               i = minContents.endIndex
               if (minContents.values.length !== 1) {
-                throw new Error(`Expected MIN value to be a single element, got ${minContents.values}`)
+                throw new SyntaxError(`Expected MIN value to be a single element, got ${minContents.values}`)
               } else {
+                ensureValueTypes(basePropertyType, minContents.values)
                 minValue = minContents.values[0]
               }
             }
@@ -243,6 +249,7 @@ export default function ParseProperty(definition: string) {
             if (nextToken && nextToken.tokenType!.name === OpenParentheses.name) {
               const allowContents = getTokensFromParentheses(lexingResult.tokens, i + 1, [IntegerValue, DecimalValue, StringValue, DateTimeValue, UuidValue])
               i = allowContents.endIndex
+              ensureValueTypes(basePropertyType, allowContents.values)
               allowedValues = allowContents.values
 
             }
@@ -251,13 +258,13 @@ export default function ParseProperty(definition: string) {
           case Primary.name: primaryKey = true; break
           case Unique.name: unique = true; break
           case Delete.name: deleteFlag = true; break
-          case Invalid.name: throw new Error(`Invalid token '${token.image}'`)
+          case Invalid.name: throw new SyntaxError(`Invalid token '${token.image}'`)
         }
       }
     }
-    return new SpecProperty(
+    return  new SpecProperty(
       basePropertyType, nullable, primaryKey, unique, deleteFlag, autoDefinition, allowedValues, defaultValue, minValue,
-      maxValue, length)
+      maxValue, length, isArray)
 
 }
 
@@ -270,11 +277,43 @@ function peekNextToken(tokens: IToken[], currentIndex: number): IToken | undefin
   }
 }
 
+function ensureValueTypes(propertyTypeName: string, values: any[]) {
+  switch (propertyTypeName.toLowerCase()) {
+    case 'string': {
+      if (values.some((v) => typeof v !== 'string')) {
+        throw new TypeError(`Expected ${propertyTypeName}, received ${values}`)
+      } else {
+        break
+      }
+    }
+    case 'integer':
+    case 'decimal': {
+      if (values.some((v) => typeof v !== 'number')) {
+        throw new TypeError(`Expected ${propertyTypeName}, received ${values}`)
+      }
+      break
+    }
+    case 'boolean': {
+      if (values.some((v) => typeof v !== 'boolean' && typeof v !== 'number')) {
+        throw new TypeError(`Expected ${propertyTypeName}, received ${values}`)
+      }
+      break
+    }
+    case 'datetime': {
+      if (values.some((v) => !(v instanceof Date) && v !== 'DateTimeNow')) {
+        throw new TypeError(`Expected ${propertyTypeName}, received ${values}`)
+      }
+      break
+    }
+
+  }
+}
+
 function getTokensFromParentheses(tokens: IToken[], startIndex: number, allowedTypes: TokenType[]) {
   const allowedTypeNames = allowedTypes.map((t) => t.name)
   const result: any[] = []
   if (startIndex >= tokens.length) {
-    throw new Error(`Start index cannot be greater than tokens length`)
+    throw new RangeError(`Start index cannot be greater than tokens length`)
 
   }
   if (tokens[startIndex].tokenType!.name === OpenParentheses.name) {
@@ -286,7 +325,7 @@ function getTokensFromParentheses(tokens: IToken[], startIndex: number, allowedT
         }
       }
       if (tokens[i].tokenType!.name !== Comma.name && allowedTypeNames.indexOf(tokens[i].tokenType!.name) === -1) {
-        throw new Error(`Token type ${tokens[i].tokenType!.name} not allowed`)
+        throw new SyntaxError(`Token type ${tokens[i].tokenType!.name} not allowed`)
       } else {
         if (tokens[i].tokenType!.name !== Comma.name) {
           const parsedTokenValue = parseTokenValue(tokens[i])
@@ -297,9 +336,9 @@ function getTokensFromParentheses(tokens: IToken[], startIndex: number, allowedT
       }
     }
   } else {
-    throw new Error(`Expected (, found ${tokens[startIndex].image}`)
+    throw new SyntaxError(`Expected (, found ${tokens[startIndex].image}`)
   }
-  throw new Error(`Missing )`)
+  throw new SyntaxError(`Missing )`)
 }
 
 function parseTokenValue(token: IToken): any {
