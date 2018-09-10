@@ -249,7 +249,7 @@ export default class SpecLoader extends CradleLoaderBase {
   private createPropertyTypeFromSpecResult(spec: SpecProperty): PropertyType {
     switch (spec.PropertyType.toLocaleUpperCase()) {
       case constants.Boolean.toLocaleUpperCase(): return new BooleanPropertyType(spec.Nullable, spec.PrimaryKey, spec.DefaultValue, spec.Unique)
-      case constants.DateTime.toLocaleUpperCase(): return new DateTimePropertyType(spec.Nullable, spec.PrimaryKey, spec.DefaultValue, spec.Unique)
+      case constants.DateTime.toLocaleUpperCase(): return new DateTimePropertyType(spec.Nullable, spec.PrimaryKey, spec.DefaultValue, spec.MaxValue, spec.MinValue, spec.Unique)
       case constants.Decimal.toLocaleUpperCase(): return new DecimalPropertyType(undefined, undefined, spec.MinValue, spec.MaxValue, spec.Nullable, spec.PrimaryKey, spec.DefaultValue, spec.Unique)
       case constants.Integer.toLocaleUpperCase(): return new IntegerPropertyType(spec.MinValue, spec.MaxValue, spec.AutogenerateOptions, spec.Nullable, spec.PrimaryKey, spec.DefaultValue, spec.Unique)
       case constants.String.toLocaleUpperCase(): return new StringPropertyType(spec.Length, spec.AllowedValues, true, spec.Nullable, spec.PrimaryKey, spec.DefaultValue, spec.Unique)
