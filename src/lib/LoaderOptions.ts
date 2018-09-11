@@ -1,16 +1,19 @@
-import { IConsole, isConsole } from './IConsole'
 import InvalidConsoleError from './Errors/InvalidConsoleError'
+import { IConsole, isConsole } from './IConsole'
 
 export default class LoaderOptions {
-    public args: string
+    public module: string
+    public options: {[key: string]: any}
     public console: IConsole
 
-    constructor(args: string, console: any) {
-        if (!isConsole(console)) {
-            throw new InvalidConsoleError(console)
+    constructor(_module: string, _options: {[key: string]: any}, _console: any) {
+        if (!isConsole(_console)) {
+            throw new InvalidConsoleError(_console)
         } else {
-            this.args = args
-            this.console = console
+
+            this.module = _module
+            this.options = _options
+            this.console = _console
         }
     }
 }

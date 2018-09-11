@@ -1,14 +1,17 @@
 {
-  "name": "cradle",
-  "version": "0.0.1",
+  "name": "@gatewayapps/cradle",
+  "version": "0.0.2",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "bin": {
     "cradle": "./dist/cli/CradleCLI.js"
   },
   "scripts": {
     "test": "mocha -r ts-node/register src/**/*.spec.ts"
   },
+  "files": [
+    "dist/**/*"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {

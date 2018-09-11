@@ -2,6 +2,7 @@ import fs from 'fs'
 import yaml from 'js-yaml'
 import path from 'path'
 import { CradleLoaderBase } from '../CradleLoaderBase'
+import CradleSchema from '../CradleSchema'
 import { IConsole } from '../IConsole'
 import ICradleLoader from '../ICradleLoader'
 import LoaderOptions from '../LoaderOptions'
@@ -25,6 +26,7 @@ export default class SpecLoader extends CradleLoaderBase {
   private console?: IConsole
   private specObject?: object
 
+  private function
   public readModelPropertyType(modelName: string, propertyName: string): Promise<PropertyType> {
     return new Promise((resolve, reject) => {
       try {
@@ -83,45 +85,46 @@ export default class SpecLoader extends CradleLoaderBase {
   public readModelReferenceType(modelName: string, referenceName: string): Promise<ModelReference> {
     return new Promise((resolve, reject) => {
 
-    const reference = this.specObject![modelName].references[referenceName]
+      const reference = this.specObject![modelName].references[referenceName]
 
-    const SINGLE_REGEX = /single of (\w+) on (\w+)/ig
-    const MULTIPLE_REGEX = /multiple of (\w+) via (\w+)/ig
+      const SINGLE_REGEX = /single of (\w+) on (\w+)/ig
+      const MULTIPLE_REGEX = /multiple of (\w+) via (\w+)/ig
 
-    if (reference.match(SINGLE_REGEX)) {
-      const matches = SINGLE_REGEX.exec(reference)
-      if (matches && matches.length === 3) {
-        const remoteModelName = matches[1]
-        const localPropertyName = matches[2]
-        resolve(new ModelReference(localPropertyName, remoteModelName,  RelationTypes.Single))
+      if (reference.match(SINGLE_REGEX)) {
+        const matches = SINGLE_REGEX.exec(reference)
+        if (matches && matches.length === 3) {
+          const remoteModelName = matches[1]
+          const localPropertyName = matches[2]
+          resolve(new ModelReference(localPropertyName, remoteModelName, RelationTypes.Single))
+        } else {
+          throw new Error(`Invalid single reference pattern: ${reference}`)
+        }
+      } else if (reference.match(MULTIPLE_REGEX)) {
+        const matches = MULTIPLE_REGEX.exec(reference)
+        if (matches && matches.length === 3) {
+          const remoteModelName = matches[1]
+          const proxyTableName = matches[2]
+          resolve(new ModelReference('', remoteModelName, RelationTypes.Multiple, proxyTableName))
+        } else {
+          throw new Error(`Invalid single reference pattern: ${reference}`)
+        }
       } else {
-        throw new Error(`Invalid single reference pattern: ${reference}`)
-      }
-    } else if (reference.match(MULTIPLE_REGEX)) {
-      const matches = MULTIPLE_REGEX.exec(reference)
-      if (matches && matches.length === 3) {
-        const remoteModelName = matches[1]
-        const proxyTableName = matches[2]
-        resolve(new ModelReference('', remoteModelName,  RelationTypes.Multiple, proxyTableName))
-      } else {
-        throw new Error(`Invalid single reference pattern: ${reference}`)
-      }
-    } else {
 
-      throw new Error(`Reference must follow pattern of either 'single of MODEL NAME on LOCAL PROPERTY NAME' or 'multiple of MODEL NAME via PROXY TABLE NAME', received '${reference.toUpperCase()}'`)
-    }
-  })
+        throw new Error(`Reference must follow pattern of either 'single of MODEL NAME on LOCAL PROPERTY NAME' or 'multiple of MODEL NAME via PROXY TABLE NAME', received '${reference.toUpperCase()}'`)
+      }
+    })
 
   }
 
-  public async prepareLoader(options: LoaderOptions): Promise<void> {
+  public async prepareLoader(options: { [key: string]: any }, console: IConsole): Promise<void> {
 
-    this.console = options.console
-    if (!fs.existsSync(options.args)) {
-      throw new Error(`Source file does not exist: ${options.args}`)
+    this.console = console
+
+    if (!fs.existsSync(options.source)) {
+      throw new Error(`Source file does not exist: ${options.source}`)
     } else {
-      const dir = path.dirname(path.resolve(options.args))
-      this.specObject = yaml.safeLoad(fs.readFileSync(options.args, 'utf8'))
+      const dir = path.dirname(path.resolve(options.source))
+      this.specObject = yaml.safeLoad(fs.readFileSync(options.source, 'utf8'))
 
       // Handle split spec files
       // This will only allow spec file references from the master file
@@ -152,39 +155,41 @@ export default class SpecLoader extends CradleLoaderBase {
 
   }
 
-  public finalizeSchema(schema: object): Promise<object> {
-    const modelNames = Object.keys(schema)
+  public finalizeSchema(schema: CradleSchema): Promise<CradleSchema> {
+
+    const modelNames = Object.keys(schema.Models)
     modelNames.map((k) => {
 
-      const model = schema[k]
+      const model = schema.Models[k]
 
-      const propertyNames = Object.keys(model.properties)
+      const propertyNames = Object.keys(model.Properties)
       propertyNames.map((pn) => {
-        const prop = model.properties[pn]
+        const prop = model.Properties[pn]
 
         if (prop.TypeName === constants.ModelReference && prop.ModelName) {
-          const modelRef = schema[prop.ModelName]
-          if (modelRef) {
-            console.log('PROPERTIES**************************')
-            console.log(modelRef.properties)
-            schema[k].properties[pn] = new ObjectPropertyType(this.propertiesToArray(modelRef.properties))
-          }
+            schema.Models[k].Properties[pn] = this.getModelReference(schema, prop)
         }
         if (prop.TypeName === constants.Array && prop.MemberType && prop.MemberType.TypeName === constants.ModelReference && prop.MemberType.ModelName) {
-          const modelRef = schema[prop.MemberType.ModelName]
-          if (modelRef) {
-            schema[k].properties[pn].MemberType = new ObjectPropertyType(this.propertiesToArray(modelRef.properties))
-          }
+            schema.Models[k].Properties[pn].MemberType = this.getModelReference(schema, prop.MemberType)
         }
       })
 
     })
     return Promise.resolve(schema)
   }
+  public getModelReference(schema: CradleSchema, ref: ModelReferenceType): ObjectPropertyType {
 
-  private propertiesToArray(propertyObject: object): Array<{propertyName: string, propertyType: PropertyType}> {
+    const modelRef = schema.Models.find((m) => m.Name === ref.ModelName)
+    if (modelRef) {
+      return new ObjectPropertyType(this.propertiesToArray(modelRef.Properties))
+    } else {
+      throw new Error(`Invalid model reference: ${ref.ModelName}`)
+    }
+  }
+
+  private propertiesToArray(propertyObject: object): Array<{ propertyName: string, propertyType: PropertyType }> {
     const propNames = Object.keys(propertyObject)
-    return propNames.map((pn) => ({propertyName: pn, propertyType: propertyObject[pn]}))
+    return propNames.map((pn) => ({ propertyName: pn, propertyType: propertyObject[pn] }))
   }
 
   private readPropertyDefinition(modelName: string, propertyPath: string[]): PropertyType {
