@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { red } from 'colors'
 import program from 'commander'
 import fs from 'fs'
 import path from 'path'
@@ -11,7 +12,7 @@ function collect(val: any, memo: any) {
     memo.push(val)
     return memo
   }
-
+try {
 program
     .version(packageInfo.version)
     .command('verify', 'verify a cradle loader')
@@ -36,11 +37,16 @@ program
       switch (cmd) {
         case 'verify': {
           verify(cradleConfig.Loader)
+          break
         }
         case 'emit': {
-
-          emit(cradleConfig.Loader, cradleConfig.Emitters.find((e) => e.name === options.emitter))
-          // handle emit
+          const emitter = cradleConfig.Emitters.find((e) => e.name === options.emitter)
+          if (emitter) {
+            emit(cradleConfig.Loader, emitter)
+          } else {
+            throw new Error(`Invalid emitter name ${options.emitter}`)
+          }
+          break
         }
       }
     }
@@ -48,3 +54,6 @@ program
     })
 
 program.parse(process.argv)
+  } catch (err) {
+    console.error(red(err.message))
+  }

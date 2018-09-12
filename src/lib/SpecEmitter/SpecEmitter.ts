@@ -30,13 +30,10 @@ export default class SpecEmitter implements ICradleEmitter {
 
       models[m.Name] = this.generateModelSpec(m)
     })
-    if (this.config!.options.outputPath instanceof RegExp) {
-      // should be a multi file output
 
-    } else {
-      if (this.tryCreateFile(this.config!.options.outputPath.toString())) {
+    if (this.tryCreateFile(this.config!.options.outputPath.toString())) {
         writeFileSync(this.config!.options.outputPath.toString(), safeDump(models), 'utf8' )
-      }
+
     }
   }
 
