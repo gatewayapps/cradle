@@ -8,7 +8,6 @@ export interface IConsole {
 }
 
 export function isConsole(_testConsole: any): _testConsole is IConsole {
-    console.log(Object.keys(_testConsole))
     return (
         'error' in _testConsole &&
         'log' in _testConsole &&
