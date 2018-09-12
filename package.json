@@ -1,12 +1,13 @@
 {
   "name": "@gatewayapps/cradle",
-  "version": "0.0.5",
+  "version": "0.0.8",
   "description": "",
   "main": "./dist/index.js",
   "bin": {
     "cradle": "./dist/cli/CradleCLI.js"
   },
   "scripts": {
+    "prepublish": "npm test && tsc",
     "test": "mocha -r ts-node/register src/**/*.spec.ts"
   },
   "files": [

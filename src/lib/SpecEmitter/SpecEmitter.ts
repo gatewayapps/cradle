@@ -34,6 +34,8 @@ export default class SpecEmitter implements ICradleEmitter {
     if (this.tryCreateFile(this.config!.options.outputPath.toString())) {
         writeFileSync(this.config!.options.outputPath.toString(), safeDump(models), 'utf8' )
 
+    } else {
+      throw new Error(`Failed to write to file ${this.config!.options.outputPath.toString()}, the file already exists`)
     }
   }
 
@@ -167,16 +169,17 @@ export default class SpecEmitter implements ICradleEmitter {
   }
 
   protected coerceValueType(value: any, propertyType: string): string | undefined {
-    if ( value === '' || value === undefined || value === null || propertyType === 'object' || propertyType === 'object[]' || propertyType === 'object[]?') {
-      return undefined
+    if ( value === undefined || value === null || propertyType === 'object' || propertyType === 'object[]' || propertyType === 'object[]?') {
+      return value
     }
+
     const basePropertyType = propertyType.replace(/(\[\]|\?)/ig, '').toLowerCase()
     switch (basePropertyType) {
       case constants.Boolean.toLowerCase(): return !!value ? 'true' : 'false'
       case constants.DateTime.toLowerCase(): return value instanceof Date ? value.toISOString() : 'NOW'
       case constants.Decimal.toLowerCase(): return value.toString()
       case constants.Integer.toLowerCase(): return value.toString()
-      case constants.String.toLowerCase(): return `${value.toString()}`
+      case constants.String.toLowerCase(): return `${value === '' ? '""' : value.toString()}`
       case constants.UniqueIdentifier.toLowerCase() : return value.toString()
       default: throw new Error(`Invalid data type for values: ${typeof value} cannot be converted to (${propertyType})`)
     }
@@ -184,7 +187,7 @@ export default class SpecEmitter implements ICradleEmitter {
   }
 
   protected tryCreateFile(fileName: string): boolean | number {
-    if (this.config!.options.overwriteExisting && existsSync(fileName)) {
+    if (!this.config!.options.overwriteExisting && existsSync(fileName)) {
       return false
     } else {
       return openSync(fileName, 'w')
