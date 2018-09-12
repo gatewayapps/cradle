@@ -1,6 +1,6 @@
 
 export {default as CradleConfig} from './lib/CradleConfig'
-export {default as  CradleLoaderBase} from './lib/CradleLoaderBase'
+export {CradleLoaderBase} from './lib/CradleLoaderBase'
 export {default as  CradleModel} from './lib/CradleModel'
 export {default as  CradleSchema} from './lib/CradleSchema'
 export {default as  EmitterOptions} from './lib/EmitterOptions'
