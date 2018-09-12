@@ -14,7 +14,6 @@ export function isConsole(_testConsole: any): _testConsole is IConsole {
         'log' in _testConsole &&
         'info' in _testConsole &&
         'warn' in _testConsole &&
-        'debug' in _testConsole &&
         'trace' in _testConsole
     )
 }
