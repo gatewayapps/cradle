@@ -1,6 +1,6 @@
 export default class InvalidConsoleError extends Error {
-  
-    constructor (arg: any) {
+
+    constructor(arg: any) {
       super(`Expected an object that implements IConsole, received a ${typeof arg}`)
     }
 }

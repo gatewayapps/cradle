@@ -7,13 +7,14 @@ export interface IConsole {
     trace: (message?: any, ...optionalParams: any[]) => void
 }
 
-export function isConsole(object: any): object is IConsole {
+export function isConsole(_testConsole: any): _testConsole is IConsole {
+    console.log(Object.keys(_testConsole))
     return (
-        'error' in object &&
-        'log' in object &&
-        'info' in object &&
-        'warn' in object &&
-        'debug' in object &&
-        'trace' in object
+        'error' in _testConsole &&
+        'log' in _testConsole &&
+        'info' in _testConsole &&
+        'warn' in _testConsole &&
+        'debug' in _testConsole &&
+        'trace' in _testConsole
     )
 }
