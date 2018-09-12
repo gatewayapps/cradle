@@ -1,8 +1,8 @@
-import PropertyType from "./PropertyType"
-import constants from "./constants";
+import constants from './constants'
+import PropertyType from './PropertyType'
 
 export default class BooleanPropertyType extends PropertyType {
-    constructor(allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue: boolean = false, unique: boolean = false) {
-        super(constants.Boolean, allowNull, isPrimaryKey, defaultValue, unique)
+    constructor(allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue: boolean | number = false, unique: boolean = false) {
+        super(constants.Boolean, allowNull, isPrimaryKey, !!defaultValue, unique)
     }
 }

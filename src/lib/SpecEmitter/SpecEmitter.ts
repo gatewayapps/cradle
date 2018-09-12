@@ -37,7 +37,7 @@ export default class SpecEmitter implements ICradleEmitter {
     }
   }
 
-  private generateModelSpec(model: CradleModel | ObjectPropertyType): {meta: object | undefined, properties: object, references: object} {
+  public generateModelSpec(model: CradleModel | ObjectPropertyType): {meta: object | undefined, properties: object, references: object} {
     const propertiesCollection = (model instanceof CradleModel) ? model.Properties : model.Members
     const propertyNames = Object.keys(propertiesCollection)
     const retVal = {
@@ -70,7 +70,7 @@ export default class SpecEmitter implements ICradleEmitter {
 
   }
 
-  private getPropertyTypeName(prop: PropertyType) {
+  public getPropertyTypeName(prop: PropertyType) {
     const parts: string[] = []
     if (prop.TypeName === constants.Array) {
       parts.push(((prop as ArrayPropertyType).MemberType as PropertyType).TypeName.toLowerCase())
@@ -84,7 +84,7 @@ export default class SpecEmitter implements ICradleEmitter {
     return parts.join('').toLowerCase()
   }
 
-  private generatePropertySpec(prop: PropertyType) {
+  public generatePropertySpec(prop: PropertyType) {
     const parts: string[] = []
 
     const propertyName = this.getPropertyTypeName(prop)
@@ -101,7 +101,7 @@ export default class SpecEmitter implements ICradleEmitter {
       parts.push(uniqueValue)
     }
 
-    if (defaultValue) {
+    if (defaultValue !== undefined && defaultValue !== null) {
       parts.push(`default(${defaultValue})`)
     }
 
@@ -166,8 +166,8 @@ export default class SpecEmitter implements ICradleEmitter {
 
   }
 
-  private coerceValueType(value: any, propertyType: string): string | undefined {
-    if (!value || value === '' || value === undefined || value === null || propertyType === 'object' || propertyType === 'object[]' || propertyType === 'object[]?') {
+  protected coerceValueType(value: any, propertyType: string): string | undefined {
+    if ( value === '' || value === undefined || value === null || propertyType === 'object' || propertyType === 'object[]' || propertyType === 'object[]?') {
       return undefined
     }
     const basePropertyType = propertyType.replace(/(\[\]|\?)/ig, '').toLowerCase()
@@ -183,7 +183,7 @@ export default class SpecEmitter implements ICradleEmitter {
 
   }
 
-  private tryCreateFile(fileName: string): boolean | number {
+  protected tryCreateFile(fileName: string): boolean | number {
     if (this.config!.options.overwriteExisting && existsSync(fileName)) {
       return false
     } else {
