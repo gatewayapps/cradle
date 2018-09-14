@@ -34,5 +34,6 @@ export async function handler(argv) {
     }
   } catch (err) {
     console.log(colors.red(err.message))
+    process.exit(1)
   }
 }
