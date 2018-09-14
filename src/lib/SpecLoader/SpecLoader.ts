@@ -167,10 +167,10 @@ export default class SpecLoader extends CradleLoaderBase {
         const prop = model.Properties[pn]
 
         if (prop.TypeName === constants.ModelReference && prop.ModelName) {
-            schema.Models[k].Properties[pn] = this.getModelReference(schema, prop)
+            schema.Models[k].Properties[pn].ModelType = this.getModelReference(schema, prop)
         }
         if (prop.TypeName === constants.Array && prop.MemberType && prop.MemberType.TypeName === constants.ModelReference && prop.MemberType.ModelName) {
-            schema.Models[k].Properties[pn].MemberType = this.getModelReference(schema, prop.MemberType)
+            schema.Models[k].Properties[pn].MemberType.ModelType = this.getModelReference(schema, prop.MemberType)
         }
       })
 
