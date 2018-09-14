@@ -1,4 +1,5 @@
 import ArrayPropertyType from './ArrayPropertyType'
+import BinaryPropertyType from './BinaryPropertyType'
 import BooleanPropertyType from './BooleanPropertyType'
 import Constants from './constants'
 import ConstrainablePropertyType from './ConstrainablePropertyType'
@@ -14,6 +15,7 @@ import UniqueIdentifierPropertyType from './UniqueIdentifierPropertyType'
 
 export default {
   ArrayPropertyType,
+  BinaryPropertyType,
   BooleanPropertyType,
   Constants,
   ConstrainablePropertyType,

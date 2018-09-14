@@ -10,5 +10,4 @@ export {default as  ICradleLoader } from './lib/ICradleLoader'
 export {default as  LoaderOptions} from './lib/LoaderOptions'
 export {default as  PropertyTypes} from './lib/PropertyTypes'
 
-export {default as verifyLoader} from './cli/CradleCLI-verify'
 export {IConsole} from './lib/IConsole'
