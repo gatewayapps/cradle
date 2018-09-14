@@ -77,6 +77,20 @@ export default class SpecEmitter implements ICradleEmitter {
     if (prop.TypeName === constants.Array) {
       parts.push(((prop as ArrayPropertyType).MemberType as PropertyType).TypeName.toLowerCase())
       parts.push('[]')
+    } else if (prop.TypeName === constants.String) {
+      const stringProp = prop as StringPropertyType
+      let stringTypeName = prop.TypeName.toLowerCase()
+      if (stringProp.MaximumLength !== null && stringProp.MaximumLength > 0) {
+        stringTypeName += `(${stringProp.MaximumLength})`
+      }
+      parts.push(stringTypeName)
+    } else if (prop.TypeName === constants.Decimal) {
+      const decimalProp = prop as DecimalPropertyType
+      let decimalTypeName = prop.TypeName.toLowerCase()
+      if (decimalProp.Precision > 0) {
+        decimalTypeName += `(${decimalProp.Precision},${decimalProp.Scale})`
+      }
+      parts.push(decimalTypeName)
     } else {
       parts.push(prop.TypeName.toLowerCase())
     }
@@ -173,7 +187,7 @@ export default class SpecEmitter implements ICradleEmitter {
       return value
     }
 
-    const basePropertyType = propertyType.replace(/(\[\]|\?)/ig, '').toLowerCase()
+    const basePropertyType = propertyType.replace(/(\[\]|\?|\(\d+,*\d*\))/ig, '').toLowerCase()
     switch (basePropertyType) {
       case constants.Boolean.toLowerCase(): return !!value ? 'true' : 'false'
       case constants.DateTime.toLowerCase(): return value instanceof Date ? value.toISOString() : 'NOW'
