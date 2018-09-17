@@ -11,7 +11,7 @@ cache:
     - node_modules
 sudo: false
 script:
-  - tslint -c ./tslint.json src/**/*.ts
+  - npx tslint --project .
   - npm test
 env:
   - NODE_ENV=development
