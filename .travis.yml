@@ -6,9 +6,7 @@ notifications:
     on_success: never
     on_failure: never
 before_install: if [[ `npm -v` != 6* ]]; then npm i -g npm@6; fi
-cache:
-  directories:
-    - node_modules
+cache: yarn
 sudo: false
 script:
   - npx tslint --project .
