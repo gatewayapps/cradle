@@ -10,3 +10,7 @@ cache:
   directories:
     - node_modules
 sudo: false
+script:
+  - npm install
+  - npx tslint -c ./tslint.json src/**/*.ts
+  - npm test
