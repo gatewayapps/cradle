@@ -1,6 +1,10 @@
 language: node_js
 node_js:
   - '9'
+notifications:
+  email:
+    on_success: never
+    on_failure: never
 before_install: if [[ `npm -v` != 6* ]]; then npm i -g npm@6; fi
 cache:
   directories:
