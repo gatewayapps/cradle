@@ -8,7 +8,6 @@
   },
   "scripts": {
     "prepublishOnly": "npm test && npx tsc",
-    "pretest": "ts lint ./src/**/*.ts",
     "test": "npx mocha -r ts-node/register \"src/**/*.spec.ts\""
   },
   "files": [
