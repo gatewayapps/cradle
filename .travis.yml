@@ -13,3 +13,4 @@ script:
   - npm test
 env:
   - NODE_ENV=development
+  - PLEASE=please
