@@ -1,1 +1,6 @@
-# cradle [![Build Status](https://travis-ci.com/gatewayapps/cradle.svg?branch=master)](https://travis-ci.com/gatewayapps/cradle)
+# cradle
+
+To do:
+- Introduction about cradle, what it is, what it's for, basic example
+- Documentation
+- Command line examples
