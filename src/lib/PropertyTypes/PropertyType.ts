@@ -1,5 +1,5 @@
-import IPropertyType from "./IPropertyType"
-import constants from "./constants";
+import constants from './constants'
+import IPropertyType from './IPropertyType'
 
 export default abstract class PropertyType implements IPropertyType {
     public TypeName: string
