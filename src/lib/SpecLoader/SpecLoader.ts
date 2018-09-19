@@ -233,10 +233,10 @@ export default class SpecLoader extends CradleLoaderBase {
         const subProperties = Object.keys(property.properties)
 
         const members: Array<{ propertyName: string, propertyType: PropertyType }> = []
-        for (let i = 0; i < subProperties.length; i++) {
-          if (!!subProperties[i]) {
-            const subPath = propertyPath.concat([subProperties[i]])
-            members.push({ propertyName: subProperties[i], propertyType: this.readPropertyDefinition(modelName, subPath) })
+        for (const subProp of subProperties) {
+          if (!!subProp) {
+            const subPath = propertyPath.concat([subProp])
+            members.push({ propertyName: subProp, propertyType: this.readPropertyDefinition(modelName, subPath) })
           }
         }
         const propertyType = new ObjectPropertyType(members, true, false, null)

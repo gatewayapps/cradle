@@ -1,7 +1,7 @@
 
-import constants from "./constants";
-import ConstrainablePropertyType from "./ConstrainablePropertyType";
-import PropertyType from "./PropertyType";
+import constants from './constants'
+import ConstrainablePropertyType from './ConstrainablePropertyType'
+import PropertyType from './PropertyType'
 
 export default class DecimalPropertyType extends ConstrainablePropertyType {
 

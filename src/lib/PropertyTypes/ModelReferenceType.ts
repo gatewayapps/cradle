@@ -1,7 +1,7 @@
+import ArrayPropertyType from './ArrayPropertyType'
 import constants from './constants'
+import ObjectPropertyType from './ObjectPropertyType'
 import PropertyType from './PropertyType'
-import ObjectPropertyType from './ObjectPropertyType';
-import ArrayPropertyType from './ArrayPropertyType';
 
 export default class ModelReferenceType extends PropertyType {
 

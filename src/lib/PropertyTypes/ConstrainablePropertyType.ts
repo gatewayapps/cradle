@@ -1,14 +1,14 @@
-import PropertyType from "./PropertyType";
-import { isNullOrUndefined } from "util";
+import { isNullOrUndefined } from 'util'
+import PropertyType from './PropertyType'
 
 export default abstract class ConstrainablePropertyType extends PropertyType {
     public MinimumValue?: number
     public MaximumValue?: number
 
     constructor(typeName: string, minimumValue?: number, maximumValue?: number, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean = false) {
-        if(!isNullOrUndefined(minimumValue) && !isNullOrUndefined(maximumValue)){
-        
-            if(minimumValue > maximumValue){
+        if (!isNullOrUndefined(minimumValue) && !isNullOrUndefined(maximumValue)) {
+
+            if (minimumValue > maximumValue) {
                 throw new RangeError(`minimumValue can not be greater than maximumValue for type: ${typeName}`)
             }
         }

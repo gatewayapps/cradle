@@ -7,8 +7,8 @@ export default class ObjectPropertyType extends PropertyType {
 
     constructor(members: Array<{propertyName: string, propertyType: PropertyType}>, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any) {
         super(constants.Object, allowNull, isPrimaryKey, defaultValue, false)
-        for (let i = 0; i < members.length; i++) {
-            this.Members[members[i].propertyName] = members[i].propertyType
+        for (const member of members) {
+            this.Members[member.propertyName] = member.propertyType
         }
 
     }
