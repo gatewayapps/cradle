@@ -1,10 +1,11 @@
-import { appendFileSync, existsSync, openSync, writeFileSync } from 'fs'
-import {dump, safeDump} from 'js-yaml'
+import { existsSync, openSync, writeFileSync } from 'fs'
+import { safeDump } from 'js-yaml'
 import CradleModel from '../CradleModel'
 import CradleSchema from '../CradleSchema'
 import EmitterOptions from '../EmitterOptions'
-import {IConsole} from '../IConsole'
+import { IConsole } from '../IConsole'
 import ICradleEmitter from '../ICradleEmitter'
+import ModelReference, { RelationTypes } from '../ModelReference'
 import ArrayPropertyType from '../PropertyTypes/ArrayPropertyType'
 import constants from '../PropertyTypes/constants'
 import DateTimePropertyType from '../PropertyTypes/DateTimePropertyType'
@@ -32,14 +33,14 @@ export default class SpecEmitter implements ICradleEmitter {
     })
 
     if (this.tryCreateFile(this.config!.options.outputPath.toString())) {
-        writeFileSync(this.config!.options.outputPath.toString(), safeDump(models), 'utf8' )
+      writeFileSync(this.config!.options.outputPath.toString(), safeDump(models), 'utf8')
 
     } else {
       throw new Error(`Failed to write to file ${this.config!.options.outputPath.toString()}, the file already exists`)
     }
   }
 
-  public generateModelSpec(model: CradleModel | ObjectPropertyType): {meta: object | undefined, properties: object, references: object} {
+  public generateModelSpec(model: CradleModel | ObjectPropertyType): { meta: object | undefined, properties: object, references: object } {
     const propertiesCollection = (model instanceof CradleModel) ? model.Properties : model.Members
     const propertyNames = Object.keys(propertiesCollection)
     const retVal = {
@@ -50,25 +51,52 @@ export default class SpecEmitter implements ICradleEmitter {
     if (retVal.meta === undefined) {
       delete retVal.meta
     }
+    if (model instanceof CradleModel && model.References) {
+      const referencesCollection = (model instanceof CradleModel) ? model.References : undefined
+      if (referencesCollection && Object.keys(referencesCollection).length > 0) {
+        const referenceNames = Object.keys(referencesCollection)
+        referenceNames.map((refName) => {
+          retVal.references[refName] = this.generateReferenceSpec(referencesCollection[refName])
+        })
+      } else {
+        delete retVal.references
+      }
+    } else {
+      delete retVal.references
+    }
 
     propertyNames.map((pn) => {
-
       if (propertiesCollection[pn].TypeName === constants.Object) {
         retVal.properties[pn] = {
-          isArray : false,
+          isArray: false,
           properties: this.generateModelSpec((propertiesCollection[pn])).properties
         }
-      } else if (propertiesCollection[pn].TypeName === constants.Array && propertiesCollection[pn].MemberType && propertiesCollection[pn].MemberType.TypeName === constants.Object ) {
-          retVal.properties[pn] = {
+      } else if (propertiesCollection[pn].TypeName === constants.Array && propertiesCollection[pn].MemberType && propertiesCollection[pn].MemberType.TypeName === constants.Object) {
+        retVal.properties[pn] = {
           isArray: propertiesCollection[pn].TypeName === constants.Array ? true : false,
           properties: this.generateModelSpec((propertiesCollection[pn].MemberType)).properties
-          }
+        }
       } else {
-      retVal.properties[pn] = this.generatePropertySpec(propertiesCollection[pn])
+        try {
+          retVal.properties[pn] = this.generatePropertySpec(propertiesCollection[pn])
+        } catch (err) {
+          throw new Error(`Property ${pn} threw an error.  ${err.message}`)
+        }
       }
     })
 
     return retVal
+
+  }
+
+  public generateReferenceSpec(modelRef: ModelReference): string {
+    if (modelRef.RelationType === RelationTypes.Single) {
+      return `single of ${modelRef.ForeignModel} on ${modelRef.LocalProperty}`
+    } else if (modelRef.RelationType === RelationTypes.Multiple) {
+      return `multiple of ${modelRef.ForeignModel} via ${modelRef.ProxyModel}`
+    } else {
+      throw new Error(`Invalid relation type of ${modelRef.RelationType}`)
+    }
 
   }
 
@@ -183,7 +211,7 @@ export default class SpecEmitter implements ICradleEmitter {
   }
 
   protected coerceValueType(value: any, propertyType: string): string | undefined {
-    if ( value === undefined || value === null || propertyType === 'object' || propertyType === 'object[]' || propertyType === 'object[]?') {
+    if (value === undefined || value === null || propertyType === 'object' || propertyType === 'object[]' || propertyType === 'object[]?' || propertyType === 'modelreference[]') {
       return value
     }
 
@@ -194,8 +222,10 @@ export default class SpecEmitter implements ICradleEmitter {
       case constants.Decimal.toLowerCase(): return value.toString()
       case constants.Integer.toLowerCase(): return value.toString()
       case constants.String.toLowerCase(): return `${value === '' ? '""' : value.toString()}`
-      case constants.UniqueIdentifier.toLowerCase() : return value.toString()
-      default: throw new Error(`Invalid data type for values: ${typeof value} cannot be converted to (${propertyType})`)
+      case constants.UniqueIdentifier.toLowerCase(): return value.toString()
+      default: {
+        throw new Error(`Invalid data type for values: ${typeof value} cannot be converted to (${propertyType})`)
+      }
     }
 
   }
@@ -209,4 +239,4 @@ export default class SpecEmitter implements ICradleEmitter {
     }
   }
 
-  }
+}
