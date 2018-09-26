@@ -1,6 +1,8 @@
 export enum RelationTypes {
     Single,
-    Multiple
+    SingleOn,
+    Multiple,
+    MultipleVia
 }
 
 export default class ModelReference {

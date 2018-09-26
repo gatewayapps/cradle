@@ -90,10 +90,14 @@ export default class SpecEmitter implements ICradleEmitter {
   }
 
   public generateReferenceSpec(modelRef: ModelReference): string {
-    if (modelRef.RelationType === RelationTypes.Single) {
+    if (modelRef.RelationType === RelationTypes.SingleOn) {
       return `single of ${modelRef.ForeignModel} on ${modelRef.LocalProperty}`
-    } else if (modelRef.RelationType === RelationTypes.Multiple) {
+    } else if (modelRef.RelationType === RelationTypes.MultipleVia) {
       return `multiple of ${modelRef.ForeignModel} via ${modelRef.ProxyModel}`
+    } else if (modelRef.RelationType === RelationTypes.Single) {
+      return `single of ${modelRef.ForeignModel}`
+    } else if (modelRef.RelationType === RelationTypes.Multiple) {
+      return `multiple of ${modelRef.ForeignModel}`
     } else {
       throw new Error(`Invalid relation type of ${modelRef.RelationType}`)
     }
