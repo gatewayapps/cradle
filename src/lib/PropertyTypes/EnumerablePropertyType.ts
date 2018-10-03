@@ -2,8 +2,8 @@ import constants from './constants'
 import PropertyType from './PropertyType'
 
 export default abstract class EnumerablePropertyType extends PropertyType {
-    public AllowedValues: any[] | null
-    constructor(typeName: string, allowedValues: any[] | null, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean = false) {
+    public AllowedValues?: any[]
+    constructor(typeName: string, allowedValues?: any[], allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean = false) {
         super(typeName, allowNull, isPrimaryKey, defaultValue, unique)
         this.AllowedValues = allowedValues
     }
