@@ -25,7 +25,7 @@ describe('SpecEmitter', () => {
         expect(emitter.generatePropertySpec(new BooleanPropertyType(undefined, undefined, 1))).to.equal('boolean default(true)')
       })
     it('Should return string default("")', () => {
-        expect(emitter.generatePropertySpec(new StringPropertyType(null, null, undefined, undefined, undefined, ''))).to.equal('string default("")')
+        expect(emitter.generatePropertySpec(new StringPropertyType(undefined, undefined, undefined, undefined, undefined, ''))).to.equal('string default("")')
       })
   })
 })

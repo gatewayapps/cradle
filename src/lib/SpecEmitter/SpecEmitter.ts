@@ -112,7 +112,7 @@ export default class SpecEmitter implements ICradleEmitter {
     } else if (prop.TypeName === constants.String) {
       const stringProp = prop as StringPropertyType
       let stringTypeName = prop.TypeName.toLowerCase()
-      if (stringProp.MaximumLength !== null && stringProp.MaximumLength > 0) {
+      if (stringProp.MaximumLength !== null && stringProp.MaximumLength! > 0) {
         stringTypeName += `(${stringProp.MaximumLength})`
       }
       parts.push(stringTypeName)
