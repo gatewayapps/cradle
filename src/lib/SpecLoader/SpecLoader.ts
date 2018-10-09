@@ -87,8 +87,8 @@ export default class SpecLoader extends CradleLoaderBase {
 
       const reference = this.specObject![modelName].references[referenceName]
 
-      const SINGLE_REGEX = /single(\??) of (\w+)/ig
-      const MULTIPLE_REGEX = /multiple(\??) of (\w+)/ig
+      const SINGLE_REGEX = /single\?? of (\w+)/ig
+      const MULTIPLE_REGEX = /multiple\?? of (\w+)/ig
       const SINGLE_ON_REGEX = /single of (\w+) on (\w+)/ig
       const MULTIPLE_VIA_REGEX = /multiple of (\w+) via (\w+)/ig
 
@@ -113,16 +113,16 @@ export default class SpecLoader extends CradleLoaderBase {
       } else if (reference.match(SINGLE_REGEX)) {
         const matches = SINGLE_REGEX.exec(reference)
         if (matches && matches.length === 2) {
-          const remoteModelName = matches[2]
-          resolve(new ModelReference('', remoteModelName, RelationTypes.Single, matches[1] === '?'))
+          const remoteModelName = matches[1]
+          resolve(new ModelReference('', remoteModelName, RelationTypes.Single, matches[0].indexOf('?') > -1))
         } else {
           throw new Error(`Invalid single reference pattern: ${reference}`)
         }
       } else if (reference.match(MULTIPLE_REGEX)) {
         const matches = MULTIPLE_REGEX.exec(reference)
-        if (matches && matches.length === 3) {
-          const remoteModelName = matches[2]
-          resolve(new ModelReference('', remoteModelName, RelationTypes.Multiple, matches[1] === '?'))
+        if (matches && matches.length === 2) {
+          const remoteModelName = matches[1]
+          resolve(new ModelReference('', remoteModelName, RelationTypes.Multiple, matches[0].indexOf('?') > -1))
         } else {
           throw new Error(`Invalid multiple reference pattern: ${reference}`)
         }
