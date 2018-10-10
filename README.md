@@ -4,6 +4,7 @@ Cradle is a tool that can be used to eliminate the manual creation of redundant 
 
 [Getting Started](#getting-started)   
 [An Example Cradle Spec](#an-example-cradle-spec)   
+[Cradle Schema](#cradle-schema)   
 [Defining Properties](#defining-properties)   
 [Model References](#model-references)   
 [Metadata](#metadata)   
@@ -103,6 +104,491 @@ TrainingCategories:
 TrainingAssignment: ./TrainingAssignment.yaml#TrainingAssignment
 UserTrainingDueDate: ./UserTrainingDueDate.yaml#UserTrainingDueDate
 ```
+
+## Cradle Schema
+Let's see what a cradle schema looks like:
+```
+{
+  "Models": [
+    {
+      "Name": "Training",
+      "Properties": {
+        "trainingId": {
+          "TypeName": "Integer",
+          "IsPrimaryKey": true,
+          "AllowNull": false,
+          "Unique": false,
+          "Autogenerate": {
+            "Seed": 1,
+            "Increment": 1
+          }
+        },
+        "name": {
+          "TypeName": "String",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false,
+          "MaximumLength": 100
+        },
+        "description": {
+          "TypeName": "String",
+          "IsPrimaryKey": false,
+          "AllowNull": true,
+          "Unique": false
+        },
+        "commonNameId": {
+          "TypeName": "Array",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "DefaultValue": [],
+          "Unique": false,
+          "MemberType": {
+            "TypeName": "Integer",
+            "IsPrimaryKey": false,
+            "AllowNull": true,
+            "Unique": false
+          }
+        },
+        "attachmentLink": {
+          "TypeName": "String",
+          "IsPrimaryKey": false,
+          "AllowNull": true,
+          "Unique": false
+        },
+        "equipmentType": {
+          "TypeName": "Integer",
+          "IsPrimaryKey": false,
+          "AllowNull": true,
+          "Unique": false
+        },
+        "isRecurring": {
+          "TypeName": "Boolean",
+          "IsPrimaryKey": false,
+          "AllowNull": true,
+          "DefaultValue": false,
+          "Unique": false
+        },
+        "recurringInterval": {
+          "TypeName": "Integer",
+          "IsPrimaryKey": false,
+          "AllowNull": true,
+          "Unique": false
+        },
+        "recurringPeriod": {
+          "TypeName": "String",
+          "IsPrimaryKey": false,
+          "AllowNull": true,
+          "Unique": false,
+          "MaximumLength": 10
+        },
+        "gracePeriod": {
+          "TypeName": "Array",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "DefaultValue": [],
+          "Unique": false,
+          "MemberType": {
+            "TypeName": "Object",
+            "IsPrimaryKey": false,
+            "AllowNull": true,
+            "DefaultValue": null,
+            "Unique": false,
+            "Members": {
+              "graceInterval": {
+                "TypeName": "String",
+                "IsPrimaryKey": false,
+                "AllowNull": false,
+                "Unique": false
+              },
+              "graceDuration": {
+                "TypeName": "Integer",
+                "IsPrimaryKey": false,
+                "AllowNull": false,
+                "Unique": false
+              },
+              "testExtended": {
+                "TypeName": "Object",
+                "IsPrimaryKey": false,
+                "AllowNull": true,
+                "DefaultValue": null,
+                "Unique": false,
+                "Members": {
+                  "extendProperty": {
+                    "TypeName": "UniqueIdentifier",
+                    "IsPrimaryKey": false,
+                    "AllowNull": false,
+                    "Unique": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requiresSignOff": {
+          "TypeName": "Boolean",
+          "IsPrimaryKey": false,
+          "AllowNull": true,
+          "DefaultValue": false,
+          "Unique": false
+        },
+        "isDeleted": {
+          "TypeName": "Boolean",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "DefaultValue": false,
+          "Unique": false
+        },
+        "createdBy": {
+          "TypeName": "Array",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "DefaultValue": [],
+          "Unique": false,
+          "MemberType": {
+            "TypeName": "ModelReference",
+            "IsPrimaryKey": false,
+            "AllowNull": true,
+            "DefaultValue": null,
+            "Unique": false,
+            "ModelName": "User",
+            "ModelType": {
+              "TypeName": "Object",
+              "IsPrimaryKey": false,
+              "AllowNull": false,
+              "Unique": false,
+              "Members": {
+                "birthday": {
+                  "TypeName": "DateTime",
+                  "IsPrimaryKey": false,
+                  "AllowNull": false,
+                  "Unique": false,
+                  "MaxValue": "DateTimeNow"
+                }
+              }
+            }
+          }
+        },
+        "createdBy2": {
+          "TypeName": "Array",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "DefaultValue": [],
+          "Unique": false,
+          "MemberType": {
+            "TypeName": "Object",
+            "IsPrimaryKey": false,
+            "AllowNull": true,
+            "DefaultValue": null,
+            "Unique": false,
+            "Members": {
+              "birthday": {
+                "TypeName": "DateTime",
+                "IsPrimaryKey": false,
+                "AllowNull": false,
+                "Unique": false,
+                "MaxValue": "DateTimeNow"
+              }
+            }
+          }
+        },
+        "createdDate": {
+          "TypeName": "DateTime",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false
+        },
+        "modifiedBy": {
+          "TypeName": "Integer",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false,
+          "MaximumValue": 100
+        },
+        "modifiedDate": {
+          "TypeName": "DateTime",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false
+        },
+        "externalCompletionPackage": {
+          "TypeName": "String",
+          "IsPrimaryKey": false,
+          "AllowNull": true,
+          "Unique": false,
+          "MaximumLength": 255
+        },
+        "externalCompletionId": {
+          "TypeName": "Integer",
+          "IsPrimaryKey": false,
+          "AllowNull": true,
+          "Unique": false
+        },
+        "isDocumentReview": {
+          "TypeName": "Boolean",
+          "IsPrimaryKey": false,
+          "AllowNull": true,
+          "DefaultValue": false,
+          "Unique": false
+        }
+      },
+      "References": {
+        "Categories": {
+          "ForeignModel": "Category",
+          "AllowNull": false,
+          "RelationType": 3,
+          "LocalProperty": "",
+          "ProxyModel": "TrainingCategories"
+        },
+        "CommonName": {
+          "ForeignModel": "CommonName",
+          "AllowNull": false,
+          "RelationType": 1,
+          "LocalProperty": "commonNameId"
+        }
+      }
+    },
+    {
+      "Name": "User",
+      "Properties": {
+        "birthday": {
+          "TypeName": "DateTime",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false,
+          "MaxValue": "DateTimeNow"
+        }
+      },
+      "References": {}
+    },
+    {
+      "Name": "CommonName",
+      "Properties": {
+        "id": {
+          "TypeName": "Integer",
+          "IsPrimaryKey": true,
+          "AllowNull": false,
+          "Unique": true,
+          "Autogenerate": {
+            "Seed": 1,
+            "Increment": 1
+          }
+        },
+        "uuid": {
+          "TypeName": "UniqueIdentifier",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": true,
+          "Autogenerate": true
+        },
+        "uuidValue": {
+          "TypeName": "UniqueIdentifier",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "DefaultValue": "00000000-0000-0000-0000-000000000000",
+          "Unique": false
+        },
+        "commonName": {
+          "TypeName": "String",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false,
+          "MaximumLength": 100
+        },
+        "deleted": {
+          "TypeName": "Boolean",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "DefaultValue": false,
+          "Unique": false
+        },
+        "createdBy": {
+          "TypeName": "Integer",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false
+        },
+        "createdDate": {
+          "TypeName": "DateTime",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "DefaultValue": "DateTimeNow",
+          "Unique": false,
+          "MinValue": "1990-01-01T00:00:00.000Z"
+        },
+        "modifiedBy": {
+          "TypeName": "Integer",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false
+        },
+        "modifiedDate": {
+          "TypeName": "DateTime",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "DefaultValue": "DateTimeNow",
+          "Unique": false
+        }
+      },
+      "References": {}
+    },
+    {
+      "Name": "Category",
+      "Meta": {
+        "tableName": "Categories"
+      },
+      "Properties": {
+        "categoryId": {
+          "TypeName": "Integer",
+          "IsPrimaryKey": true,
+          "AllowNull": false,
+          "Unique": false,
+          "Autogenerate": {
+            "Seed": 1,
+            "Increment": 1
+          }
+        },
+        "categoryName": {
+          "TypeName": "String",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false,
+          "AllowedValues": [
+            "\"test\"",
+            "\"test2\""
+          ],
+          "MaximumLength": 100
+        },
+        "categoryDescription": {
+          "TypeName": "String",
+          "IsPrimaryKey": false,
+          "AllowNull": true,
+          "Unique": false
+        },
+        "deleted": {
+          "TypeName": "Boolean",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "DefaultValue": false,
+          "Unique": false
+        },
+        "createdBy": {
+          "TypeName": "Integer",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false
+        },
+        "createdDate": {
+          "TypeName": "DateTime",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false
+        },
+        "modifiedBy": {
+          "TypeName": "Integer",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false
+        },
+        "modifiedDate": {
+          "TypeName": "DateTime",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false
+        }
+      },
+      "References": {
+        "Trainings": {
+          "ForeignModel": "Training",
+          "AllowNull": false,
+          "RelationType": 3,
+          "LocalProperty": "",
+          "ProxyModel": "TrainingCategories"
+        }
+      }
+    },
+    {
+      "Name": "TrainingCategories",
+      "Properties": {
+        "trainingId": {
+          "TypeName": "Integer",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false
+        },
+        "categoryId": {
+          "TypeName": "Integer",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false
+        }
+      },
+      "References": {
+        "Training": {
+          "ForeignModel": "Training",
+          "AllowNull": false,
+          "RelationType": 1,
+          "LocalProperty": "trainingId"
+        },
+        "Category": {
+          "ForeignModel": "Category",
+          "AllowNull": false,
+          "RelationType": 1,
+          "LocalProperty": "categoryId"
+        }
+      }
+    },
+    {
+      "Name": "TrainingAssignment",
+      "Properties": {
+        "trainingId": {
+          "TypeName": "Integer",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false
+        },
+        "nodeId": {
+          "TypeName": "Integer",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false
+        }
+      },
+      "References": {}
+    },
+    {
+      "Name": "UserTrainingDueDate",
+      "Properties": {
+        "trainingId": {
+          "TypeName": "Integer",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false
+        },
+        "userAccountId": {
+          "TypeName": "Integer",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false
+        },
+        "dueDate": {
+          "TypeName": "DateTime",
+          "IsPrimaryKey": false,
+          "AllowNull": false,
+          "Unique": false
+        }
+      },
+      "References": {}
+    }
+  ]
+}
+```
+
+- `Models`: is an array of the models defined in the cradle spec file(s)
+- `TypeName`: is the cradle data type
+- `AllowNull`: is true if the `?` notation was used to define the property
+- `Unique`: is true if the `unique` keyword was used to define the property
+- If the property is an array, then there is a `MemberType` property which contains the values and data type of the array
+
 
 ## Defining Properties
 - Cradle can accept common data types. So if you want to define a string, you'd describe the property as `propertyName: string`
