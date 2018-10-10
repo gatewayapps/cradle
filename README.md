@@ -196,13 +196,13 @@ Use the `verify` command to ensure that any given spec file is valid:
 This command will output the cradle spec in the terminal or command window in which the command was executed. Any warnings or errors will also be output.
 
 ### emit
-Use the `emit` command to generate code output:      
+Use the `emit` command to run the specified emitter:      
 `npx cradle emit -c [path to cradle config] -e spec`
 
 This command will run the specified emitters(see the Configuration section). Use the `-e` argument to specify a particular emitter or omit it to run all configured emitters.
 
 ## Configuration
-Cradle uses a JavaScript based configuration file in order to execute loading the spec and emitting generated code. Below is an example configuration file:
+Cradle uses a JavaScript based configuration file in order to execute loading the spec and executing emitters. Below is an example configuration file:
 
 ```
 const cradle = require('@gatewayapps/cradle')
