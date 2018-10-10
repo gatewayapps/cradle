@@ -17,6 +17,7 @@ describe('PropertyType', () => {
       expect(mock.TypeName).to.equal(constants.Object)
     })
     it('Should throw a TypeError if an unknown property type name is used', () => {
+      /* tslint:disable-next-line no-unused-expression */
       expect(() => { new MockPropertyType('Unknown') }).to.throw(TypeError)
     })
   })
