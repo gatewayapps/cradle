@@ -47,7 +47,7 @@ You can also write a custom emitter.  Suppose you wanted to write your schema to
 You can reference @gatewayapps/cradle-template-emitter or @gatewayapps/cradle-react-emitter to see a functioning emitter.
 
 ## An Example Cradle Spec
-Cradle provides a custom loader and emitter out of the box called spec.  The cradle spec is something we developed for easily modelling our data in an agnostic way.  Here's a sample
+Cradle provides a custom loader and emitter out of the box called spec.  The cradle spec is something we developed for easily modeling our data in an agnostic way.  Here's a sample
 ```
 Film:
   properties:
