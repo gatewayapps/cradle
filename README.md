@@ -15,8 +15,39 @@ Cradle is a tool for loading data models from one place and outputting it to ano
 To get started, first install Cradle in your local project folder:
 `npm i --save-dev @gatewayapps/cradle`
 
+## The Cradle Flow
+Cradle was built to load a schema from any source via CradleLoaders and emit to any destination via CradleEmitters.  
+
+When you execute ```npx cradle emit```, it will load your schema, then send it to each of your configured emitters.  We have developed a few emitters for you to use (@gatewayapps/cradle-template-emitter and @gatewayapps/cradle-react-emitter), but the API is simple to understand and implement.
+
+## Cradle Loader API
+If you want to develop a custom Cradle Loader, (for instance, loading from Postgres or Mongo), all you have to do is implement ICradleLoader in a npm module.
+```
+    prepareLoader: (options: {[key: string]: any}, console: IConsole) => Promise < void >
+    readModelNames: () => Promise < string[] >
+    readModelPropertyNames: (modelName: string) => Promise < string[] >
+    readModelPropertyType: (modelName: string, propertyName: string) => Promise < PropertyType >
+    readModelReferenceNames: (modelName: string) => Promise < string[] >
+    readModelReferenceType: (modelName: string, referenceName: string) => Promise < ModelReference >
+    readModelMetadata: (modelName: string) => Promise < object >
+    finalizeSchema: (schema: CradleSchema) => Promise < CradleSchema >
+    loadSchema: () => Promise<CradleSchema>
+```
+
+You can reference @gatewayapps/cradle-sql-loader for a functioning loader
+
+## Cradle Emitter API
+
+You can also write a custom emitter.  Suppose you wanted to write your schema to a database, you could implement a sql-emitter by implementing the ICradleEmitter interface.
+```
+  prepareEmitter(options: IEmitterOptions, console: IConsole)
+  emitSchema(schema: CradleSchema)
+```
+
+You can reference @gatewayapps/cradle-template-emitter or @gatewayapps/cradle-react-emitter to see a functioning emitter.
+
 ## An Example Cradle Spec
-Cradle leverages the yaml document format for its spec files. Below is an example of a Cradle spec:
+Cradle provides a custom loader and emitter out of the box called spec.  The cradle spec is something we developed for easily modelling our data in an agnostic way.  Here's a sample
 ```
 Film:
   properties:
