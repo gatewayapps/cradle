@@ -1,13 +1,10 @@
-# Cradle - A Flexible Code Generator
+# Cradle - A Schema Pipeline 
 ## What is Cradle?
-Cradle is a tool that can be used to eliminate the manual creation of redundant and tedious code within your project/application. We provide the ability to create specs and templates that can, in turn, be executed with the output resulting in the code you wish to use. Cradle doesn't care which language or platform you are using.
+Cradle is a tool for loading data models from one place and outputting it to another. This can be leveraged to eliminate the manual creation of redundant and tedious code within your project/application. We provide the ability to create specs that can, in turn, be executed against emitters with the output resulting in the code you wish to use.
 
 [Getting Started](#getting-started)   
 [An Example Cradle Spec](#an-example-cradle-spec)   
 [Cradle Schema](#cradle-schema)   
-[Defining Properties](#defining-properties)   
-[Model References](#model-references)   
-[Metadata](#metadata)   
 [The Cradle CLI](#the-cradle-cli)   
 [Configuration](#configuration)   
 [Loaders](#loaders)   
@@ -21,99 +18,35 @@ To get started, first install Cradle in your local project folder:
 ## An Example Cradle Spec
 Cradle leverages the yaml document format for its spec files. Below is an example of a Cradle spec:
 ```
-Training:
+Film:
   properties:
-    trainingId: integer primary auto(1,1)
+    id: integer primary auto(1,1)
     name: string(100)
-    description: string?
-    commonNameId: integer[]?
-    attachmentLink: string?
-    equipmentType: integer?
-    isRecurring: boolean? default(0)
-    recurringInterval: integer?
-    recurringPeriod: string(10)?
-
-    #nested object
-    gracePeriod:
+    totalBoxOffice: decimal min(0)
+    releaseDate: datetime
+    isDeleted: boolean default(false) delete
+    actors:
       isArray: true
-      properties:
-        graceInterval: string
-        graceDuration: integer
-        testExtended:
-          properties:
-            extendProperty: uniqueidentifier
+      modelRef: Actor
 
-    requiresSignOff: boolean? default(0)
-    isDeleted: boolean default(0) delete
-    createdBy:
-      isArray: true
-      modelRef: User
-    createdBy2:
-      isArray: true
-      properties:
-        birthday: datetime max(NOW)
-    createdDate: datetime
-    modifiedBy: integer max(100)
-    modifiedDate: datetime
-    externalCompletionPackage: string(255)?
-    externalCompletionId: integer?
-    isDocumentReview: boolean? default(0)
-  references:
-    Categories: multiple of Category via TrainingCategories
-    CommonName: single of CommonName on commonNameId
-
-User:
+Actor:
   properties:
-    birthday: datetime max(NOW)
-
-CommonName:
-  properties:
-    id: integer auto(1,1) primary unique
-    uuid: uniqueidentifier auto unique
-    uuidValue: uniqueidentifier default(00000000-0000-0000-0000-000000000000)
-    commonName: string(100)
-    deleted: boolean default(0)
-    createdBy: integer
-    createdDate: datetime default(NOW) min(1990-01-01)
-    modifiedBy: integer
-    modifiedDate: datetime default(NOW)
-
-Category:
-  meta:
-    tableName: Categories
-  properties:
-    categoryId: integer auto(1,1) primary
-    categoryName: string(100) allow("test", "test2")
-    categoryDescription: string?
-    deleted: boolean default(0)
-    createdBy: integer allow(1, 2, 3, 4)
-    createdDate: datetime
-    modifiedBy: integer
-    modifiedDate: datetime
-  references:
-    Trainings: multiple of Training via TrainingCategories
-
-TrainingCategories:
-  properties:
-    trainingId: integer
-    categoryId: integer
-  references:
-    Training: single of Training on trainingId
-    Category: single of Category on categoryId
-
-TrainingAssignment: ./TrainingAssignment.yaml#TrainingAssignment
-UserTrainingDueDate: ./UserTrainingDueDate.yaml#UserTrainingDueDate
+    id: integer primary auto(1,1)
+    firstName: string(100)
+    lastName: string(100)
+    dateOfBirth: datetime
 ```
+To learn more about defining a cradle spec, see the wiki page [here](https://github.com/gatewayapps/cradle/wiki/The-Cradle-Spec)
 
 ## Cradle Schema
-Let's see what a cradle schema looks like:
+Let's see what a cradle schema looks like as a JSON object:
 ```
 {
   "Models": [
     {
-      "Name": "Training",
+      "Name": "Film",
       "Properties": {
-        "trainingId": {
+        "id": {
           "TypeName": "Integer",
           "IsPrimaryKey": true,
           "AllowNull": false,
@@ -130,105 +63,19 @@ Let's see what a cradle schema looks like:
           "Unique": false,
           "MaximumLength": 100
         },
-        "description": {
-          "TypeName": "String",
-          "IsPrimaryKey": false,
-          "AllowNull": true,
-          "Unique": false
-        },
-        "commonNameId": {
-          "TypeName": "Array",
+        "totalBoxOffice": {
+          "TypeName": "Decimal",
           "IsPrimaryKey": false,
           "AllowNull": false,
-          "DefaultValue": [],
           "Unique": false,
-          "MemberType": {
-            "TypeName": "Integer",
-            "IsPrimaryKey": false,
-            "AllowNull": true,
-            "Unique": false
-          }
+          "MinimumValue": 0,
+          "Precision": 18,
+          "Scale": 2
         },
-        "attachmentLink": {
-          "TypeName": "String",
-          "IsPrimaryKey": false,
-          "AllowNull": true,
-          "Unique": false
-        },
-        "equipmentType": {
-          "TypeName": "Integer",
-          "IsPrimaryKey": false,
-          "AllowNull": true,
-          "Unique": false
-        },
-        "isRecurring": {
-          "TypeName": "Boolean",
-          "IsPrimaryKey": false,
-          "AllowNull": true,
-          "DefaultValue": false,
-          "Unique": false
-        },
-        "recurringInterval": {
-          "TypeName": "Integer",
-          "IsPrimaryKey": false,
-          "AllowNull": true,
-          "Unique": false
-        },
-        "recurringPeriod": {
-          "TypeName": "String",
-          "IsPrimaryKey": false,
-          "AllowNull": true,
-          "Unique": false,
-          "MaximumLength": 10
-        },
-        "gracePeriod": {
-          "TypeName": "Array",
+        "releaseDate": {
+          "TypeName": "DateTime",
           "IsPrimaryKey": false,
           "AllowNull": false,
-          "DefaultValue": [],
-          "Unique": false,
-          "MemberType": {
-            "TypeName": "Object",
-            "IsPrimaryKey": false,
-            "AllowNull": true,
-            "DefaultValue": null,
-            "Unique": false,
-            "Members": {
-              "graceInterval": {
-                "TypeName": "String",
-                "IsPrimaryKey": false,
-                "AllowNull": false,
-                "Unique": false
-              },
-              "graceDuration": {
-                "TypeName": "Integer",
-                "IsPrimaryKey": false,
-                "AllowNull": false,
-                "Unique": false
-              },
-              "testExtended": {
-                "TypeName": "Object",
-                "IsPrimaryKey": false,
-                "AllowNull": true,
-                "DefaultValue": null,
-                "Unique": false,
-                "Members": {
-                  "extendProperty": {
-                    "TypeName": "UniqueIdentifier",
-                    "IsPrimaryKey": false,
-                    "AllowNull": false,
-                    "Unique": false
-                  }
-                }
-              }
-            }
-          }
-        },
-        "requiresSignOff": {
-          "TypeName": "Boolean",
-          "IsPrimaryKey": false,
-          "AllowNull": true,
-          "DefaultValue": false,
           "Unique": false
         },
         "isDeleted": {
@@ -238,7 +85,7 @@ Let's see what a cradle schema looks like:
           "DefaultValue": false,
           "Unique": false
         },
-        "createdBy": {
+        "actors": {
           "TypeName": "Array",
           "IsPrimaryKey": false,
           "AllowNull": false,
@@ -250,327 +97,78 @@ Let's see what a cradle schema looks like:
             "AllowNull": true,
             "DefaultValue": null,
             "Unique": false,
-            "ModelName": "User",
+            "ModelName": "Actor",
             "ModelType": {
               "TypeName": "Object",
               "IsPrimaryKey": false,
               "AllowNull": false,
               "Unique": false,
               "Members": {
-                "birthday": {
-                  "TypeName": "DateTime",
+                "id": {
+                  "TypeName": "Integer",
+                  "IsPrimaryKey": true,
+                  "AllowNull": false,
+                  "Unique": false,
+                  "Autogenerate": {
+                    "Seed": 1,
+                    "Increment": 1
+                  }
+                },
+                "firstName": {
+                  "TypeName": "String",
                   "IsPrimaryKey": false,
                   "AllowNull": false,
                   "Unique": false,
-                  "MaxValue": "DateTimeNow"
+                  "MaximumLength": 100
+                },
+                "lastName": {
+                  "TypeName": "String",
+                  "IsPrimaryKey": false,
+                  "AllowNull": false,
+                  "Unique": false,
+                  "MaximumLength": 100
+                },
+                "dateOfBirth": {
+                  "TypeName": "DateTime",
+                  "IsPrimaryKey": false,
+                  "AllowNull": false,
+                  "Unique": false
                 }
               }
             }
           }
-        },
-        "createdBy2": {
-          "TypeName": "Array",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "DefaultValue": [],
-          "Unique": false,
-          "MemberType": {
-            "TypeName": "Object",
-            "IsPrimaryKey": false,
-            "AllowNull": true,
-            "DefaultValue": null,
-            "Unique": false,
-            "Members": {
-              "birthday": {
-                "TypeName": "DateTime",
-                "IsPrimaryKey": false,
-                "AllowNull": false,
-                "Unique": false,
-                "MaxValue": "DateTimeNow"
-              }
-            }
-          }
-        },
-        "createdDate": {
-          "TypeName": "DateTime",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "Unique": false
-        },
-        "modifiedBy": {
-          "TypeName": "Integer",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "Unique": false,
-          "MaximumValue": 100
-        },
-        "modifiedDate": {
-          "TypeName": "DateTime",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "Unique": false
-        },
-        "externalCompletionPackage": {
-          "TypeName": "String",
-          "IsPrimaryKey": false,
-          "AllowNull": true,
-          "Unique": false,
-          "MaximumLength": 255
-        },
-        "externalCompletionId": {
-          "TypeName": "Integer",
-          "IsPrimaryKey": false,
-          "AllowNull": true,
-          "Unique": false
-        },
-        "isDocumentReview": {
-          "TypeName": "Boolean",
-          "IsPrimaryKey": false,
-          "AllowNull": true,
-          "DefaultValue": false,
-          "Unique": false
-        }
-      },
-      "References": {
-        "Categories": {
-          "ForeignModel": "Category",
-          "AllowNull": false,
-          "RelationType": 3,
-          "LocalProperty": "",
-          "ProxyModel": "TrainingCategories"
-        },
-        "CommonName": {
-          "ForeignModel": "CommonName",
-          "AllowNull": false,
-          "RelationType": 1,
-          "LocalProperty": "commonNameId"
-        }
-      }
-    },
-    {
-      "Name": "User",
-      "Properties": {
-        "birthday": {
-          "TypeName": "DateTime",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "Unique": false,
-          "MaxValue": "DateTimeNow"
         }
       },
       "References": {}
     },
     {
-      "Name": "CommonName",
+      "Name": "Actor",
       "Properties": {
         "id": {
           "TypeName": "Integer",
           "IsPrimaryKey": true,
           "AllowNull": false,
-          "Unique": true,
-          "Autogenerate": {
-            "Seed": 1,
-            "Increment": 1
-          }
-        },
-        "uuid": {
-          "TypeName": "UniqueIdentifier",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "Unique": true,
-          "Autogenerate": true
-        },
-        "uuidValue": {
-          "TypeName": "UniqueIdentifier",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "DefaultValue": "00000000-0000-0000-0000-000000000000",
-          "Unique": false
-        },
-        "commonName": {
-          "TypeName": "String",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "Unique": false,
-          "MaximumLength": 100
-        },
-        "deleted": {
-          "TypeName": "Boolean",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "DefaultValue": false,
-          "Unique": false
-        },
-        "createdBy": {
-          "TypeName": "Integer",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "Unique": false
-        },
-        "createdDate": {
-          "TypeName": "DateTime",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "DefaultValue": "DateTimeNow",
-          "Unique": false,
-          "MinValue": "1990-01-01T00:00:00.000Z"
-        },
-        "modifiedBy": {
-          "TypeName": "Integer",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "Unique": false
-        },
-        "modifiedDate": {
-          "TypeName": "DateTime",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "DefaultValue": "DateTimeNow",
-          "Unique": false
-        }
-      },
-      "References": {}
-    },
-    {
-      "Name": "Category",
-      "Meta": {
-        "tableName": "Categories"
-      },
-      "Properties": {
-        "categoryId": {
-          "TypeName": "Integer",
-          "IsPrimaryKey": true,
-          "AllowNull": false,
           "Unique": false,
           "Autogenerate": {
             "Seed": 1,
             "Increment": 1
           }
         },
-        "categoryName": {
+        "firstName": {
           "TypeName": "String",
           "IsPrimaryKey": false,
           "AllowNull": false,
           "Unique": false,
-          "AllowedValues": [
-            "\"test\"",
-            "\"test2\""
-          ],
           "MaximumLength": 100
         },
-        "categoryDescription": {
+        "lastName": {
           "TypeName": "String",
           "IsPrimaryKey": false,
-          "AllowNull": true,
-          "Unique": false
+          "AllowNull": false,
+          "Unique": false,
+          "MaximumLength": 100
         },
-        "deleted": {
-          "TypeName": "Boolean",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "DefaultValue": false,
-          "Unique": false
-        },
-        "createdBy": {
-          "TypeName": "Integer",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "Unique": false
-        },
-        "createdDate": {
-          "TypeName": "DateTime",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "Unique": false
-        },
-        "modifiedBy": {
-          "TypeName": "Integer",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "Unique": false
-        },
-        "modifiedDate": {
-          "TypeName": "DateTime",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "Unique": false
-        }
-      },
-      "References": {
-        "Trainings": {
-          "ForeignModel": "Training",
-          "AllowNull": false,
-          "RelationType": 3,
-          "LocalProperty": "",
-          "ProxyModel": "TrainingCategories"
-        }
-      }
-    },
-    {
-      "Name": "TrainingCategories",
-      "Properties": {
-        "trainingId": {
-          "TypeName": "Integer",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "Unique": false
-        },
-        "categoryId": {
-          "TypeName": "Integer",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "Unique": false
-        }
-      },
-      "References": {
-        "Training": {
-          "ForeignModel": "Training",
-          "AllowNull": false,
-          "RelationType": 1,
-          "LocalProperty": "trainingId"
-        },
-        "Category": {
-          "ForeignModel": "Category",
-          "AllowNull": false,
-          "RelationType": 1,
-          "LocalProperty": "categoryId"
-        }
-      }
-    },
-    {
-      "Name": "TrainingAssignment",
-      "Properties": {
-        "trainingId": {
-          "TypeName": "Integer",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "Unique": false
-        },
-        "nodeId": {
-          "TypeName": "Integer",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "Unique": false
-        }
-      },
-      "References": {}
-    },
-    {
-      "Name": "UserTrainingDueDate",
-      "Properties": {
-        "trainingId": {
-          "TypeName": "Integer",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "Unique": false
-        },
-        "userAccountId": {
-          "TypeName": "Integer",
-          "IsPrimaryKey": false,
-          "AllowNull": false,
-          "Unique": false
-        },
-        "dueDate": {
+        "dateOfBirth": {
           "TypeName": "DateTime",
           "IsPrimaryKey": false,
           "AllowNull": false,
@@ -582,67 +180,11 @@ Let's see what a cradle schema looks like:
   ]
 }
 ```
-
 - `Models`: is an array of the models defined in the cradle spec file(s)
 - `TypeName`: is the cradle data type
 - `AllowNull`: is true if the `?` notation was used to define the property
 - `Unique`: is true if the `unique` keyword was used to define the property
 - If the property is an array, then there is a `MemberType` property which contains the values and data type of the array
-
-
-## Defining Properties
-- Cradle can accept common data types. So if you want to define a string, you'd describe the property as `propertyName: string`
-- Cradle can accept nullable properties. Just add a `?` to the end of the data type and the property is now nullable
-- Cradle can accept default values. After the data type, just add `default(value)` where `value` is your default.
-- At the moment, enumerations have to be defined inline. In order to do so, the pattern is `dataType allow(value1, value2, ...)`
-
-## Model References
-Referencing an entity within another Cradle entity is easy. Just make sure you've defined the other entity and then: 
-```
-    propertyName:
-        modelRef: AnotherEntity
-```
-In the same manner, if the property needs to be an array of entities:
-```
-    propertyName:
-        isArray: true
-        modelRef: AnotherEntity
-```
-References could be defined as such:
-```
-EntityB:
-    properties:
-        primaryKey: integer primary auto(1,1)
-ReferenceEntity:
-    properties:
-        id1: integer
-        id2: integer
-    references:
-        EntityB: single of EntityB on primaryKey
-Entity:
-    properties:
-        propertyA:
-        ...
-    references:
-        propertyB: single of EntityB on primaryKey # this says "add a reference to EntityB using primaryKey"
-        propertyC: multiple of EntityB via ReferenceEntity # this says "add a n to n reference of EntityB by cross referencing through ReferenceEntity"
-```
-
-Cradle supports the following syntax for defining References:
-- `single of Entity on key`: from the Model, creates a reference to Entity on a particular key
-- `single[?] of Entity`: from the model, creates a reference to Entity and returns the primary key properties from Entity
-- `multiple of Entity via ReferenceEntity`: from the Model, creates a many-to-many reference from Entity via a cross reference table(ReferenceEntity)
-- `multiple[?] of Entity`: from the Model, creates a reference to Entity and returns an array of the primary key properties from Entity
-
-
-## Metadata
-Metadata can be added to any entity by using the `meta` syntax. Any data you may need but doesn't need to be a property can be added here:
-```
-Entity:
-  meta:
-    tableName: theTableName
-    someOtherThing: 1234AbCDe
-```
 
 ## The Cradle CLI
 Cradle provides a CLI that can be used to verify and generate spec files:

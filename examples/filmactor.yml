@@ -1,0 +1,17 @@
+Film:
+  properties:
+    id: integer primary auto(1,1)
+    name: string(100)
+    totalBoxOffice: decimal min(0)
+    releaseDate: datetime
+    isDeleted: boolean default(false) delete
+    actors:
+      isArray: true
+      modelRef: Actor
+
+Actor:
+  properties:
+    id: integer primary auto(1,1)
+    firstName: string(100)
+    lastName: string(100)
+    dateOfBirth: datetime
