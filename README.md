@@ -187,7 +187,7 @@ Let's see what a cradle schema looks like as a JSON object:
 - If the property is an array, then there is a `MemberType` property which contains the values and data type of the array
 
 ## The Cradle CLI
-Cradle provides a CLI that can be used to verify and generate spec files:
+Cradle provides a CLI with a few different commands:
 
 ### verify
 Use the `verify` command to ensure that any given spec file is valid:     
@@ -199,7 +199,7 @@ This command will output the cradle spec in the terminal or command window in wh
 Use the `emit` command to generate code output:      
 `npx cradle emit -c [path to cradle config] -e spec`
 
-This command will generate code based on the configured emitters(see the Configuration section). Use the `-e` argument to specify a particular emitter or omit it to run all configured emitters.
+This command will run the specified emitters(see the Configuration section). Use the `-e` argument to specify a particular emitter or omit it to run all configured emitters.
 
 ## Configuration
 Cradle uses a JavaScript based configuration file in order to execute loading the spec and emitting generated code. Below is an example configuration file:
