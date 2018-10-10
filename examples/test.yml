@@ -11,11 +11,6 @@ Training:
     recurringPeriod: string(10)?
 
     #nested object
-    # for Mongo and other no-sql, we can leave as is
-    # for sql server we can turn sub properties into:
-    # gracePeriod_HasGracePeriod
-    # gracePeriod_duration
-    # gracePeriod_period
     gracePeriod:
       isArray: true
       properties:
@@ -43,8 +38,6 @@ Training:
   references:
     Categories: multiple of Category via TrainingCategories
     CommonName: single of CommonName on commonNameId
-    Test: single of Category
-    TestMultiple: multiple of Category
 
 User:
   properties:
@@ -87,12 +80,3 @@ TrainingCategories:
 
 TrainingAssignment: ./TrainingAssignment.yaml#TrainingAssignment
 UserTrainingDueDate: ./UserTrainingDueDate.yaml#UserTrainingDueDate
-
-EntityAllow:
-  properties:
-    authenticatorId: string
-    name: string
-    type: string allow("Property", "Contact", "Role", "Team", "Listing", "DevelopmentSite", "DevelopmentClient")
-    value: string allow("ViewOnly", "OwnAttachments", "Edit", "Unrestricted")
-    hasChanged: boolean default(0)
-    isAdded: boolean
