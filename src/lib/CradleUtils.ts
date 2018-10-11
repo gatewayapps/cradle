@@ -30,6 +30,11 @@ export async function getLoader(options: LoaderOptions): Promise<ICradleLoader> 
 
 export async function getEmitter(options: IEmitterOptions): Promise<ICradleEmitter> {
   let emitter: ICradleEmitter
+
+  if (!options.module) {
+    throw new Error(`Expected an instance of IEmitterOptions, got: { ${Object.keys(options).join(', ')} }`)
+  }
+
   if (options.module === 'spec') {
     emitter = new SpecEmitter()
   } else {
@@ -38,9 +43,10 @@ export async function getEmitter(options: IEmitterOptions): Promise<ICradleEmitt
       try {
         emitter = new emitterDef()
       } catch (err) {
-        return Promise.reject(`${options.module} module was found but a valid ICradleEmitter is not the default export`)
+        return Promise.reject(`${options.module} module was found but a valid ICradleEmitter is not the default export `)
       }
     } catch (err) {
+      err.message = `Error loading ${options.module}: ${err.message}`
       return Promise.reject(err)
     }
   }
