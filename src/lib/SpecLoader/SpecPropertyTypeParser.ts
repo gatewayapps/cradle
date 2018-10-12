@@ -6,7 +6,7 @@ const createToken = chevrotain.createToken
 
 const PropertyType = createToken({
   name: 'PropertyType',
-  pattern: /(uniqueidentifier|integer|string\(\s*\d+\s*\)|string|boolean|datetime|decimal)(\[\])?\??/i
+  pattern: /(uniqueidentifier|integer|string\(\s*\d+\s*\)|string|boolean|datetime|decimal\(\s*\d+,\d+\s*\)|decimal)(\[\])?\??/i
 })
 
 const BooleanValue = createToken({
@@ -36,7 +36,7 @@ const Now = createToken({
 
 const DateTimeValue = createToken({
   name: 'DateTimeValue',
-  pattern: /(\d{4})\D?(0[1-9]|1[0-2])\D?([12]\d|0[1-9]|3[01])(\D?([01]\d|2[0-3])\D?([0-5]\d)\D?([0-5]\d)?\D?(\d{3})?([zZ]|([\+-])([01]\d|2[0-3])\D?([0-5]\d)?)?)?/i
+  pattern: /(\d{4})\D?(0[1-9]|1[0-2])\D?([12]\d|0[1-9]|3[01])([^\d\)]?([01]\d|2[0-3])[^\d\)]?([0-5]\d)[^\d\)]?([0-5]\d)?[^\d\)]?(\d{3})?([zZ]|([\+-])([01]\d|2[0-3])[^\d\)]?([0-5]\d)?)?)?/i
 })
 
 const Min = createToken({
@@ -175,17 +175,26 @@ export default function ParseProperty(definition: string) {
     let primaryKey: boolean = false
     let deleteFlag: boolean = false
     let defaultValue: any
-    let length!: number
+    let length: number | undefined
+    let precision: number | undefined
+    let scale: number | undefined
+    let allowedValues: any
+    let minValue: any
+    let maxValue: any
+
     const isArray = propertyType.indexOf('[]') > -1
     const nullable = propertyType.indexOf('?') > -1
-    const strippedPropertyType = propertyType.replace(/[^0-9]/ig, '')
-    if (strippedPropertyType.length > 0) {
-      length = parseInt(strippedPropertyType, 10)
-    }
-    let allowedValues!: any
 
-    let minValue!: any
-    let maxValue!: any
+    const typeDetailMatch = /\((.+)\)/.exec(propertyType)
+    if (typeDetailMatch) {
+      const detailParts = typeDetailMatch[1].split(',')
+      if (detailParts.length === 1) {
+        length = parseInt(detailParts[0], 10)
+      } else if (detailParts.length === 2) {
+        precision = parseInt(detailParts[0], 10)
+        scale = parseInt(detailParts[1], 10)
+      }
+    }
 
     for (let i = 1; i < lexingResult.tokens.length; i++) {
       const token = lexingResult.tokens[i]
@@ -207,8 +216,10 @@ export default function ParseProperty(definition: string) {
             if (nextToken && nextToken.tokenType!.name === OpenParentheses.name) {
               const defaultContents = getTokensFromParentheses(lexingResult.tokens, i + 1, [IntegerValue, DecimalValue, StringValue, DateTimeValue, UuidValue, BooleanValue, Now])
               i = defaultContents.endIndex
-              if (defaultContents.values.length !== 1) {
-                throw new SyntaxError(`Expected default to be a single element, got ${defaultContents.values}`)
+              if (defaultContents.values.length === 0) {
+                throw new SyntaxError(`Expected default to contain a value`)
+              } else if (defaultContents.values.length !== 1) {
+                throw new TypeError(`Expected default to be a single element, got ${defaultContents.values}`)
               } else {
                 ensureValueTypes(basePropertyType, defaultContents.values)
                 defaultValue = defaultContents.values[0]
@@ -221,8 +232,10 @@ export default function ParseProperty(definition: string) {
             if (nextToken && nextToken.tokenType!.name === OpenParentheses.name) {
               const maxContents = getTokensFromParentheses(lexingResult.tokens, i + 1, [IntegerValue, DecimalValue, DateTimeValue, Now])
               i = maxContents.endIndex
-              if (maxContents.values.length !== 1) {
-                throw new SyntaxError(`Expected MAX value to be a single element, got ${maxContents.values}`)
+              if (maxContents.values.length === 0) {
+                throw new SyntaxError(`Expected MAX to contain a value`)
+              } else if (maxContents.values.length !== 1) {
+                throw new TypeError(`Expected MAX value to be a single element, got ${maxContents.values}`)
               } else {
                 ensureValueTypes(basePropertyType, maxContents.values)
                 maxValue = maxContents.values[0]
@@ -235,8 +248,10 @@ export default function ParseProperty(definition: string) {
             if (nextToken && nextToken.tokenType!.name === OpenParentheses.name) {
               const minContents = getTokensFromParentheses(lexingResult.tokens, i + 1, [IntegerValue, DecimalValue, DateTimeValue, Now])
               i = minContents.endIndex
-              if (minContents.values.length !== 1) {
-                throw new SyntaxError(`Expected MIN value to be a single element, got ${minContents.values}`)
+              if (minContents.values.length === 0) {
+                throw new SyntaxError(`Expected MIN to contain a value`)
+              } else if (minContents.values.length !== 1) {
+                throw new TypeError(`Expected MIN value to be a single element, got ${minContents.values}`)
               } else {
                 ensureValueTypes(basePropertyType, minContents.values)
                 minValue = minContents.values[0]
@@ -249,9 +264,12 @@ export default function ParseProperty(definition: string) {
             if (nextToken && nextToken.tokenType!.name === OpenParentheses.name) {
               const allowContents = getTokensFromParentheses(lexingResult.tokens, i + 1, [IntegerValue, DecimalValue, StringValue, DateTimeValue, UuidValue])
               i = allowContents.endIndex
-              ensureValueTypes(basePropertyType, allowContents.values)
-              allowedValues = allowContents.values
-
+              if (allowContents.values.length === 0) {
+                throw new SyntaxError(`Expected ALLOW to have a value, got ${allowContents.values}`)
+              } else {
+                ensureValueTypes(basePropertyType, allowContents.values)
+                allowedValues = allowContents.values
+              }
             }
             break
           }
@@ -262,10 +280,21 @@ export default function ParseProperty(definition: string) {
         }
       }
     }
-    return  new SpecProperty(
-      basePropertyType, nullable, primaryKey, unique, deleteFlag, autoDefinition, allowedValues, defaultValue, minValue,
-      maxValue, length, isArray)
-
+    return  new SpecProperty(basePropertyType, {
+      allowedValues,
+      autogenerateOptions: autoDefinition,
+      defaultValue,
+      deleteFlag,
+      isArray,
+      length,
+      maxValue,
+      minValue,
+      nullable,
+      precision,
+      primaryKey,
+      scale,
+      unique,
+    })
 }
 
 function peekNextToken(tokens: IToken[], currentIndex: number): IToken | undefined {
@@ -325,7 +354,7 @@ function getTokensFromParentheses(tokens: IToken[], startIndex: number, allowedT
         }
       }
       if (tokens[i].tokenType!.name !== Comma.name && allowedTypeNames.indexOf(tokens[i].tokenType!.name) === -1) {
-        throw new SyntaxError(`Token type ${tokens[i].tokenType!.name} not allowed`)
+        throw new TypeError(`Token type ${tokens[i].tokenType!.name} not allowed`)
       } else {
         if (tokens[i].tokenType!.name !== Comma.name) {
           const parsedTokenValue = parseTokenValue(tokens[i])
@@ -338,7 +367,7 @@ function getTokensFromParentheses(tokens: IToken[], startIndex: number, allowedT
   } else {
     throw new SyntaxError(`Expected (, found ${tokens[startIndex].image}`)
   }
-  throw new SyntaxError(`Missing )`)
+  throw new SyntaxError(`Missing ) in "${tokens.map((t) => t.image).join(' ')}"`)
 }
 
 function parseTokenValue(token: IToken): any {
@@ -354,7 +383,7 @@ function parseTokenValue(token: IToken): any {
         return token.image
       }
       case StringValue.name: {
-        return token.image
+        return token.image.substr(1, token.image.length - 2)
       }
       case BooleanValue.name: {
         return token.image.toString().toLowerCase() === 'true'
