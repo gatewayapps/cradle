@@ -1,4 +1,10 @@
 Film:
+  operations:
+    createFilm:
+      returns: Film
+      arguments:
+        name: "?"
+        totalBoxOffice: decimal min(0)
   properties:
     id: integer primary auto(1,1)
     name: string(100)

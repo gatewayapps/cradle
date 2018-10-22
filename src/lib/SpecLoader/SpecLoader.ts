@@ -4,8 +4,7 @@ import path from 'path'
 import { CradleLoaderBase } from '../CradleLoaderBase'
 import CradleSchema from '../CradleSchema'
 import { IConsole } from '../IConsole'
-import ICradleLoader from '../ICradleLoader'
-import LoaderOptions from '../LoaderOptions'
+import { ICradleOperation } from '../ICradleOperation'
 import ModelReference, { RelationTypes } from '../ModelReference'
 import ArrayPropertyType from '../PropertyTypes/ArrayPropertyType'
 import BooleanPropertyType from '../PropertyTypes/BooleanPropertyType'
@@ -24,21 +23,69 @@ import ParseProperty from './SpecPropertyTypeParser'
 export default class SpecLoader extends CradleLoaderBase {
 
   private console?: IConsole
-  private specObject?: object
+  private specObject ?: object
 
-  private function
-  public readModelPropertyType(modelName: string, propertyName: string): Promise<PropertyType> {
-    return new Promise((resolve, reject) => {
-      try {
-        return resolve(this.readPropertyDefinition(modelName, [propertyName]))
-      } catch (err) {
-        throw new Error(`Error: '${err.message}' encountered while parsing ${modelName}.${propertyName}`)
+  public readModelOperationNames(modelName: string): Promise<string[]> {
+    if (!this.specObject) {
+      throw new Error(`No spec file loaded`)
+    }
+    if (!this.specObject[modelName]) {
+      throw new Error(`The spec file does not contain a model named '${modelName}'`)
+    }
+    if (typeof this.specObject[modelName] === typeof ('')) {
+      throw new Error(`The model definition must be an object`)
+    } else {
+      if (!this.specObject[modelName].operations) {
+        return Promise.resolve([])
+      } else {
+        return Promise.resolve(Object.keys(this.specObject[modelName].operations))
       }
-
-    })
+    }
   }
 
-  public readModelNames(): Promise<string[]> {
+  public async readModelOperation(modelName: string, operationName: string): Promise<ICradleOperation> {
+
+    let returnType = this.specObject![modelName].operations[operationName].returns
+    if (returnType) {
+      returnType = await this.getPropertyTypeFromDefinition(returnType)
+    }
+    const _args: any = {}
+    const argNames = Object.keys(this.specObject![modelName].operations[operationName].arguments)
+    await Promise.all(argNames.map(async (argName) => {
+      const argValue = this.specObject![modelName].operations[operationName].arguments[argName]
+      if (argValue !== null && argValue !== '?') {
+        _args[argName] = await this.getPropertyTypeFromDefinition(this.specObject![modelName].operations[operationName].arguments[argName])
+      } else {
+        try {
+        _args[argName] = await this.readModelPropertyType(modelName, argName)
+        if (argValue === '?') {
+            _args[argName].AllowNull = true
+          }
+        } catch (err) {
+          err.message = `Error encountered when parsing ${modelName}.operations.arguments.${argName}.
+
+          ${err.message}`
+          throw err
+        }
+
+      }
+
+    }))
+
+    return {
+      Arguments: _args,
+      Returns: returnType
+    }
+  }
+  public async readModelPropertyType(modelName: string, propertyName: string): Promise < PropertyType > {
+
+        return await this.readPropertyDefinition(modelName, [propertyName]).catch((err) => {
+          throw new Error(`Error: '${err.message}' encountered while parsing ${modelName}.${propertyName}`)
+        })
+
+  }
+
+  public readModelNames(): Promise < string[] > {
     if (this.specObject) {
       const modelNames = Object.keys(this.specObject)
       return Promise.resolve(modelNames)
@@ -48,7 +95,7 @@ export default class SpecLoader extends CradleLoaderBase {
 
   }
 
-  public readModelPropertyNames(modelName: string): Promise<string[]> {
+  public readModelPropertyNames(modelName: string): Promise < string[] > {
     if (!this.specObject) {
       throw new Error(`No spec file loaded`)
     }
@@ -66,7 +113,7 @@ export default class SpecLoader extends CradleLoaderBase {
     }
   }
 
-  public readModelReferenceNames(modelName: string): Promise<string[]> {
+  public readModelReferenceNames(modelName: string): Promise < string[] > {
     return new Promise((resolve, reject) => {
       if (!this.specObject) {
         throw new Error('No spec file loaded')
@@ -82,7 +129,7 @@ export default class SpecLoader extends CradleLoaderBase {
     })
 
   }
-  public readModelReferenceType(modelName: string, referenceName: string): Promise<ModelReference> {
+  public readModelReferenceType(modelName: string, referenceName: string): Promise < ModelReference > {
     return new Promise((resolve, reject) => {
 
       const reference = this.specObject![modelName].references[referenceName]
@@ -133,7 +180,7 @@ export default class SpecLoader extends CradleLoaderBase {
 
   }
 
-  public async prepareLoader(options: { [key: string]: any }, console: IConsole): Promise<void> {
+  public async prepareLoader(options: { [key: string]: any }, console: IConsole): Promise < void > {
 
     this.console = console
 
@@ -165,14 +212,14 @@ export default class SpecLoader extends CradleLoaderBase {
     return Promise.resolve()
   }
 
-  public readModelMetadata(modelName: string): Promise<object> {
+  public readModelMetadata(modelName: string): Promise < object > {
     return new Promise((resolve, reject) => {
       return resolve(this.specObject![modelName].meta)
     })
 
   }
 
-  public finalizeSchema(schema: CradleSchema): Promise<CradleSchema> {
+  public finalizeSchema(schema: CradleSchema): Promise < CradleSchema > {
 
     const modelNames = Object.keys(schema.Models)
     modelNames.map((k) => {
@@ -204,12 +251,62 @@ export default class SpecLoader extends CradleLoaderBase {
     }
   }
 
-  private propertiesToArray(propertyObject: object): Array<{ propertyName: string, propertyType: PropertyType }> {
+  private propertiesToArray(propertyObject: object): Array < { propertyName: string, propertyType: PropertyType } > {
     const propNames = Object.keys(propertyObject)
     return propNames.map((pn) => ({ propertyName: pn, propertyType: propertyObject[pn] }))
   }
 
-  private readPropertyDefinition(modelName: string, propertyPath: string[]): PropertyType {
+  private async getPropertyTypeFromDefinition(property: any): Promise<PropertyType> {
+    if (typeof (property) === 'string') {
+      let specProperty
+      try {
+        specProperty = ParseProperty(property)
+      } catch (err) {
+        const modelNames = await this.readModelNames()
+        if (modelNames.find((x) => x === property)) {
+          return new ModelReferenceType(property)
+        } else {
+        throw err
+        }
+      }
+      if (specProperty) {
+        const propertyType = this.createPropertyTypeFromSpecResult(specProperty)
+        if (specProperty.IsArray) {
+          return new ArrayPropertyType(propertyType)
+        } else {
+          return propertyType
+        }
+      } else {
+        throw new Error(`Unable to parse property ${property}`)
+        }
+
+    } else {
+      const isArray = property.isArray
+      if (property.modelRef) {
+        if (isArray) {
+          return new ArrayPropertyType(new ModelReferenceType(property.modelRef))
+        } else {
+          return new ModelReferenceType(property.modelRef)
+        }
+      }
+      const subProperties = Object.keys(property.properties)
+
+      const members: Array<{ propertyName: string, propertyType: PropertyType }> = []
+      for (const subProp of subProperties) {
+        if (!!subProp) {
+          members.push({ propertyName: subProp, propertyType: await this.getPropertyTypeFromDefinition(subProp) })
+        }
+      }
+      const propertyType = new ObjectPropertyType(members, true, false, null)
+      if (isArray) {
+        return new ArrayPropertyType(propertyType)
+      } else {
+        return propertyType
+      }
+    }
+  }
+
+  private async readPropertyDefinition(modelName: string, propertyPath: string[]): Promise < PropertyType > {
     if (this.specObject) {
       const model = this.specObject[modelName]
 
@@ -221,48 +318,8 @@ export default class SpecLoader extends CradleLoaderBase {
         }
       }
 
-      const property = currentProperty
+      return await this.getPropertyTypeFromDefinition(currentProperty)
 
-      if (typeof (property) === 'string') {
-
-        const specProperty = ParseProperty(property)
-        if (specProperty) {
-
-          const propertyType = this.createPropertyTypeFromSpecResult(specProperty)
-          if (specProperty.IsArray) {
-            return new ArrayPropertyType(propertyType)
-          } else {
-            return propertyType
-          }
-        } else {
-          throw new Error(`Unable to parse property ${propertyPath.join('.')}`)
-        }
-
-      } else {
-        const isArray = property.isArray
-        if (property.modelRef) {
-          if (isArray) {
-            return new ArrayPropertyType(new ModelReferenceType(property.modelRef))
-          } else {
-            return new ModelReferenceType(property.modelRef)
-          }
-        }
-        const subProperties = Object.keys(property.properties)
-
-        const members: Array<{ propertyName: string, propertyType: PropertyType }> = []
-        for (const subProp of subProperties) {
-          if (!!subProp) {
-            const subPath = propertyPath.concat([subProp])
-            members.push({ propertyName: subProp, propertyType: this.readPropertyDefinition(modelName, subPath) })
-          }
-        }
-        const propertyType = new ObjectPropertyType(members, true, false, null)
-        if (isArray) {
-          return new ArrayPropertyType(propertyType)
-        } else {
-          return propertyType
-        }
-      }
     } else {
       throw new Error(`No spec file loaded`)
     }
