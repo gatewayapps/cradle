@@ -5,7 +5,7 @@ const SpecEmitterOptions = require('../dist/lib/SpecEmitter/SpecEmitterOptions')
 
 
 const loaderOptions = new LoaderOptions('spec', {
-  source: './examples/test.yml'
+  source: './examples/filmactor.yml'
 }, console)
 
 
