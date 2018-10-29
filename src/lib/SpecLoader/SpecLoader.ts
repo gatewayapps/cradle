@@ -238,6 +238,18 @@ export default class SpecLoader extends CradleLoaderBase {
         }
       })
 
+      const operationNames = Object.keys(model.Operations)
+      operationNames.map((opName) => {
+        const op = model.Operations[opName]
+        if (op.Returns.TypeName === constants.ModelReference && op.Returns.ModelName) {
+          schema.Models[k].Operations[opName].Returns.ModelType = this.getModelReference(schema, op.Returns)
+        }
+        if (op.Returns.TypeName === constants.Array && op.Returns.MemberType && op.Returns.MemberType.TypeName === constants.ModelReference && op.Returns.MemberType.ModelName) {
+          schema.Models[k].Operations[opName].Returns.ModelType = this.getModelReference(schema, op.Returns.MemberType)
+      }
+
+      })
+
     })
     return Promise.resolve(schema)
   }
