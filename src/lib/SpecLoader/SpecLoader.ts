@@ -257,7 +257,7 @@ export default class SpecLoader extends CradleLoaderBase {
 
     const modelRef = schema.Models.find((m) => m.Name === ref.ModelName)
     if (modelRef) {
-      return new ObjectPropertyType(this.propertiesToArray(modelRef.Properties))
+      return new ObjectPropertyType(this.propertiesToArray(modelRef.Properties), ref.AllowNull, ref.IsPrimaryKey, ref.DefaultValue)
     } else {
       throw new Error(`Invalid model reference: ${ref.ModelName}`)
     }
@@ -273,6 +273,7 @@ export default class SpecLoader extends CradleLoaderBase {
       let specProperty
       try {
         specProperty = ParseProperty(property)
+
       } catch (err) {
         const modelNames = await this.readModelNames()
         if (modelNames.find((x) => x === property)) {
@@ -327,6 +328,7 @@ export default class SpecLoader extends CradleLoaderBase {
 
         if (currentProperty.properties && currentProperty.properties[propertyPath[i]]) {
           currentProperty = currentProperty.properties[propertyPath[i]]
+          break
         }
       }
 
