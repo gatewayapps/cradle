@@ -12,7 +12,4 @@ steps:
   inputs:
     versionSpec: $(node_version)
 
-- script: |
-  npm install
-  npx tslint --project .
-  npm test
+- script: npm install && npm test
