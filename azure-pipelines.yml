@@ -26,5 +26,6 @@ jobs:
   - task: Npm@1
     inputs:
         command: publish
-        publishEndpoint: 'npmjs'
+        publishRegistry: useExternalRegistry
+        publishEndpoint: npmjs
 
