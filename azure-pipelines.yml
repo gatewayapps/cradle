@@ -23,7 +23,7 @@ jobs:
     inputs:
       versionSpec: '10.x'
   - script: |
-      echo "//registry.npmjs.org/:_authToken=$SYSTEM_ACCESSTOKEN" > ~/.npmrc
+      echo "//registry.npmjs.org/:_authToken=$SYSTEM_ACCESSTOKEN" > ./npmrc
       npm install
       npm publish
 
