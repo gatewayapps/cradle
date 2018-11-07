@@ -1,18 +1,28 @@
 pool:
   vmImage: 'ubuntu-16.04'
-strategy:
-  matrix:
-    node_8_x:
-      node_version: 8.x
-    node_9_x:
-      node_version: 9.x
 
-steps:
-- task: NodeTool@0 
-  inputs:
-    versionSpec: $(node_version)
+- job: Test
 
-- script: |
-    npm install
-    npx tslint --project .
-    npm test
+  steps:
+  - task: NodeTool@0 
+    inputs:
+      versionSpec: '10.x'
+  - script: |
+      npm install
+      npx tslint --project .
+      npm test
+
+- job: Publish
+  dependsOn: Test
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/tags/*'))
+  steps:
+  - task: NodeTool@1
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    inputs:
+      versionSpec: '10.x'
+  - script: |
+      echo "//registry.npmjs.org/:_authToken=$SYSTEM_ACCESSTOKEN" > ~/.npmrc
+      npm install
+      npm publish
+
