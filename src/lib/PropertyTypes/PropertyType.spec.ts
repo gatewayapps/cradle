@@ -4,7 +4,7 @@ import constants from './constants'
 import PropertyType from './PropertyType'
 
 class MockPropertyType extends PropertyType {
-  constructor(typeName: string, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean = false) {
+  constructor(typeName: string, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean | string = false) {
     super(typeName, allowNull, isPrimaryKey, defaultValue, unique)
   }
 }

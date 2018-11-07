@@ -142,6 +142,9 @@ describe('SpecPropertyTypeParser', () => {
     it('Should parse with unique', () => {
       expect(ParseProperty('decimal unique')).to.deep.equal(new SpecProperty('decimal', { unique: true }))
     })
+    it('Should parse with unique index name', () => {
+      expect(ParseProperty('decimal unique("awesome")')).to.deep.equal(new SpecProperty('decimal', { unique: 'awesome' }))
+    })
     it('Should parse with a max value', () => {
       expect(ParseProperty('decimal max(10.5)')).to.deep.equal(new SpecProperty('decimal', { maxValue: 10.5 }))
     })

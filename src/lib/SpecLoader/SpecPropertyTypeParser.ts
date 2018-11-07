@@ -171,7 +171,7 @@ export default function ParseProperty(definition: string) {
     const basePropertyType = propertyType.replace(/\(.+\)/ig, '').replace('?', '').replace('[]', '')
 
     let autoDefinition: any
-    let unique: boolean = false
+    let unique: boolean | string = false
     let primaryKey: boolean = false
     let deleteFlag: boolean = false
     let defaultValue: any
@@ -208,6 +208,17 @@ export default function ParseProperty(definition: string) {
               autoDefinition = contents.values
             } else {
               autoDefinition = true
+            }
+            break
+          }
+          case Unique.name: {
+            const nextToken = peekNextToken(lexingResult.tokens, i)
+            if (nextToken && nextToken.tokenType!.name === OpenParentheses.name) {
+              const contents = getTokensFromParentheses(lexingResult.tokens, i + 1, [StringValue])
+              i = contents.endIndex
+              unique = contents.values[0]
+            } else {
+              unique = true
             }
             break
           }

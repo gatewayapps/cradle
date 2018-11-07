@@ -13,7 +13,7 @@ export interface ISpecPropertyOptions {
   precision?: number
   primaryKey?: boolean
   scale?: number
-  unique?: boolean
+  unique?: boolean | string
 }
 
 export default class SpecProperty {
@@ -25,7 +25,7 @@ export default class SpecProperty {
   public MinValue?: any
   public MaxValue?: any
   public PrimaryKey: boolean
-  public Unique: boolean
+  public Unique: boolean | string
   public DeleteFlag: boolean
   public Length?: number
   public IsArray: boolean
