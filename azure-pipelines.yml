@@ -15,11 +15,11 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   dependsOn: Test
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/tags/*'))
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
   steps:
   - task: NodeTool@0
     env:
-      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+      SYSTEM_ACCESSTOKEN: $(npm.accessToken)
     inputs:
       versionSpec: '10.x'
   - script: |
