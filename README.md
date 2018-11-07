@@ -59,6 +59,11 @@ Film:
     actors:
       isArray: true
       modelRef: Actor
+  operations:
+    createFilm:
+      returns: Film
+      arguments:
+        name: 
 
 Actor:
   properties:
