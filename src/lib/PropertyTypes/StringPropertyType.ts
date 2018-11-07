@@ -5,7 +5,7 @@ import PropertyType from './PropertyType'
 export default class StringPropertyType extends EnumerablePropertyType {
     public MaximumLength?: number
 
-    constructor(maximumLength?: number, allowedValues?: any[], caseSensitive: boolean = false, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean = false) {
+    constructor(maximumLength?: number, allowedValues?: any[], caseSensitive: boolean = false, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean | string = false) {
         super(constants.String, allowedValues, allowNull, isPrimaryKey, defaultValue, unique)
         this.MaximumLength = maximumLength
     }

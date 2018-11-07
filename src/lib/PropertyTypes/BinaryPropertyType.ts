@@ -4,7 +4,7 @@ import PropertyType from './PropertyType'
 export default class BinaryPropertyType extends PropertyType {
     public MaximumLength?: number
 
-    constructor(maximumLength?: number, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean = false) {
+    constructor(maximumLength?: number, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean | string = false) {
         super(constants.Binary, allowNull, isPrimaryKey, defaultValue, unique)
         this.MaximumLength = maximumLength
     }

@@ -14,7 +14,7 @@ export class IntegerAutogenerateOptions {
 export default class IntegerPropertyType extends ConstrainablePropertyType {
     public Autogenerate?: IntegerAutogenerateOptions
     // tslint:disable-next-line:max-line-length
-    constructor(minimumValue?: number, maximumValue?: number, autogenerateOptions?: any, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean = false) {
+    constructor(minimumValue?: number, maximumValue?: number, autogenerateOptions?: any, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean | string = false) {
         super(constants.Integer, minimumValue, maximumValue, allowNull, isPrimaryKey, defaultValue, unique)
         if (autogenerateOptions instanceof IntegerAutogenerateOptions) {
             this.Autogenerate = autogenerateOptions

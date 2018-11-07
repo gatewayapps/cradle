@@ -5,7 +5,7 @@ export default abstract class ConstrainablePropertyType extends PropertyType {
     public MinimumValue?: number
     public MaximumValue?: number
 
-    constructor(typeName: string, minimumValue?: number, maximumValue?: number, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean = false) {
+    constructor(typeName: string, minimumValue?: number, maximumValue?: number, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean | string = false) {
         if (!isNullOrUndefined(minimumValue) && !isNullOrUndefined(maximumValue)) {
 
             if (minimumValue > maximumValue) {
