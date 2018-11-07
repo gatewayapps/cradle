@@ -11,19 +11,19 @@ jobs:
       npx tslint --project .
       npm test
 
-# - job: Publish
-#   pool:
-#     vmImage: 'ubuntu-16.04'
-#   dependsOn: Test
-#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/tags/*'))
-#   steps:
-#   - task: NodeTool@1
-#     env:
-#       SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-#     inputs:
-#       versionSpec: '10.x'
-#   - script: |
-#       echo "//registry.npmjs.org/:_authToken=$SYSTEM_ACCESSTOKEN" > ~/.npmrc
-#       npm install
-#       npm publish
+- job: Publish
+  pool:
+    vmImage: 'ubuntu-16.04'
+  dependsOn: Test
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/tags/*'))
+  steps:
+  - task: NodeTool@0
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    inputs:
+      versionSpec: '10.x'
+  - script: |
+      echo "//registry.npmjs.org/:_authToken=$SYSTEM_ACCESSTOKEN" > ~/.npmrc
+      npm install
+      npm publish
 
