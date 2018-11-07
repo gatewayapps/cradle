@@ -18,8 +18,6 @@ jobs:
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
   steps:
   - task: NodeTool@0
-    env:
-      SYSTEM_ACCESSTOKEN: $(npm.accessToken)
     inputs:
       versionSpec: '10.x'
   - script: npm install
