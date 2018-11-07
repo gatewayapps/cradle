@@ -1,4 +1,4 @@
-# Cradle - A Schema Pipeline 
+# Cradle - A Schema Pipeline [![Build Status](https://gatewayapps.visualstudio.com/Cradle/_apis/build/status/Cradle%20CI)](https://gatewayapps.visualstudio.com/Cradle/_build/latest?definitionId=34)
 ## What is Cradle?
 Cradle is a tool for loading data models from one place and emitting it to another. This can be leveraged to eliminate the manual creation of redundant and tedious code within your project/application. We provide the ability to create specs that can, in turn, be executed against emitters with the output resulting in the code you wish to use.
 
