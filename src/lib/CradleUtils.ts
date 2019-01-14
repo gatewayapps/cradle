@@ -27,7 +27,10 @@ export async function getLoader(options: LoaderOptions): Promise<ICradleLoader> 
   } else {
     loader = options.module
   }
-  await loader.prepareLoader()
+  if (loader.prepareLoader) {
+    await loader.prepareLoader()
+  }
+
   return loader
 }
 

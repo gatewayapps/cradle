@@ -24,7 +24,7 @@ export abstract class CradleLoaderBase implements ICradleLoader {
   public abstract readModelNames(): Promise<string[]>
   public abstract readModelPropertyNames(modelName: string): Promise<string[]>
   public abstract readModelMetadata(modelName: string): Promise<object>
-  public abstract prepareLoader(): Promise<void>
+  public abstract prepareLoader?(): Promise<void>
 
   public finalizeSchema(schema: CradleSchema): Promise<CradleSchema> {
     return Promise.resolve(schema)
