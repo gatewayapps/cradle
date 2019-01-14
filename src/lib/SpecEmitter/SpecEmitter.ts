@@ -18,33 +18,32 @@ import UniqueIdentifierPropertyType from '../PropertyTypes/UniqueIdentifierPrope
 import ISpecEmitterOptions from './SpecEmitterOptions'
 
 export default class SpecEmitter implements ICradleEmitter {
-  public config?: EmitterOptions<ISpecEmitterOptions>
-  public console?: IConsole
-  public prepareEmitter(options: EmitterOptions<ISpecEmitterOptions>, console: IConsole) {
-    this.config = options
+  public options: ISpecEmitterOptions
+  public console: IConsole
+
+  constructor(options: ISpecEmitterOptions, console: IConsole) {
+    this.options = options
     this.console = console
   }
 
   public emitSchema(schema: CradleSchema) {
     const models = {}
     schema.Models.map((m) => {
-
       models[m.Name] = this.generateModelSpec(m)
     })
 
-    if (this.tryCreateFile(this.config!.options.outputPath.toString())) {
-      writeFileSync(this.config!.options.outputPath.toString(), safeDump(models), 'utf8')
-
+    if (this.tryCreateFile(this.options.outputPath.toString())) {
+      writeFileSync(this.options.outputPath.toString(), safeDump(models), 'utf8')
     } else {
-      throw new Error(`Failed to write to file ${this.config!.options.outputPath.toString()}, the file already exists`)
+      throw new Error(`Failed to write to file ${this.options.outputPath.toString()}, the file already exists`)
     }
   }
 
-  public generateModelSpec(model: CradleModel | ObjectPropertyType): { meta: object | undefined, properties: object, references: object } {
-    const propertiesCollection = (model instanceof CradleModel) ? model.Properties : model.Members
+  public generateModelSpec(model: CradleModel | ObjectPropertyType): { meta: object | undefined; properties: object; references: object } {
+    const propertiesCollection = model instanceof CradleModel ? model.Properties : model.Members
     const propertyNames = Object.keys(propertiesCollection)
     const retVal = {
-      meta: (model instanceof CradleModel) ? model.Meta : undefined,
+      meta: model instanceof CradleModel ? model.Meta : undefined,
       properties: {},
       references: {}
     }
@@ -52,7 +51,7 @@ export default class SpecEmitter implements ICradleEmitter {
       delete retVal.meta
     }
     if (model instanceof CradleModel && model.References) {
-      const referencesCollection = (model instanceof CradleModel) ? model.References : undefined
+      const referencesCollection = model instanceof CradleModel ? model.References : undefined
       if (referencesCollection && Object.keys(referencesCollection).length > 0) {
         const referenceNames = Object.keys(referencesCollection)
         referenceNames.map((refName) => {
@@ -69,12 +68,12 @@ export default class SpecEmitter implements ICradleEmitter {
       if (propertiesCollection[pn].TypeName === constants.Object) {
         retVal.properties[pn] = {
           isArray: false,
-          properties: this.generateModelSpec((propertiesCollection[pn])).properties
+          properties: this.generateModelSpec(propertiesCollection[pn]).properties
         }
       } else if (propertiesCollection[pn].TypeName === constants.Array && propertiesCollection[pn].MemberType && propertiesCollection[pn].MemberType.TypeName === constants.Object) {
         retVal.properties[pn] = {
           isArray: propertiesCollection[pn].TypeName === constants.Array ? true : false,
-          properties: this.generateModelSpec((propertiesCollection[pn].MemberType)).properties
+          properties: this.generateModelSpec(propertiesCollection[pn].MemberType).properties
         }
       } else {
         try {
@@ -86,7 +85,6 @@ export default class SpecEmitter implements ICradleEmitter {
     })
 
     return retVal
-
   }
 
   public generateReferenceSpec(modelRef: ModelReference): string {
@@ -101,7 +99,6 @@ export default class SpecEmitter implements ICradleEmitter {
     } else {
       throw new Error(`Invalid relation type of ${modelRef.RelationType}`)
     }
-
   }
 
   public getPropertyTypeName(prop: PropertyType) {
@@ -155,7 +152,7 @@ export default class SpecEmitter implements ICradleEmitter {
 
     switch (prop.TypeName) {
       case constants.Integer: {
-        const int = (prop as IntegerPropertyType)
+        const int = prop as IntegerPropertyType
         if (int.MinimumValue !== undefined) {
           const min = this.coerceValueType(int.MinimumValue, propertyName)
           parts.push(`min(${min})`)
@@ -172,7 +169,7 @@ export default class SpecEmitter implements ICradleEmitter {
         break
       }
       case constants.Decimal: {
-        const int = (prop as DecimalPropertyType)
+        const int = prop as DecimalPropertyType
         if (int.MinimumValue !== undefined) {
           const min = this.coerceValueType(int.MinimumValue, propertyName)
           parts.push(`min(${min})`)
@@ -184,7 +181,7 @@ export default class SpecEmitter implements ICradleEmitter {
         break
       }
       case constants.DateTime: {
-        const int = (prop as DateTimePropertyType)
+        const int = prop as DateTimePropertyType
         if (int.MinValue) {
           const min = this.coerceValueType(int.MinValue, propertyName)
           parts.push(`min(${min})`)
@@ -196,22 +193,20 @@ export default class SpecEmitter implements ICradleEmitter {
         break
       }
       case constants.String: {
-        const str = (prop as StringPropertyType)
+        const str = prop as StringPropertyType
         if (str.AllowedValues != null && str.AllowedValues.length > 0) {
           const allowedValues = str.AllowedValues.map((av) => this.coerceValueType(av, propertyName))
           parts.push(`allow(${allowedValues.join(', ')})`)
         }
       }
       case constants.UniqueIdentifier: {
-        const uuid = (prop as UniqueIdentifierPropertyType)
+        const uuid = prop as UniqueIdentifierPropertyType
         if (uuid.Autogenerate) {
           parts.push('auto')
         }
       }
-
     }
     return parts.join(' ')
-
   }
 
   protected coerceValueType(value: any, propertyType: string): string | undefined {
@@ -219,28 +214,31 @@ export default class SpecEmitter implements ICradleEmitter {
       return value
     }
 
-    const basePropertyType = propertyType.replace(/(\[\]|\?|\(\d+,*\d*\))/ig, '').toLowerCase()
+    const basePropertyType = propertyType.replace(/(\[\]|\?|\(\d+,*\d*\))/gi, '').toLowerCase()
     switch (basePropertyType) {
-      case constants.Boolean.toLowerCase(): return !!value ? 'true' : 'false'
-      case constants.DateTime.toLowerCase(): return value instanceof Date ? value.toISOString() : 'NOW'
-      case constants.Decimal.toLowerCase(): return value.toString()
-      case constants.Integer.toLowerCase(): return value.toString()
-      case constants.String.toLowerCase(): return `${value === '' ? '""' : value.toString()}`
-      case constants.UniqueIdentifier.toLowerCase(): return value.toString()
+      case constants.Boolean.toLowerCase():
+        return !!value ? 'true' : 'false'
+      case constants.DateTime.toLowerCase():
+        return value instanceof Date ? value.toISOString() : 'NOW'
+      case constants.Decimal.toLowerCase():
+        return value.toString()
+      case constants.Integer.toLowerCase():
+        return value.toString()
+      case constants.String.toLowerCase():
+        return `${value === '' ? '""' : value.toString()}`
+      case constants.UniqueIdentifier.toLowerCase():
+        return value.toString()
       default: {
         throw new Error(`Invalid data type for values: ${typeof value} cannot be converted to (${propertyType})`)
       }
     }
-
   }
 
   protected tryCreateFile(fileName: string): boolean | number {
-    if (!this.config!.options.overwriteExisting && existsSync(fileName)) {
+    if (!this.options.overwriteExisting && existsSync(fileName)) {
       return false
     } else {
       return openSync(fileName, 'w')
-
     }
   }
-
 }
