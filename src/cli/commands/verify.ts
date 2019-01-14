@@ -9,8 +9,9 @@ export const desc = 'Verifies a cradle schema based on the configuration'
 export const builder = {
   config: {
     alias: ['c'],
-    demandOption: true,
-    describe: 'path to a cradle config file',
+    default: './cradle.config.js',
+    demandOption: false,
+    describe: 'path to a cradle config file'
   }
 }
 
