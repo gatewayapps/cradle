@@ -1,8 +1,26 @@
 {
-    "tslint.run": "onType",
-    "tslint.autoFixOnSave": true,
+    "[typescript]": {
+      "editor.formatOnSave": true
+    },
+    "[javascript]": {
+      "editor.formatOnSave": true
+    },
+    "[json]": {
+      "editor.formatOnSave": false
+    },
+    "[jsonc]": {
+      "editor.formatOnSave": false
+    },
+    "prettier.tslintIntegration": true,
+    "files.insertFinalNewline": true,
     "files.exclude": {
-        "node_modules": true,
-        "dist": true
+      "**/.git": true,
+      "**/.svn": true,
+      "**/.hg": true,
+      "**/CVS": true,
+      "**/.DS_Store": true,
+      "node_modules": true,
+      "dist": false
     }
-}
+  }
+  

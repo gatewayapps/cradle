@@ -10,7 +10,7 @@ export default interface ICradleLoader {
     /**
      * Passes a loader the options so it can do any initialization it needs to
      */
-    prepareLoader: (options: {[key: string]: any}, console: IConsole) => Promise < void >
+    prepareLoader: () => Promise < void >
     readModelNames: () => Promise < string[] >
     readModelOperationNames?: (modelName: string) => Promise <string[]>
     readModelOperation?: (modelName: string, operationName: string) => Promise<ICradleOperation>
@@ -21,4 +21,8 @@ export default interface ICradleLoader {
     readModelMetadata: (modelName: string) => Promise < object >
     finalizeSchema: (schema: CradleSchema) => Promise < CradleSchema >
     loadSchema: () => Promise<CradleSchema>
+}
+
+export interface ICradleLoaderConstructable {
+    new (options: {[key: string]: any}, console: IConsole): ICradleLoader
 }
