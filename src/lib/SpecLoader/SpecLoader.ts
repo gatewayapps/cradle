@@ -7,6 +7,7 @@ import { IConsole } from '../IConsole'
 import { ICradleOperation } from '../ICradleOperation'
 import ModelReference, { RelationTypes } from '../ModelReference'
 import ArrayPropertyType from '../PropertyTypes/ArrayPropertyType'
+import BinaryPropertyType from '../PropertyTypes/BinaryPropertyType'
 import BooleanPropertyType from '../PropertyTypes/BooleanPropertyType'
 import constants from '../PropertyTypes/constants'
 import DateTimePropertyType from '../PropertyTypes/DateTimePropertyType'
@@ -329,6 +330,8 @@ export default class SpecLoader extends CradleLoaderBase {
         return new StringPropertyType(spec.Length, spec.AllowedValues, true, spec.Nullable, spec.PrimaryKey, spec.DefaultValue, spec.Unique)
       case constants.UniqueIdentifier.toLocaleUpperCase():
         return new UniqueIdentifierPropertyType(spec.Nullable, spec.PrimaryKey, spec.AutogenerateOptions, spec.DefaultValue, spec.Unique)
+      case constants.Binary.toLocaleUpperCase():
+        return new BinaryPropertyType(spec.Length, spec.Nullable, spec.PrimaryKey, spec.DefaultValue, spec.Unique)
       default: {
         throw new Error(`Unexpected property type: ${spec.PropertyType}`)
       }
