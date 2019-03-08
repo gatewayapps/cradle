@@ -6,7 +6,7 @@ const createToken = chevrotain.createToken
 
 const PropertyType = createToken({
   name: 'PropertyType',
-  pattern: /(uniqueidentifier|integer|string\(\s*\d+\s*\)|string|boolean|datetime|decimal\(\s*\d+,\d+\s*\)|decimal)(\[\])?\??/i
+  pattern: /(uniqueidentifier|binary|integer|string\(\s*\d+\s*\)|string|boolean|datetime|decimal\(\s*\d+,\d+\s*\)|decimal)(\[\])?\??/i
 })
 
 const BooleanValue = createToken({
