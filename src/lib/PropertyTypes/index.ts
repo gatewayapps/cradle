@@ -6,8 +6,8 @@ import ConstrainablePropertyType from './ConstrainablePropertyType'
 import DateTimePropertyType from './DateTimePropertyType'
 import DecimalPropertyType from './DecimalPropertyType'
 import EnumerablePropertyType from './EnumerablePropertyType'
+import ImportModelType from './ImportModelType'
 import IntegerPropertyType from './IntegerPropertyType'
-import ModelReferencePropertyType from './ModelReferenceType'
 import ObjectPropertyType from './ObjectPropertyType'
 import PropertyType from './PropertyType'
 import StringPropertyType from './StringPropertyType'
@@ -22,8 +22,8 @@ export default {
   DateTimePropertyType,
   DecimalPropertyType,
   EnumerablePropertyType,
+  ImportModelType,
   IntegerPropertyType,
-  ModelReferencePropertyType,
   ObjectPropertyType,
   PropertyType,
   StringPropertyType,

@@ -6,4 +6,6 @@ export default class CradleSchema {
   constructor(models: CradleModel[]) {
     this.Models = models
   }
+
+  public GetModel = (modelName: string) => this.Models.find((m) => m.Name === modelName)
 }

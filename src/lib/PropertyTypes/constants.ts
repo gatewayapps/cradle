@@ -1,13 +1,14 @@
 const PropertyTypes = {
-    Array: 'Array',
-    Binary: 'Binary',
-    Boolean: 'Boolean',
-    DateTime: 'DateTime',
-    Decimal: 'Decimal',
-    Integer: 'Integer',
-    ModelReference: 'ModelReference',
-    Object: 'Object',
-    String: 'String',
-    UniqueIdentifier: 'UniqueIdentifier'
+  Array: 'Array',
+  Binary: 'Binary',
+  Boolean: 'Boolean',
+  DateTime: 'DateTime',
+  Decimal: 'Decimal',
+  ImportModel: 'ImportModel',
+  Integer: 'Integer',
+  Object: 'Object',
+  ReferenceModel: 'ReferenceModel',
+  String: 'String',
+  UniqueIdentifier: 'UniqueIdentifier'
 }
 export default PropertyTypes

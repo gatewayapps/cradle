@@ -6,6 +6,4 @@ export default interface ICradleEmitter {
   prepareEmitter?()
   emitSchema(schema: CradleSchema)
 }
-export interface ICradleEmitterConstructable {
-  new (options: any, console: IConsole): ICradleEmitter
-}
+export type ICradleEmitterConstructable = new (options: any, console: IConsole) => ICradleEmitter

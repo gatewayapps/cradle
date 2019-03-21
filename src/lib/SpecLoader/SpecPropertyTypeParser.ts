@@ -1,12 +1,11 @@
-
 import chevrotain, { IToken, Lexer, Parser, TokenType } from 'chevrotain'
-import ArrayPropertyType from '../PropertyTypes/ArrayPropertyType'
+import constants from '../PropertyTypes/constants'
 import SpecProperty from './SpecProperty'
 const createToken = chevrotain.createToken
 
 const PropertyType = createToken({
   name: 'PropertyType',
-  pattern: /(uniqueidentifier|binary|integer|string\(\s*\d+\s*\)|string|boolean|datetime|decimal\(\s*\d+,\d+\s*\)|decimal)(\[\])?\??/i
+  pattern: /(ref\s(\w+)|import\s(\w+)|uniqueidentifier|binary|integer|string\(\s*\d+\s*\)|string|boolean|datetime|decimal\(\s*\d+,\d+\s*\)|decimal)(\[\])?\??/i
 })
 
 const BooleanValue = createToken({
@@ -99,46 +98,19 @@ const WhiteSpace = createToken({
   name: 'WhiteSpace',
   pattern: /\s+/
 })
+
 const Invalid = createToken({
   name: 'Invalid',
   pattern: /.+/
 })
 
-const allTokens = [
-  StringValue,
-  WhiteSpace,
-  PropertyType,
-  OpenParentheses,
-  Comma,
-  CloseParentheses,
-  UuidValue,
-  DateTimeValue,
-  Now,
-  BooleanValue,
-  DecimalValue,
-  IntegerValue,
-  Auto,
-  Unique,
-  Max,
-  Min,
-  Default,
-  Allow,
-  Primary,
-  Delete,
-  Invalid
-]
+const allTokens = [StringValue, WhiteSpace, PropertyType, OpenParentheses, Comma, CloseParentheses, UuidValue, DateTimeValue, Now, BooleanValue, DecimalValue, IntegerValue, Auto, Unique, Max, Min, Default, Allow, Primary, Delete, Invalid]
 
 const SpecLexer = new Lexer(allTokens)
 
 class SpecParser extends Parser {
   public propertyStatement: any
   private propertyDeclaration: any
-  private defaultDeclaration: any
-  private deleteDeclaration: any
-  private primaryDeclaration: any
-  private minDeclaration: any
-  private maxDeclaration: any
-  private autoDeclaration: any
 
   constructor(input) {
     super(input, allTokens)
@@ -157,45 +129,66 @@ class SpecParser extends Parser {
 const localParser = new SpecParser([])
 
 export default function ParseProperty(definition: string) {
+  const lexingResult = SpecLexer.tokenize(definition)
+  if (lexingResult.tokens.length === 0) {
+    throw new SyntaxError('Unable to parse empty or null string')
+  }
 
-    const lexingResult = SpecLexer.tokenize(definition)
-    if (lexingResult.tokens.length === 0) {
-      throw new SyntaxError('Unable to parse empty or null string')
+  lexingResult.tokens.map((t) => {
+    if (t.tokenType!.name === Invalid.name) {
+      throw new SyntaxError(`Invalid token: ${t.image}`)
     }
-    lexingResult.tokens.map((t) => {
-      if (t.tokenType!.name === Invalid.name) {
-        throw new SyntaxError(`Invalid token: ${t.image}`)
-      }
-    })
-    const propertyType = lexingResult.tokens[0].image
-    const basePropertyType = propertyType.replace(/\(.+\)/ig, '').replace('?', '').replace('[]', '')
+  })
+  const propertyType = lexingResult.tokens[0].image
 
-    let autoDefinition: any
-    let unique: boolean | string = false
-    let primaryKey: boolean = false
-    let deleteFlag: boolean = false
-    let defaultValue: any
-    let length: number | undefined
-    let precision: number | undefined
-    let scale: number | undefined
-    let allowedValues: any
-    let minValue: any
-    let maxValue: any
+  const isImport = propertyType.indexOf('import') === 0
+  const isRef = propertyType.indexOf('ref') === 0
 
-    const isArray = propertyType.indexOf('[]') > -1
-    const nullable = propertyType.indexOf('?') > -1
+  let basePropertyType = propertyType
+    .replace(/\(.+\)/gi, '')
+    .replace('?', '')
+    .replace('[]', '')
 
-    const typeDetailMatch = /\((.+)\)/.exec(propertyType)
-    if (typeDetailMatch) {
-      const detailParts = typeDetailMatch[1].split(',')
-      if (detailParts.length === 1) {
-        length = parseInt(detailParts[0], 10)
-      } else if (detailParts.length === 2) {
-        precision = parseInt(detailParts[0], 10)
-        scale = parseInt(detailParts[1], 10)
-      }
+  let autoDefinition: any
+  let unique: boolean | string = false
+  let primaryKey: boolean = false
+  let deleteFlag: boolean = false
+  let defaultValue: any
+  let length: number | undefined
+  let precision: number | undefined
+  let scale: number | undefined
+  let allowedValues: any
+  let minValue: any
+  let maxValue: any
+  let modelName: string | undefined
+  let localProperty: string | undefined
+  let foreignProperty: string | undefined
+
+  const isArray = propertyType.indexOf('[]') > -1
+  const nullable = propertyType.indexOf('?') > -1
+
+  const typeDetailMatch = /\((.+)\)/.exec(propertyType)
+  if (typeDetailMatch) {
+    const detailParts = typeDetailMatch[1].split(',')
+    if (detailParts.length === 1) {
+      length = parseInt(detailParts[0], 10)
+    } else if (detailParts.length === 2) {
+      precision = parseInt(detailParts[0], 10)
+      scale = parseInt(detailParts[1], 10)
     }
+  }
 
+  if (isImport) {
+    modelName = basePropertyType.split(' ')[1]
+    basePropertyType = constants.ImportModel
+  } else if (isRef) {
+    modelName = basePropertyType.split(' ')[1]
+    basePropertyType = constants.ReferenceModel
+
+    const contents = getTokensFromParentheses(lexingResult.tokens, 1, [StringValue])
+    localProperty = contents.values[0]
+    foreignProperty = contents.values[1]
+  } else {
     for (let i = 1; i < lexingResult.tokens.length; i++) {
       const token = lexingResult.tokens[i]
       if (token && token.tokenType) {
@@ -284,28 +277,39 @@ export default function ParseProperty(definition: string) {
             }
             break
           }
-          case Primary.name: primaryKey = true; break
-          case Unique.name: unique = true; break
-          case Delete.name: deleteFlag = true; break
-          case Invalid.name: throw new SyntaxError(`Invalid token '${token.image}'`)
+          case Primary.name:
+            primaryKey = true
+            break
+          case Unique.name:
+            unique = true
+            break
+          case Delete.name:
+            deleteFlag = true
+            break
+          case Invalid.name:
+            throw new SyntaxError(`Invalid token '${token.image}'`)
         }
       }
     }
-    return  new SpecProperty(basePropertyType, {
-      allowedValues,
-      autogenerateOptions: autoDefinition,
-      defaultValue,
-      deleteFlag,
-      isArray,
-      length,
-      maxValue,
-      minValue,
-      nullable,
-      precision,
-      primaryKey,
-      scale,
-      unique,
-    })
+  }
+  return new SpecProperty(basePropertyType, {
+    allowedValues,
+    autogenerateOptions: autoDefinition,
+    defaultValue,
+    deleteFlag,
+    foreignProperty,
+    isArray,
+    length,
+    localProperty,
+    maxValue,
+    minValue,
+    modelName,
+    nullable,
+    precision,
+    primaryKey,
+    scale,
+    unique
+  })
 }
 
 function peekNextToken(tokens: IToken[], currentIndex: number): IToken | undefined {
@@ -345,7 +349,6 @@ function ensureValueTypes(propertyTypeName: string, values: any[]) {
       }
       break
     }
-
   }
 }
 
@@ -354,7 +357,6 @@ function getTokensFromParentheses(tokens: IToken[], startIndex: number, allowedT
   const result: any[] = []
   if (startIndex >= tokens.length) {
     throw new RangeError(`Start index cannot be greater than tokens length`)
-
   }
   if (tokens[startIndex].tokenType!.name === OpenParentheses.name) {
     for (let i = startIndex + 1; i < tokens.length; i++) {
@@ -372,7 +374,6 @@ function getTokensFromParentheses(tokens: IToken[], startIndex: number, allowedT
 
           result.push(parsedTokenValue)
         }
-
       }
     }
   } else {
