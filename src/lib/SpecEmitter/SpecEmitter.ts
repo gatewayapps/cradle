@@ -2,10 +2,10 @@ import { existsSync, openSync, writeFileSync } from 'fs'
 import { safeDump } from 'js-yaml'
 import CradleModel from '../CradleModel'
 import CradleSchema from '../CradleSchema'
-import EmitterOptions from '../EmitterOptions'
+
 import { IConsole } from '../IConsole'
 import ICradleEmitter from '../ICradleEmitter'
-import ModelReference, { RelationTypes } from '../ModelReference'
+
 import ArrayPropertyType from '../PropertyTypes/ArrayPropertyType'
 import constants from '../PropertyTypes/constants'
 import DateTimePropertyType from '../PropertyTypes/DateTimePropertyType'
@@ -50,19 +50,6 @@ export default class SpecEmitter implements ICradleEmitter {
     if (retVal.meta === undefined) {
       delete retVal.meta
     }
-    if (model instanceof CradleModel && model.References) {
-      const referencesCollection = model instanceof CradleModel ? model.References : undefined
-      if (referencesCollection && Object.keys(referencesCollection).length > 0) {
-        const referenceNames = Object.keys(referencesCollection)
-        referenceNames.map((refName) => {
-          retVal.references[refName] = this.generateReferenceSpec(referencesCollection[refName])
-        })
-      } else {
-        delete retVal.references
-      }
-    } else {
-      delete retVal.references
-    }
 
     propertyNames.map((pn) => {
       if (propertiesCollection[pn].TypeName === constants.Object) {
@@ -85,20 +72,6 @@ export default class SpecEmitter implements ICradleEmitter {
     })
 
     return retVal
-  }
-
-  public generateReferenceSpec(modelRef: ModelReference): string {
-    if (modelRef.RelationType === RelationTypes.SingleOn) {
-      return `single of ${modelRef.ForeignModel} on ${modelRef.LocalProperty}`
-    } else if (modelRef.RelationType === RelationTypes.MultipleVia) {
-      return `multiple of ${modelRef.ForeignModel} via ${modelRef.ProxyModel}`
-    } else if (modelRef.RelationType === RelationTypes.Single) {
-      return `single of ${modelRef.ForeignModel}`
-    } else if (modelRef.RelationType === RelationTypes.Multiple) {
-      return `multiple of ${modelRef.ForeignModel}`
-    } else {
-      throw new Error(`Invalid relation type of ${modelRef.RelationType}`)
-    }
   }
 
   public getPropertyTypeName(prop: PropertyType) {

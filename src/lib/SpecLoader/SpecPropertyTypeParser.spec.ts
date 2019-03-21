@@ -1,4 +1,4 @@
-import {expect} from 'chai'
+import { expect } from 'chai'
 import 'mocha'
 import constants from '../PropertyTypes/constants'
 import { IntegerAutogenerateOptions } from '../PropertyTypes/IntegerPropertyType'
@@ -7,11 +7,45 @@ import ParseProperty from './SpecPropertyTypeParser'
 
 describe('SpecPropertyTypeParser', () => {
   it('Should throw a SyntaxError if called without a value', () => {
-    expect(() => {ParseProperty('')}).to.throw(SyntaxError)
+    expect(() => {
+      ParseProperty('')
+    }).to.throw(SyntaxError)
   })
 
   it('Should throw a SyntaxError if called with invalid type name', () => {
-    expect(() => {ParseProperty('garbage')}).to.throw(SyntaxError)
+    expect(() => {
+      ParseProperty('garbage')
+    }).to.throw(SyntaxError)
+  })
+
+  describe('Ref', () => {
+    it('Should parse a ref', () => {
+      expect(ParseProperty('ref Test("id", "id")')).to.deep.equal(new SpecProperty(constants.ReferenceModel, { foreignProperty: 'id', localProperty: 'id', modelName: 'Test' }))
+    })
+    it('Should parse a ref array', () => {
+      expect(ParseProperty('ref Test[]("id", "id")')).to.deep.equal(new SpecProperty(constants.ReferenceModel, { foreignProperty: 'id', localProperty: 'id', modelName: 'Test', isArray: true }))
+    })
+    it('Should parse a nullable ref', () => {
+      expect(ParseProperty('ref Test?("id", "id")')).to.deep.equal(new SpecProperty(constants.ReferenceModel, { foreignProperty: 'id', localProperty: 'id', modelName: 'Test', nullable: true }))
+    })
+    it('Should parse a nullable ref array', () => {
+      expect(ParseProperty('ref Test[]?("id", "id")')).to.deep.equal(new SpecProperty(constants.ReferenceModel, { foreignProperty: 'id', localProperty: 'id', modelName: 'Test', nullable: true, isArray: true }))
+    })
+  })
+
+  describe('Import', () => {
+    it('Should parse an import', () => {
+      expect(ParseProperty('import Test')).to.deep.equal(new SpecProperty(constants.ImportModel, { modelName: 'Test' }))
+    })
+    it('Should parse a nullable import', () => {
+      expect(ParseProperty('import Test?')).to.deep.equal(new SpecProperty(constants.ImportModel, { modelName: 'Test', nullable: true }))
+    })
+    it('Should parse an import array', () => {
+      expect(ParseProperty('import Test[]')).to.deep.equal(new SpecProperty(constants.ImportModel, { modelName: 'Test', isArray: true }))
+    })
+    it('Should parse a nullable import array', () => {
+      expect(ParseProperty('import Test[]?')).to.deep.equal(new SpecProperty(constants.ImportModel, { modelName: 'Test', isArray: true, nullable: true }))
+    })
   })
 
   describe('Integer', () => {
@@ -40,7 +74,7 @@ describe('SpecPropertyTypeParser', () => {
       expect(ParseProperty('integer max(0)')).to.deep.equal(new SpecProperty('integer', { maxValue: 0 }))
     })
     it('Should parse with a min and max value', () => {
-      expect(ParseProperty('integer min(-100) max(0)')).to.deep.equal(new SpecProperty('integer', { maxValue: 0, minValue: -100, }))
+      expect(ParseProperty('integer min(-100) max(0)')).to.deep.equal(new SpecProperty('integer', { maxValue: 0, minValue: -100 }))
     })
     it('Should parse with a list of allowed values', () => {
       expect(ParseProperty('integer allow(0, 1, 2, 3, 4)')).to.deep.equal(new SpecProperty('integer', { allowedValues: [0, 1, 2, 3, 4] }))
@@ -51,31 +85,49 @@ describe('SpecPropertyTypeParser', () => {
 
     // Errors
     it('Should throw an error with invalid Auto options', () => {
-      expect(() => {ParseProperty('integer auto(1)')}).to.throw(RangeError)
+      expect(() => {
+        ParseProperty('integer auto(1)')
+      }).to.throw(RangeError)
     })
     it('Should throw a TypeError with an invalid default value', () => {
-      expect(() => {ParseProperty('integer default("123")')}).to.throw(TypeError)
+      expect(() => {
+        ParseProperty('integer default("123")')
+      }).to.throw(TypeError)
     })
     it('Should throw a SyntaxError with an empty default value', () => {
-      expect(() => {ParseProperty('integer default()')}).to.throw(SyntaxError)
+      expect(() => {
+        ParseProperty('integer default()')
+      }).to.throw(SyntaxError)
     })
     it('Should throw a TypeError with an invalid min value', () => {
-      expect(() => {ParseProperty('integer min("123")')}).to.throw(TypeError)
+      expect(() => {
+        ParseProperty('integer min("123")')
+      }).to.throw(TypeError)
     })
     it('Should throw a SyntaxError with an empty min value', () => {
-      expect(() => {ParseProperty('integer min()')}).to.throw(SyntaxError)
+      expect(() => {
+        ParseProperty('integer min()')
+      }).to.throw(SyntaxError)
     })
     it('Should throw a TypeError with an invalid max value', () => {
-      expect(() => {ParseProperty('integer max("123")')}).to.throw(TypeError)
+      expect(() => {
+        ParseProperty('integer max("123")')
+      }).to.throw(TypeError)
     })
     it('Should throw a SyntaxError with an empty max value', () => {
-      expect(() => {ParseProperty('integer max()')}).to.throw(SyntaxError)
+      expect(() => {
+        ParseProperty('integer max()')
+      }).to.throw(SyntaxError)
     })
     it('Should throw a TypeError with an invalid allow value', () => {
-      expect(() => {ParseProperty('integer allow(0, "1", 2)')}).to.throw(TypeError)
+      expect(() => {
+        ParseProperty('integer allow(0, "1", 2)')
+      }).to.throw(TypeError)
     })
     it('Should throw a SyntaxError with an empty allow value', () => {
-      expect(() => {ParseProperty('integer allow()')}).to.throw(SyntaxError)
+      expect(() => {
+        ParseProperty('integer allow()')
+      }).to.throw(SyntaxError)
     })
   })
 
@@ -101,10 +153,14 @@ describe('SpecPropertyTypeParser', () => {
 
     // Errors
     it('Should throw a TypeError with invalid default value', () => {
-      expect(() => {ParseProperty('boolean default("bad")')}).to.throw(TypeError)
+      expect(() => {
+        ParseProperty('boolean default("bad")')
+      }).to.throw(TypeError)
     })
     it('Should throw a SyntaxError with an empty default value', () => {
-      expect(() => {ParseProperty('boolean default()')}).to.throw(SyntaxError)
+      expect(() => {
+        ParseProperty('boolean default()')
+      }).to.throw(SyntaxError)
     })
   })
 
@@ -119,7 +175,7 @@ describe('SpecPropertyTypeParser', () => {
       expect(ParseProperty('decimal[]')).to.deep.equal(new SpecProperty('decimal', { isArray: true }))
     })
     it('Should parse as a nullable array', () => {
-    expect(ParseProperty('decimal[]?')).to.deep.equal(new SpecProperty('decimal', { isArray: true, nullable: true }))
+      expect(ParseProperty('decimal[]?')).to.deep.equal(new SpecProperty('decimal', { isArray: true, nullable: true }))
     })
     it('Should parse with a precision and scale', () => {
       expect(ParseProperty('decimal(12,2)')).to.deep.equal(new SpecProperty('decimal', { precision: 12, scale: 2 }))
@@ -155,44 +211,54 @@ describe('SpecPropertyTypeParser', () => {
       expect(ParseProperty('decimal min(-10.5) max(10.5)')).to.deep.equal(new SpecProperty('decimal', { maxValue: 10.5, minValue: -10.5 }))
     })
     it('Should parse with allowed values', () => {
-      expect(ParseProperty('decimal allow(0, 1.5, 2.5, 5)')).to.deep.equal(new SpecProperty('decimal', { allowedValues: [ 0, 1.5, 2.5, 5 ] }))
+      expect(ParseProperty('decimal allow(0, 1.5, 2.5, 5)')).to.deep.equal(new SpecProperty('decimal', { allowedValues: [0, 1.5, 2.5, 5] }))
     })
 
     // Errors
     it('Should throw a TypeError with an invalid default value', () => {
-      expect(() => {ParseProperty('decimal default("123.45")')}).to.throw(TypeError)
+      expect(() => {
+        ParseProperty('decimal default("123.45")')
+      }).to.throw(TypeError)
     })
     it('Should throw a SyntaxError with an empty default value', () => {
-      expect(() => {ParseProperty('decimal default()')}).to.throw(SyntaxError)
+      expect(() => {
+        ParseProperty('decimal default()')
+      }).to.throw(SyntaxError)
     })
     it('Should throw a TypeError with an invalid min value', () => {
-      expect(() => {ParseProperty('decimal min("123.45")')}).to.throw(TypeError)
+      expect(() => {
+        ParseProperty('decimal min("123.45")')
+      }).to.throw(TypeError)
     })
     it('Should throw a SyntaxError with an empty min value', () => {
-      expect(() => {ParseProperty('decimal min()')}).to.throw(SyntaxError)
+      expect(() => {
+        ParseProperty('decimal min()')
+      }).to.throw(SyntaxError)
     })
     it('Should throw a TypeError with an invalid max value', () => {
-      expect(() => {ParseProperty('decimal max("123.45")')}).to.throw(TypeError)
+      expect(() => {
+        ParseProperty('decimal max("123.45")')
+      }).to.throw(TypeError)
     })
     it('Should throw a SyntaxError with an empty max value', () => {
-      expect(() => {ParseProperty('decimal max()')}).to.throw(SyntaxError)
+      expect(() => {
+        ParseProperty('decimal max()')
+      }).to.throw(SyntaxError)
     })
     it('Should throw a TypeError with an invalid allow value', () => {
-      expect(() => {ParseProperty('decimal allow(0.25, "1.5", 2)')}).to.throw(TypeError)
+      expect(() => {
+        ParseProperty('decimal allow(0.25, "1.5", 2)')
+      }).to.throw(TypeError)
     })
     it('Should throw a SyntaxError with an empty allow value', () => {
-      expect(() => {ParseProperty('decimal allow()')}).to.throw(SyntaxError)
+      expect(() => {
+        ParseProperty('decimal allow()')
+      }).to.throw(SyntaxError)
     })
   })
 
   describe('DateTime', () => {
-    const validNowTokens = [
-      'NOW',
-      'now',
-      'Now',
-      'nOw',
-      'noW',
-    ]
+    const validNowTokens = ['NOW', 'now', 'Now', 'nOw', 'noW']
     const validDates = [
       '2018-01-01',
       '2018/01/01',
@@ -216,11 +282,11 @@ describe('SpecPropertyTypeParser', () => {
       '2018-01-01 05:40:12.345+0530',
       '20180101',
       '20180101T0545',
-      '20180101T0545Z',
+      '20180101T0545Z'
     ]
     const invalidDates = [
       '"2018-01-01"',
-      '2018-13-28',
+      '2018-13-28'
       // '2007-04-05T24:50',
     ]
 
@@ -265,23 +331,35 @@ describe('SpecPropertyTypeParser', () => {
     // Errors
     it('Should throw a TypeError with an invalid default value', () => {
       invalidDates.forEach((testDate) => {
-        expect(() => {ParseProperty(`datetime default(${testDate})`)}).to.throw(TypeError)
+        expect(() => {
+          ParseProperty(`datetime default(${testDate})`)
+        }).to.throw(TypeError)
       })
     })
     it('Should throw a SyntaxError with an empty default value', () => {
-      expect(() => {ParseProperty('datetime default()')}).to.throw(SyntaxError)
+      expect(() => {
+        ParseProperty('datetime default()')
+      }).to.throw(SyntaxError)
     })
     it('Should throw a TypeError with an invalid min value', () => {
-      expect(() => {ParseProperty('datetime min("123.45")')}).to.throw(TypeError)
+      expect(() => {
+        ParseProperty('datetime min("123.45")')
+      }).to.throw(TypeError)
     })
     it('Should throw a SyntaxError with an empty min value', () => {
-      expect(() => {ParseProperty('datetime min()')}).to.throw(SyntaxError)
+      expect(() => {
+        ParseProperty('datetime min()')
+      }).to.throw(SyntaxError)
     })
     it('Should throw a TypeError with an invalid max value', () => {
-      expect(() => {ParseProperty('datetime max("123.45")')}).to.throw(TypeError)
+      expect(() => {
+        ParseProperty('datetime max("123.45")')
+      }).to.throw(TypeError)
     })
     it('Should throw a SyntaxError with an empty max value', () => {
-      expect(() => {ParseProperty('datetime max()')}).to.throw(SyntaxError)
+      expect(() => {
+        ParseProperty('datetime max()')
+      }).to.throw(SyntaxError)
     })
   })
 
@@ -317,16 +395,24 @@ describe('SpecPropertyTypeParser', () => {
 
     // Errors
     it('Should throw a TypeError with an invalid default value', () => {
-      expect(() => {ParseProperty('string default(123.45)')}).to.throw(TypeError)
+      expect(() => {
+        ParseProperty('string default(123.45)')
+      }).to.throw(TypeError)
     })
     it('Should throw a SyntaxError with an empty default value', () => {
-      expect(() => {ParseProperty('string default()')}).to.throw(SyntaxError)
+      expect(() => {
+        ParseProperty('string default()')
+      }).to.throw(SyntaxError)
     })
     it('Should throw a TypeError with an invalid allow value', () => {
-      expect(() => {ParseProperty('string allow("Test 1", 1.5, "Test 2")')}).to.throw(TypeError)
+      expect(() => {
+        ParseProperty('string allow("Test 1", 1.5, "Test 2")')
+      }).to.throw(TypeError)
     })
     it('Should throw a SyntaxError with an empty allow value', () => {
-      expect(() => {ParseProperty('string allow()')}).to.throw(SyntaxError)
+      expect(() => {
+        ParseProperty('string allow()')
+      }).to.throw(SyntaxError)
     })
   })
 

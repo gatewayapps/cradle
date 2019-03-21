@@ -5,17 +5,19 @@ import { CradleLoaderBase } from '../CradleLoaderBase'
 import CradleSchema from '../CradleSchema'
 import { IConsole } from '../IConsole'
 import { ICradleOperation } from '../ICradleOperation'
-import ModelReference, { RelationTypes } from '../ModelReference'
+
+import { CradleModel } from '../..'
 import ArrayPropertyType from '../PropertyTypes/ArrayPropertyType'
 import BinaryPropertyType from '../PropertyTypes/BinaryPropertyType'
 import BooleanPropertyType from '../PropertyTypes/BooleanPropertyType'
 import constants from '../PropertyTypes/constants'
 import DateTimePropertyType from '../PropertyTypes/DateTimePropertyType'
 import DecimalPropertyType from '../PropertyTypes/DecimalPropertyType'
+import ImportModelType from '../PropertyTypes/ImportModelType'
 import IntegerPropertyType from '../PropertyTypes/IntegerPropertyType'
-import ModelReferenceType from '../PropertyTypes/ModelReferenceType'
 import ObjectPropertyType from '../PropertyTypes/ObjectPropertyType'
 import PropertyType from '../PropertyTypes/PropertyType'
+import ReferenceModelType from '../PropertyTypes/ReferenceModelType'
 import StringPropertyType from '../PropertyTypes/StringPropertyType'
 import UniqueIdentifierPropertyType from '../PropertyTypes/UniqueIdentifierPropertyType'
 import SpecProperty from './SpecProperty'
@@ -108,72 +110,6 @@ export default class SpecLoader extends CradleLoaderBase {
     }
   }
 
-  public readModelReferenceNames(modelName: string): Promise<string[]> {
-    return new Promise((resolve, reject) => {
-      if (!this.specObject) {
-        throw new Error('No spec file loaded')
-      }
-      if (!this.specObject[modelName]) {
-        throw new Error(`The spec file does not contain a model named '${modelName}'`)
-      }
-      if (!this.specObject[modelName].references) {
-        return resolve([])
-      } else {
-        return resolve(Object.keys(this.specObject[modelName].references))
-      }
-    })
-  }
-  public readModelReferenceType(modelName: string, referenceName: string): Promise<ModelReference> {
-    return new Promise((resolve, reject) => {
-      const reference = this.specObject![modelName].references[referenceName]
-
-      const SINGLE_REGEX = /single\?? of (\w+)/gi
-      const MULTIPLE_REGEX = /multiple\?? of (\w+)/gi
-      const SINGLE_ON_REGEX = /single of (\w+) on (\w+)/gi
-      const MULTIPLE_VIA_REGEX = /multiple of (\w+) via (\w+)/gi
-
-      if (reference.match(SINGLE_ON_REGEX)) {
-        const matches = SINGLE_ON_REGEX.exec(reference)
-        if (matches && matches.length === 3) {
-          const remoteModelName = matches[1]
-          const localPropertyName = matches[2]
-          resolve(new ModelReference(localPropertyName, remoteModelName, RelationTypes.SingleOn, false))
-        } else {
-          throw new Error(`Invalid single on reference pattern: ${reference}`)
-        }
-      } else if (reference.match(MULTIPLE_VIA_REGEX)) {
-        const matches = MULTIPLE_VIA_REGEX.exec(reference)
-        if (matches && matches.length === 3) {
-          const remoteModelName = matches[1]
-          const proxyTableName = matches[2]
-          resolve(new ModelReference('', remoteModelName, RelationTypes.MultipleVia, false, proxyTableName))
-        } else {
-          throw new Error(`Invalid multiple via reference pattern: ${reference}`)
-        }
-      } else if (reference.match(SINGLE_REGEX)) {
-        const matches = SINGLE_REGEX.exec(reference)
-        if (matches && matches.length === 2) {
-          const remoteModelName = matches[1]
-          resolve(new ModelReference('', remoteModelName, RelationTypes.Single, matches[0].indexOf('?') > -1))
-        } else {
-          throw new Error(`Invalid single reference pattern: ${reference}`)
-        }
-      } else if (reference.match(MULTIPLE_REGEX)) {
-        const matches = MULTIPLE_REGEX.exec(reference)
-        if (matches && matches.length === 2) {
-          const remoteModelName = matches[1]
-          resolve(new ModelReference('', remoteModelName, RelationTypes.Multiple, matches[0].indexOf('?') > -1))
-        } else {
-          throw new Error(`Invalid multiple reference pattern: ${reference}`)
-        }
-      } else {
-        throw new Error(
-          `Reference must follow pattern of either 'single of MODEL NAME on LOCAL PROPERTY NAME' or 'multiple of MODEL NAME via PROXY TABLE NAME' or 'single of MODEL NAME' or 'multiple of MODEL NAME', received '${reference.toUpperCase()}'`
-        )
-      }
-    })
-  }
-
   public async prepareLoader(): Promise<void> {
     if (!fs.existsSync(this.options.source)) {
       throw new Error(`Source file does not exist: ${this.options.source}`)
@@ -206,37 +142,48 @@ export default class SpecLoader extends CradleLoaderBase {
   }
 
   public finalizeSchema(schema: CradleSchema): Promise<CradleSchema> {
-    const modelNames = Object.keys(schema.Models)
-    modelNames.map((k) => {
-      const model = schema.Models[k]
-
+    schema.Models.forEach((model, k) => {
       const propertyNames = Object.keys(model.Properties)
       propertyNames.map((pn) => {
-        const prop = model.Properties[pn]
+        const prop: PropertyType = model.Properties[pn]
 
-        if (prop.TypeName === constants.ModelReference && prop.ModelName) {
-          schema.Models[k].Properties[pn].ModelType = this.getModelReference(schema, prop)
+        if (prop.TypeName === constants.ImportModel) {
+          const importProp = prop as ImportModelType
+          schema.Models[k].Properties[pn].ModelType = schema.GetModel(importProp.ModelName)
         }
-        if (prop.TypeName === constants.Array && prop.MemberType && prop.MemberType.TypeName === constants.ModelReference && prop.MemberType.ModelName) {
-          schema.Models[k].Properties[pn].MemberType.ModelType = this.getModelReference(schema, prop.MemberType)
+        if (prop.TypeName === constants.ReferenceModel) {
+          const refProp = prop as ReferenceModelType
+          const targetModel: CradleModel | undefined = schema.GetModel(refProp.ModelName)
+
+          if (!targetModel) {
+            throw new Error(`Invalid reference ${pn} on ${model.Name}.  Foreign model ${refProp.ModelName} does not exist`)
+          }
+          if (!targetModel.Properties[refProp.ForeignProperty]) {
+            throw new Error(`Invalid reference ${pn} on ${model.Name}. Foreign model ${refProp.ModelName} does not contain a property named ${refProp.ForeignProperty}`)
+          }
+          if (!model.Properties[refProp.LocalProperty]) {
+            throw new Error(`Invalid reference ${pn} on ${model.Name}. ${model.Name} does not contain a property named ${refProp.ForeignProperty}`)
+          }
+
+          schema.Models[k].Properties[pn].ModelType = targetModel
         }
       })
 
       const operationNames = Object.keys(model.Operations)
       operationNames.map((opName) => {
         const op = model.Operations[opName]
-        if (op.Returns.TypeName === constants.ModelReference && op.Returns.ModelName) {
+        if (op.Returns.TypeName === constants.ImportModel && op.Returns.ModelName) {
           schema.Models[k].Operations[opName].Returns.ModelType = this.getModelReference(schema, op.Returns)
         }
-        if (op.Returns.TypeName === constants.Array && op.Returns.MemberType && op.Returns.MemberType.TypeName === constants.ModelReference && op.Returns.MemberType.ModelName) {
+        if (op.Returns.TypeName === constants.Array && op.Returns.MemberType && op.Returns.MemberType.TypeName === constants.ImportModel && op.Returns.MemberType.ModelName) {
           schema.Models[k].Operations[opName].Returns.ModelType = this.getModelReference(schema, op.Returns.MemberType)
         }
       })
     })
     return Promise.resolve(schema)
   }
-  public getModelReference(schema: CradleSchema, ref: ModelReferenceType): ObjectPropertyType {
-    const modelRef = schema.Models.find((m) => m.Name === ref.ModelName)
+  public getModelReference(schema: CradleSchema, ref: ImportModelType): ObjectPropertyType {
+    const modelRef = schema.GetModel(ref.ModelName)
     if (modelRef) {
       return new ObjectPropertyType(this.propertiesToArray(modelRef.Properties), ref.AllowNull, ref.IsPrimaryKey, ref.DefaultValue)
     } else {
@@ -257,7 +204,7 @@ export default class SpecLoader extends CradleLoaderBase {
       } catch (err) {
         const modelNames = await this.readModelNames()
         if (modelNames.find((x) => x === property)) {
-          return new ModelReferenceType(property)
+          return new ImportModelType(property, false)
         } else {
           throw err
         }
@@ -276,9 +223,9 @@ export default class SpecLoader extends CradleLoaderBase {
       const isArray = property.isArray
       if (property.modelRef) {
         if (isArray) {
-          return new ArrayPropertyType(new ModelReferenceType(property.modelRef))
+          return new ArrayPropertyType(new ImportModelType(property.modelRef, false))
         } else {
-          return new ModelReferenceType(property.modelRef)
+          return new ImportModelType(property.modelRef, false)
         }
       }
       const subProperties = Object.keys(property.properties)
@@ -332,6 +279,10 @@ export default class SpecLoader extends CradleLoaderBase {
         return new UniqueIdentifierPropertyType(spec.Nullable, spec.PrimaryKey, spec.AutogenerateOptions, spec.DefaultValue, spec.Unique)
       case constants.Binary.toLocaleUpperCase():
         return new BinaryPropertyType(spec.Length, spec.Nullable, spec.PrimaryKey, spec.DefaultValue, spec.Unique)
+      case constants.ReferenceModel.toLocaleUpperCase():
+        return new ReferenceModelType(spec.ModelName!, spec.LocalProperty!, spec.ForeignProperty)
+      case constants.ImportModel.toLocaleUpperCase():
+        return new ImportModelType(spec.ModelName!, spec.Nullable)
       default: {
         throw new Error(`Unexpected property type: ${spec.PropertyType}`)
       }

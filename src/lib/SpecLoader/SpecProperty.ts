@@ -14,6 +14,9 @@ export interface ISpecPropertyOptions {
   primaryKey?: boolean
   scale?: number
   unique?: boolean | string
+  modelName?: string
+  localProperty?: string
+  foreignProperty?: string
 }
 
 export default class SpecProperty {
@@ -31,9 +34,11 @@ export default class SpecProperty {
   public IsArray: boolean
   public Precision?: number
   public Scale?: number
+  public ModelName?: string
+  public LocalProperty?: string
+  public ForeignProperty?: string
 
   constructor(propertyType: string, options: ISpecPropertyOptions = {}) {
-
     this.PropertyType = propertyType
     this.Nullable = options.nullable || false
     this.AllowedValues = options.allowedValues
@@ -47,6 +52,9 @@ export default class SpecProperty {
     this.IsArray = options.isArray || false
     this.Precision = options.precision
     this.Scale = options.scale
+    this.ModelName = options.modelName
+    this.LocalProperty = options.localProperty
+    this.ForeignProperty = options.foreignProperty
     if (Array.isArray(options.autogenerateOptions)) {
       if (options.autogenerateOptions.length !== 2) {
         throw new RangeError(`Expected 2 elements in autogenerate options, received ${options.autogenerateOptions}`)
