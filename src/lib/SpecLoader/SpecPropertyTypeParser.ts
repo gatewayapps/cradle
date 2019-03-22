@@ -13,6 +13,11 @@ const BooleanValue = createToken({
   pattern: /(true)|(false)/i
 })
 
+const AttributeValue = createToken({
+  name: 'AttributeValue',
+  pattern: /\@\w+/i
+})
+
 const Default = createToken({
   name: 'Default',
   pattern: /default/i
@@ -104,7 +109,30 @@ const Invalid = createToken({
   pattern: /.+/
 })
 
-const allTokens = [StringValue, WhiteSpace, PropertyType, OpenParentheses, Comma, CloseParentheses, UuidValue, DateTimeValue, Now, BooleanValue, DecimalValue, IntegerValue, Auto, Unique, Max, Min, Default, Allow, Primary, Delete, Invalid]
+const allTokens = [
+  StringValue,
+  WhiteSpace,
+  PropertyType,
+  OpenParentheses,
+  Comma,
+  CloseParentheses,
+  AttributeValue,
+  UuidValue,
+  DateTimeValue,
+  Now,
+  BooleanValue,
+  DecimalValue,
+  IntegerValue,
+  Auto,
+  Unique,
+  Max,
+  Min,
+  Default,
+  Allow,
+  Primary,
+  Delete,
+  Invalid
+]
 
 const SpecLexer = new Lexer(allTokens)
 
@@ -163,6 +191,7 @@ export default function ParseProperty(definition: string) {
   let modelName: string | undefined
   let localProperty: string | undefined
   let foreignProperty: string | undefined
+  let attributes: { [key: string]: any } | undefined
 
   const isArray = propertyType.indexOf('[]') > -1
   const nullable = propertyType.indexOf('?') > -1
@@ -263,6 +292,31 @@ export default function ParseProperty(definition: string) {
             }
             break
           }
+          case AttributeValue.name: {
+            const attributeName = token.image.replace(/\@/gi, '')
+            if (!attributes) {
+              attributes = {}
+            }
+            const nextToken = peekNextToken(lexingResult.tokens, i)
+            if (nextToken && nextToken.tokenType!.name === OpenParentheses.name) {
+              const attrContents = getTokensFromParentheses(lexingResult.tokens, i + 1, [IntegerValue, DecimalValue, StringValue, DateTimeValue, UuidValue])
+              i = attrContents.endIndex
+              if (attrContents.values.length === 0) {
+                throw new SyntaxError(`Expected ${token.image} to have a value, got ${attrContents.values}`)
+              } else {
+                ensureValueTypes(basePropertyType, attrContents.values)
+
+                if (attrContents.values.length === 1) {
+                  attributes[attributeName] = attrContents.values[0]
+                } else {
+                  attributes[attributeName] = attrContents.values
+                }
+              }
+            } else {
+              attributes[attributeName] = true
+            }
+            break
+          }
           case Allow.name: {
             const nextToken = peekNextToken(lexingResult.tokens, i)
             if (nextToken && nextToken.tokenType!.name === OpenParentheses.name) {
@@ -294,6 +348,7 @@ export default function ParseProperty(definition: string) {
   }
   return new SpecProperty(basePropertyType, {
     allowedValues,
+    attributes,
     autogenerateOptions: autoDefinition,
     defaultValue,
     deleteFlag,

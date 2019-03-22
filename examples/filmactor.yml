@@ -7,7 +7,7 @@ Film:
         totalBoxOffice: decimal min(0)
   properties:
     id: integer primary auto(1,1)
-    name: string(100)
+    name: string(100) @format("title")
     totalBoxOffice: decimal min(0)
     releaseDate: datetime
     isDeleted: boolean default(false) delete

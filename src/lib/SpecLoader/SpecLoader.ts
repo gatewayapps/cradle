@@ -272,6 +272,7 @@ export default class SpecLoader extends CradleLoaderBase {
   private createPropertyTypeFromSpecResult(spec: SpecProperty): PropertyType {
     const options: any = {
       AllowNull: spec.Nullable,
+      Attributes: spec.Attributes,
       DefaultValue: spec.DefaultValue,
       IsPrimaryKey: spec.PrimaryKey,
       Unique: spec.Unique
