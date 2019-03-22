@@ -1,11 +1,12 @@
 import constants from './constants'
 import PropertyType, { IPropertyTypeOptions } from './PropertyType'
+import SecurablePropertyType, { ISecurablePropertyTypeOptions } from './SecurablePropertyType'
 
-export interface IBinaryPropertyTypeOptions extends IPropertyTypeOptions {
+export interface IBinaryPropertyTypeOptions extends ISecurablePropertyTypeOptions {
   MaximumLength?: number
 }
 
-export default class BinaryPropertyType extends PropertyType {
+export default class BinaryPropertyType extends SecurablePropertyType {
   public MaximumLength?: number
 
   constructor(options: IBinaryPropertyTypeOptions) {

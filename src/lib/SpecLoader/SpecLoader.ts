@@ -274,6 +274,8 @@ export default class SpecLoader extends CradleLoaderBase {
       AllowNull: spec.Nullable,
       Attributes: spec.Attributes,
       DefaultValue: spec.DefaultValue,
+      Encrypted: spec.Encrypted,
+      Hashed: spec.Hashed,
       IsPrimaryKey: spec.PrimaryKey,
       Unique: spec.Unique
     }
@@ -281,7 +283,7 @@ export default class SpecLoader extends CradleLoaderBase {
       case constants.Boolean.toLocaleUpperCase():
         return new BooleanPropertyType(options)
       case constants.DateTime.toLocaleUpperCase():
-        return new DateTimePropertyType(Object.assign(options, { MaximumValue: spec.MaxValue, MinimumValue: spec.MinValue }) as IConstrainablePropertyTypeOptions)
+        return new DateTimePropertyType(Object.assign(options, { MaximumValue: spec.MaxValue, MinimumValue: spec.MinValue } as IConstrainablePropertyTypeOptions))
       case constants.Decimal.toLocaleUpperCase():
         return new DecimalPropertyType(Object.assign(options, { MaximumValue: spec.MaxValue, MinimumValue: spec.MinValue, Prevision: spec.Precision, Scale: spec.Scale }) as IDecimalPropertyTypeOptions)
       case constants.Integer.toLocaleUpperCase():

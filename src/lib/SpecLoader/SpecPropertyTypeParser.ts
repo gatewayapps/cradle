@@ -89,6 +89,17 @@ const Primary = createToken({
   name: 'Primary',
   pattern: /primary/i
 })
+
+const Hashed = createToken({
+  name: 'Hashed',
+  pattern: /hashed/i
+})
+
+const Encrypted = createToken({
+  name: 'Encrypted',
+  pattern: /encrypted/i
+})
+
 const Delete = createToken({
   name: 'Delete',
   pattern: /delete/i
@@ -130,6 +141,8 @@ const allTokens = [
   Default,
   Allow,
   Primary,
+  Hashed,
+  Encrypted,
   Delete,
   Invalid
 ]
@@ -192,6 +205,8 @@ export default function ParseProperty(definition: string) {
   let localProperty: string | undefined
   let foreignProperty: string | undefined
   let attributes: { [key: string]: any } | undefined
+  let encrypted: boolean = false
+  let hashed: boolean = false
 
   const isArray = propertyType.indexOf('[]') > -1
   const nullable = propertyType.indexOf('?') > -1
@@ -334,6 +349,11 @@ export default function ParseProperty(definition: string) {
           case Primary.name:
             primaryKey = true
             break
+          case Encrypted.name:
+            encrypted = true
+            break
+          case Hashed.name:
+            hashed = true
           case Unique.name:
             unique = true
             break
@@ -352,7 +372,9 @@ export default function ParseProperty(definition: string) {
     autogenerateOptions: autoDefinition,
     defaultValue,
     deleteFlag,
+    encrypted,
     foreignProperty,
+    hashed,
     isArray,
     length,
     localProperty,

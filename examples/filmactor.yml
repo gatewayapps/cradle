@@ -20,4 +20,4 @@ Actor:
     id: integer primary auto(1,1)
     firstName: string(100)
     lastName: string(100)
-    dateOfBirth: datetime
+    dateOfBirth: datetime encrypted @sensitive

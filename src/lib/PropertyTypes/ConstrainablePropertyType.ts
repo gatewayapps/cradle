@@ -1,12 +1,13 @@
 import { isNullOrUndefined } from 'util'
 import PropertyType, { IPropertyTypeOptions } from './PropertyType'
+import SecurablePropertyType, { ISecurablePropertyTypeOptions } from './SecurablePropertyType'
 
-export interface IConstrainablePropertyTypeOptions extends IPropertyTypeOptions {
+export interface IConstrainablePropertyTypeOptions extends ISecurablePropertyTypeOptions {
   MinimumValue?: number | Date | undefined
   MaximumValue?: number | Date | undefined
 }
 
-export default abstract class ConstrainablePropertyType extends PropertyType {
+export default abstract class ConstrainablePropertyType extends SecurablePropertyType {
   public MinimumValue?: number | Date
   public MaximumValue?: number | Date
 
