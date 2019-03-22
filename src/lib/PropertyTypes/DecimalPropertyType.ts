@@ -1,28 +1,30 @@
-
 import constants from './constants'
-import ConstrainablePropertyType from './ConstrainablePropertyType'
+import ConstrainablePropertyType, { IConstrainablePropertyTypeOptions } from './ConstrainablePropertyType'
 import PropertyType from './PropertyType'
 
+export interface IDecimalPropertyTypeOptions extends IConstrainablePropertyTypeOptions {
+  Precision?: number
+  Scale?: number
+}
+
 export default class DecimalPropertyType extends ConstrainablePropertyType {
+  public Precision?: number
+  public Scale?: number
 
-    public Precision: number
-    public Scale: number
+  constructor(options: IDecimalPropertyTypeOptions) {
+    super(constants.Decimal, options)
 
-    constructor(precision: number = 18, scale: number = 2, minimumValue?: number, maximumValue?: number, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean | string = false) {
-        super(constants.Decimal, minimumValue, maximumValue, allowNull, isPrimaryKey, defaultValue, unique)
-        this.MinimumValue = minimumValue
-        this.MaximumValue = maximumValue
-        this.Precision = precision
-        this.Scale = scale
+    this.Precision = options.Precision
+    this.Scale = options.Scale
+  }
+
+  public equals(other: PropertyType): boolean {
+    if (!super.equals(other)) {
+      return false
     }
-
-    public equals(other: PropertyType): boolean {
-        if (!super.equals(other)) {
-            return false
-        }
-        if (other instanceof DecimalPropertyType) {
-            return this.Precision === other.Precision && this.Scale === other.Scale
-        }
-        return false
+    if (other instanceof DecimalPropertyType) {
+      return this.Precision === other.Precision && this.Scale === other.Scale
     }
+    return false
+  }
 }

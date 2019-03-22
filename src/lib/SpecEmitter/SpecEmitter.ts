@@ -89,7 +89,7 @@ export default class SpecEmitter implements ICradleEmitter {
     } else if (prop.TypeName === constants.Decimal) {
       const decimalProp = prop as DecimalPropertyType
       let decimalTypeName = prop.TypeName.toLowerCase()
-      if (decimalProp.Precision > 0) {
+      if (decimalProp.Precision && decimalProp.Precision > 0) {
         decimalTypeName += `(${decimalProp.Precision},${decimalProp.Scale})`
       }
       parts.push(decimalTypeName)
@@ -155,12 +155,12 @@ export default class SpecEmitter implements ICradleEmitter {
       }
       case constants.DateTime: {
         const int = prop as DateTimePropertyType
-        if (int.MinValue) {
-          const min = this.coerceValueType(int.MinValue, propertyName)
+        if (int.MinimumValue) {
+          const min = this.coerceValueType(int.MinimumValue, propertyName)
           parts.push(`min(${min})`)
         }
-        if (int.MaxValue !== undefined) {
-          const max = this.coerceValueType(int.MaxValue, propertyName)
+        if (int.MaximumValue !== undefined) {
+          const max = this.coerceValueType(int.MaximumValue, propertyName)
           parts.push(`max(${max})`)
         }
         break

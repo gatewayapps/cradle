@@ -1,27 +1,30 @@
-
 import constants from './constants'
-import ConstrainablePropertyType from './ConstrainablePropertyType'
+import ConstrainablePropertyType, { IConstrainablePropertyTypeOptions } from './ConstrainablePropertyType'
 
 export class IntegerAutogenerateOptions {
-    public Seed: number
-    public Increment: number
-    constructor(seed: number = 1, increment: number = 1) {
-        this.Seed = seed
-        this.Increment = increment
-    }
+  public Seed: number
+  public Increment: number
+  constructor(seed: number = 1, increment: number = 1) {
+    this.Seed = seed
+    this.Increment = increment
+  }
+}
+
+export interface IIntegerPropertyTypeOptions extends IConstrainablePropertyTypeOptions {
+  Autogenerate?: IntegerAutogenerateOptions
 }
 
 export default class IntegerPropertyType extends ConstrainablePropertyType {
-    public Autogenerate?: IntegerAutogenerateOptions
-    // tslint:disable-next-line:max-line-length
-    constructor(minimumValue?: number, maximumValue?: number, autogenerateOptions?: any, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean | string = false) {
-        super(constants.Integer, minimumValue, maximumValue, allowNull, isPrimaryKey, defaultValue, unique)
-        if (autogenerateOptions instanceof IntegerAutogenerateOptions) {
-            this.Autogenerate = autogenerateOptions
-        } else {
-            if (autogenerateOptions !== undefined) {
-            throw new TypeError(`Expected auto options to be of type IntegerAutogenerateOptions, got ${autogenerateOptions}`)
-            }
-        }
+  public Autogenerate?: IntegerAutogenerateOptions
+  // tslint:disable-next-line:max-line-length
+  constructor(options: IIntegerPropertyTypeOptions) {
+    super(constants.Integer, options)
+    if (options.Autogenerate instanceof IntegerAutogenerateOptions) {
+      this.Autogenerate = options.Autogenerate
+    } else {
+      if (options.Autogenerate !== undefined) {
+        throw new TypeError(`Expected auto options to be of type IntegerAutogenerateOptions, got ${options.Autogenerate}`)
+      }
     }
+  }
 }

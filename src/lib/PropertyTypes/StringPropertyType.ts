@@ -1,23 +1,26 @@
 import constants from './constants'
-import EnumerablePropertyType from './EnumerablePropertyType'
+import EnumerablePropertyType, { IEnumerablePropertyTypeOptions } from './EnumerablePropertyType'
 import PropertyType from './PropertyType'
 
+export interface IStringPropertyTypeOptions extends IEnumerablePropertyTypeOptions {
+  MaximumLength?: number
+}
+
 export default class StringPropertyType extends EnumerablePropertyType {
-    public MaximumLength?: number
+  public MaximumLength?: number
 
-    constructor(maximumLength?: number, allowedValues?: any[], caseSensitive: boolean = false, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean | string = false) {
-        super(constants.String, allowedValues, allowNull, isPrimaryKey, defaultValue, unique)
-        this.MaximumLength = maximumLength
+  constructor(options: IStringPropertyTypeOptions = { AllowNull: false, IsPrimaryKey: false, Unique: false }) {
+    super(constants.String, options)
+    this.MaximumLength = options.MaximumLength
+  }
+
+  public equals(other: PropertyType): boolean {
+    if (!super.equals(other)) {
+      return false
     }
-
-    public equals(other: PropertyType): boolean {
-        if (!super.equals(other)) {
-            return false
-        }
-        if (other instanceof StringPropertyType) {
-            return other.MaximumLength === this.MaximumLength
-        }
-        return false
+    if (other instanceof StringPropertyType) {
+      return other.MaximumLength === this.MaximumLength
     }
-
+    return false
+  }
 }
