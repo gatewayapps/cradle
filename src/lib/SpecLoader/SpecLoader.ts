@@ -6,18 +6,20 @@ import CradleSchema from '../CradleSchema'
 import { IConsole } from '../IConsole'
 import { ICradleOperation } from '../ICradleOperation'
 
+import { stringify } from 'querystring'
 import { CradleModel } from '../..'
 import ArrayPropertyType from '../PropertyTypes/ArrayPropertyType'
 import BinaryPropertyType from '../PropertyTypes/BinaryPropertyType'
 import BooleanPropertyType from '../PropertyTypes/BooleanPropertyType'
 import constants from '../PropertyTypes/constants'
+import { IConstrainablePropertyTypeOptions } from '../PropertyTypes/ConstrainablePropertyType'
 import DateTimePropertyType from '../PropertyTypes/DateTimePropertyType'
-import DecimalPropertyType from '../PropertyTypes/DecimalPropertyType'
-import ImportModelType from '../PropertyTypes/ImportModelType'
-import IntegerPropertyType from '../PropertyTypes/IntegerPropertyType'
+import DecimalPropertyType, { IDecimalPropertyTypeOptions } from '../PropertyTypes/DecimalPropertyType'
+import ImportModelType, { IImportModelTypeOptions } from '../PropertyTypes/ImportModelType'
+import IntegerPropertyType, { IIntegerPropertyTypeOptions } from '../PropertyTypes/IntegerPropertyType'
 import ObjectPropertyType from '../PropertyTypes/ObjectPropertyType'
 import PropertyType from '../PropertyTypes/PropertyType'
-import ReferenceModelType from '../PropertyTypes/ReferenceModelType'
+import ReferenceModelType, { IReferenceModelTypeOptions } from '../PropertyTypes/ReferenceModelType'
 import StringPropertyType from '../PropertyTypes/StringPropertyType'
 import UniqueIdentifierPropertyType from '../PropertyTypes/UniqueIdentifierPropertyType'
 import SpecProperty from './SpecProperty'
@@ -185,7 +187,7 @@ export default class SpecLoader extends CradleLoaderBase {
   public getModelReference(schema: CradleSchema, ref: ImportModelType): ObjectPropertyType {
     const modelRef = schema.GetModel(ref.ModelName)
     if (modelRef) {
-      return new ObjectPropertyType(this.propertiesToArray(modelRef.Properties), ref.AllowNull, ref.IsPrimaryKey, ref.DefaultValue)
+      return new ObjectPropertyType({ Members: modelRef.Properties, AllowNull: ref.AllowNull, IsPrimaryKey: ref.IsPrimaryKey, DefaultValue: ref.DefaultValue })
     } else {
       throw new Error(`Invalid model reference: ${ref.ModelName}`)
     }
@@ -204,7 +206,7 @@ export default class SpecLoader extends CradleLoaderBase {
       } catch (err) {
         const modelNames = await this.readModelNames()
         if (modelNames.find((x) => x === property)) {
-          return new ImportModelType(property, false)
+          return new ImportModelType({ ModelName: property })
         } else {
           throw err
         }
@@ -212,7 +214,7 @@ export default class SpecLoader extends CradleLoaderBase {
       if (specProperty) {
         const propertyType = this.createPropertyTypeFromSpecResult(specProperty)
         if (specProperty.IsArray) {
-          return new ArrayPropertyType(propertyType)
+          return new ArrayPropertyType({ MemberType: propertyType })
         } else {
           return propertyType
         }
@@ -223,9 +225,9 @@ export default class SpecLoader extends CradleLoaderBase {
       const isArray = property.isArray
       if (property.modelRef) {
         if (isArray) {
-          return new ArrayPropertyType(new ImportModelType(property.modelRef, false))
+          return new ArrayPropertyType({ MemberType: new ImportModelType({ ModelName: property.modelRef }) })
         } else {
-          return new ImportModelType(property.modelRef, false)
+          return new ImportModelType({ ModelName: property.modelRef })
         }
       }
       const subProperties = Object.keys(property.properties)
@@ -236,9 +238,13 @@ export default class SpecLoader extends CradleLoaderBase {
           members.push({ propertyName: subProp, propertyType: await this.getPropertyTypeFromDefinition(property.properties[subProp]) })
         }
       }
-      const propertyType = new ObjectPropertyType(members, true, false, null)
+
+      const memberMap = new Map<string, PropertyType>()
+      members.forEach((m) => memberMap.set(m.propertyName, m.propertyType))
+
+      const propertyType = new ObjectPropertyType({ Members: memberMap, AllowNull: true })
       if (isArray) {
-        return new ArrayPropertyType(propertyType)
+        return new ArrayPropertyType({ MemberType: propertyType })
       } else {
         return propertyType
       }
@@ -264,25 +270,34 @@ export default class SpecLoader extends CradleLoaderBase {
   }
 
   private createPropertyTypeFromSpecResult(spec: SpecProperty): PropertyType {
+    const options: any = {
+      AllowNull: spec.Nullable,
+      Attributes: spec.Attributes,
+      DefaultValue: spec.DefaultValue,
+      Encrypted: spec.Encrypted,
+      Hashed: spec.Hashed,
+      IsPrimaryKey: spec.PrimaryKey,
+      Unique: spec.Unique
+    }
     switch (spec.PropertyType.toLocaleUpperCase()) {
       case constants.Boolean.toLocaleUpperCase():
-        return new BooleanPropertyType(spec.Nullable, spec.PrimaryKey, spec.DefaultValue, spec.Unique)
+        return new BooleanPropertyType(options)
       case constants.DateTime.toLocaleUpperCase():
-        return new DateTimePropertyType(spec.Nullable, spec.PrimaryKey, spec.DefaultValue, spec.MaxValue, spec.MinValue, spec.Unique)
+        return new DateTimePropertyType(Object.assign(options, { MaximumValue: spec.MaxValue, MinimumValue: spec.MinValue } as IConstrainablePropertyTypeOptions))
       case constants.Decimal.toLocaleUpperCase():
-        return new DecimalPropertyType(undefined, undefined, spec.MinValue, spec.MaxValue, spec.Nullable, spec.PrimaryKey, spec.DefaultValue, spec.Unique)
+        return new DecimalPropertyType(Object.assign(options, { MaximumValue: spec.MaxValue, MinimumValue: spec.MinValue, Prevision: spec.Precision, Scale: spec.Scale }) as IDecimalPropertyTypeOptions)
       case constants.Integer.toLocaleUpperCase():
-        return new IntegerPropertyType(spec.MinValue, spec.MaxValue, spec.AutogenerateOptions, spec.Nullable, spec.PrimaryKey, spec.DefaultValue, spec.Unique)
+        return new IntegerPropertyType(Object.assign(options, { MaximumValue: spec.MaxValue, MinimumValue: spec.MinValue, Autogenerate: spec.AutogenerateOptions }) as IIntegerPropertyTypeOptions)
       case constants.String.toLocaleUpperCase():
-        return new StringPropertyType(spec.Length, spec.AllowedValues, true, spec.Nullable, spec.PrimaryKey, spec.DefaultValue, spec.Unique)
+        return new StringPropertyType(Object.assign(options, { AllowedValues: spec.AllowedValues, MaximumLength: spec.Length }))
       case constants.UniqueIdentifier.toLocaleUpperCase():
-        return new UniqueIdentifierPropertyType(spec.Nullable, spec.PrimaryKey, spec.AutogenerateOptions, spec.DefaultValue, spec.Unique)
+        return new UniqueIdentifierPropertyType(Object.assign(options, { Autogenerate: spec.AutogenerateOptions }))
       case constants.Binary.toLocaleUpperCase():
-        return new BinaryPropertyType(spec.Length, spec.Nullable, spec.PrimaryKey, spec.DefaultValue, spec.Unique)
+        return new BinaryPropertyType(Object.assign(options, { MaximumLength: spec.Length }))
       case constants.ReferenceModel.toLocaleUpperCase():
-        return new ReferenceModelType(spec.ModelName!, spec.LocalProperty!, spec.ForeignProperty)
+        return new ReferenceModelType(Object.assign(options, { ModelName: spec.ModelName, LocalProperty: spec.LocalProperty, ForeignProperty: spec.ForeignProperty }))
       case constants.ImportModel.toLocaleUpperCase():
-        return new ImportModelType(spec.ModelName!, spec.Nullable)
+        return new ImportModelType(Object.assign(options, { ModelName: spec.ModelName! } as IImportModelTypeOptions))
       default: {
         throw new Error(`Unexpected property type: ${spec.PropertyType}`)
       }

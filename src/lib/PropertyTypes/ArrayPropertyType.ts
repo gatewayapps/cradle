@@ -1,13 +1,15 @@
 import constants from './constants'
-import PropertyType from './PropertyType'
+import PropertyType, { IPropertyTypeOptions } from './PropertyType'
+
+export interface IArrayPropertyTypeOptions extends IPropertyTypeOptions {
+  MemberType: PropertyType | string
+}
 
 export default class ArrayPropertyType extends PropertyType {
+  public MemberType: PropertyType | string
 
-    public MemberType: PropertyType | string
-
-    constructor( memberType: PropertyType | string) {
-        super(constants.Array, false, false, [], false)
-        this.MemberType = memberType
-
-    }
+  constructor(options: IArrayPropertyTypeOptions) {
+    super(constants.Array, options)
+    this.MemberType = options.MemberType
+  }
 }

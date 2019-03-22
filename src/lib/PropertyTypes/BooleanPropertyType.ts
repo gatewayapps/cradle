@@ -1,8 +1,12 @@
 import constants from './constants'
-import PropertyType from './PropertyType'
+import PropertyType, { IPropertyTypeOptions } from './PropertyType'
+
+export interface IBooleanPropertyTypeOptions extends IPropertyTypeOptions {
+  DefaultValue: boolean | number | undefined
+}
 
 export default class BooleanPropertyType extends PropertyType {
-    constructor(allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: boolean | number, unique: boolean | string = false) {
-        super(constants.Boolean, allowNull, isPrimaryKey, defaultValue === undefined ? undefined : !!defaultValue, unique)
-    }
+  constructor(options: IBooleanPropertyTypeOptions) {
+    super(constants.Boolean, options)
+  }
 }

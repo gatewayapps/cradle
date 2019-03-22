@@ -1,21 +1,26 @@
 import constants from './constants'
-import PropertyType from './PropertyType'
+import PropertyType, { IPropertyTypeOptions } from './PropertyType'
+import SecurablePropertyType, { ISecurablePropertyTypeOptions } from './SecurablePropertyType'
 
-export default class BinaryPropertyType extends PropertyType {
-    public MaximumLength?: number
+export interface IBinaryPropertyTypeOptions extends ISecurablePropertyTypeOptions {
+  MaximumLength?: number
+}
 
-    constructor(maximumLength?: number, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean | string = false) {
-        super(constants.Binary, allowNull, isPrimaryKey, defaultValue, unique)
-        this.MaximumLength = maximumLength
+export default class BinaryPropertyType extends SecurablePropertyType {
+  public MaximumLength?: number
+
+  constructor(options: IBinaryPropertyTypeOptions) {
+    super(constants.Binary, options)
+    this.MaximumLength = options.MaximumLength
+  }
+
+  public equals(other: PropertyType): boolean {
+    if (!super.equals(other)) {
+      return false
     }
-
-    public equals(other: PropertyType): boolean {
-        if (!super.equals(other)) {
-            return false
-        }
-        if (other instanceof BinaryPropertyType) {
-            return other.MaximumLength === this.MaximumLength
-        }
-        return false
+    if (other instanceof BinaryPropertyType) {
+      return other.MaximumLength === this.MaximumLength
     }
+    return false
+  }
 }

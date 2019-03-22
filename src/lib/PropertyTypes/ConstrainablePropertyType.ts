@@ -1,30 +1,35 @@
 import { isNullOrUndefined } from 'util'
-import PropertyType from './PropertyType'
+import PropertyType, { IPropertyTypeOptions } from './PropertyType'
+import SecurablePropertyType, { ISecurablePropertyTypeOptions } from './SecurablePropertyType'
 
-export default abstract class ConstrainablePropertyType extends PropertyType {
-    public MinimumValue?: number
-    public MaximumValue?: number
+export interface IConstrainablePropertyTypeOptions extends ISecurablePropertyTypeOptions {
+  MinimumValue?: number | Date | undefined
+  MaximumValue?: number | Date | undefined
+}
 
-    constructor(typeName: string, minimumValue?: number, maximumValue?: number, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean | string = false) {
-        if (!isNullOrUndefined(minimumValue) && !isNullOrUndefined(maximumValue)) {
+export default abstract class ConstrainablePropertyType extends SecurablePropertyType {
+  public MinimumValue?: number | Date
+  public MaximumValue?: number | Date
 
-            if (minimumValue > maximumValue) {
-                throw new RangeError(`minimumValue can not be greater than maximumValue for type: ${typeName}`)
-            }
-        }
-
-        super(typeName, allowNull, isPrimaryKey, defaultValue, unique)
-        this.MinimumValue = minimumValue
-        this.MaximumValue = maximumValue
+  constructor(typeName: string, options: IConstrainablePropertyTypeOptions) {
+    if (!isNullOrUndefined(options.MinimumValue) && !isNullOrUndefined(options.MaximumValue)) {
+      if (options.MinimumValue > options.MaximumValue) {
+        throw new RangeError(`minimumValue can not be greater than maximumValue for type: ${typeName}`)
+      }
     }
 
-    public equals(other: PropertyType): boolean {
-        if (!super.equals(other)) {
-            return false
-        }
-        if (other instanceof ConstrainablePropertyType) {
-            return this.MinimumValue === other.MinimumValue && this.MaximumValue === other.MaximumValue
-        }
-        return false
+    super(typeName, options)
+    this.MinimumValue = options.MinimumValue
+    this.MaximumValue = options.MaximumValue
+  }
+
+  public equals(other: PropertyType): boolean {
+    if (!super.equals(other)) {
+      return false
     }
+    if (other instanceof ConstrainablePropertyType) {
+      return this.MinimumValue === other.MinimumValue && this.MaximumValue === other.MaximumValue
+    }
+    return false
+  }
 }

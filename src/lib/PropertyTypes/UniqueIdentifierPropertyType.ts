@@ -1,10 +1,15 @@
 import constants from './constants'
-import PropertyType from './PropertyType'
+import PropertyType, { IPropertyTypeOptions } from './PropertyType'
+import SecurablePropertyType, { ISecurablePropertyTypeOptions } from './SecurablePropertyType'
 
-export default class UniqueIdentifierPropertyType extends PropertyType {
+export interface IUniqueIdentifierPropertyTypeOptions extends ISecurablePropertyTypeOptions {
+  Autogenerate?: boolean
+}
+
+export default class UniqueIdentifierPropertyType extends SecurablePropertyType {
   public Autogenerate: boolean
-    constructor(allowNull: boolean = false, isPrimaryKey: boolean = false, autogenerate?: any, defaultValue?: any, unique: boolean | string = false) {
-        super(constants.UniqueIdentifier, allowNull, isPrimaryKey, defaultValue, unique)
-        this.Autogenerate = autogenerate
-    }
+  constructor(options: IUniqueIdentifierPropertyTypeOptions = { AllowNull: false, IsPrimaryKey: false, Autogenerate: false, Unique: false }) {
+    super(constants.UniqueIdentifier, options)
+    this.Autogenerate = options.Autogenerate || false
+  }
 }

@@ -17,6 +17,9 @@ export interface ISpecPropertyOptions {
   modelName?: string
   localProperty?: string
   foreignProperty?: string
+  encrypted?: boolean
+  hashed?: boolean
+  attributes?: { [key: string]: any }
 }
 
 export default class SpecProperty {
@@ -37,6 +40,9 @@ export default class SpecProperty {
   public ModelName?: string
   public LocalProperty?: string
   public ForeignProperty?: string
+  public Attributes?: { [key: string]: any }
+  public Encrypted?: boolean
+  public Hashed?: boolean
 
   constructor(propertyType: string, options: ISpecPropertyOptions = {}) {
     this.PropertyType = propertyType
@@ -55,6 +61,9 @@ export default class SpecProperty {
     this.ModelName = options.modelName
     this.LocalProperty = options.localProperty
     this.ForeignProperty = options.foreignProperty
+    this.Attributes = options.attributes
+    this.Encrypted = options.encrypted
+    this.Hashed = options.hashed
     if (Array.isArray(options.autogenerateOptions)) {
       if (options.autogenerateOptions.length !== 2) {
         throw new RangeError(`Expected 2 elements in autogenerate options, received ${options.autogenerateOptions}`)

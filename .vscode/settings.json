@@ -20,7 +20,14 @@
       "**/CVS": true,
       "**/.DS_Store": true,
       "node_modules": true,
-      "dist": false
-    }
+      "dist": true
+    },
+    "mochaExplorer.files": "src/**/*.spec.ts",
+    "mochaExplorer.optsFile": "",
+    "testExplorer.gutterDecoration": true,
+    "testExplorer.codeLens": true,
+    "mochaExplorer.require": [
+      "ts-node/register"
+    ]
   }
   

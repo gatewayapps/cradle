@@ -367,6 +367,15 @@ describe('SpecPropertyTypeParser', () => {
     it('Should parse a simple string', () => {
       expect(ParseProperty('string')).to.deep.equal(new SpecProperty('string'))
     })
+    it('Should parse a string with custom attribute', () => {
+      expect(ParseProperty('string @format("email")')).to.deep.equal(new SpecProperty('string', { attributes: { format: 'email' } }))
+    })
+    it('Should parse a string with a custom attribute array', () => {
+      expect(ParseProperty('string @formats("email", "url")')).to.deep.equal(new SpecProperty('string', { attributes: { formats: ['email', 'url'] } }))
+    })
+    it('It should parse a string with a custom attribute with no value', () => {
+      expect(ParseProperty('string @email')).to.deep.equal(new SpecProperty('string', { attributes: { email: true } }))
+    })
     it('Should parse a string with length', () => {
       expect(ParseProperty('string(100)')).to.deep.equal(new SpecProperty('string', { length: 100 }))
     })

@@ -5,20 +5,21 @@ import PropertyType from './PropertyType'
 
 class MockPropertyType extends PropertyType {
   constructor(typeName: string, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean | string = false) {
-    super(typeName, allowNull, isPrimaryKey, defaultValue, unique)
+    super(typeName, { AllowNull: allowNull, IsPrimaryKey: isPrimaryKey, DefaultValue: defaultValue, Unique: unique })
   }
 }
 
 describe('PropertyType', () => {
   describe('constructor', () => {
-
     it('Should return a new PropertyType with the correct type name', () => {
       const mock = new MockPropertyType(constants.Object)
       expect(mock.TypeName).to.equal(constants.Object)
     })
     it('Should throw a TypeError if an unknown property type name is used', () => {
       /* tslint:disable-next-line no-unused-expression */
-      expect(() => { new MockPropertyType('Unknown') }).to.throw(TypeError)
+      expect(() => {
+        const temp = new MockPropertyType('Unknown')
+      }).to.throw(TypeError)
     })
   })
   describe('Equals', () => {

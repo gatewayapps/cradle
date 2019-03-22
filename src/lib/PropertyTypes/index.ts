@@ -5,7 +5,7 @@ import Constants from './constants'
 import ConstrainablePropertyType from './ConstrainablePropertyType'
 import DateTimePropertyType from './DateTimePropertyType'
 import DecimalPropertyType from './DecimalPropertyType'
-import EnumerablePropertyType from './EnumerablePropertyType'
+
 import ImportModelType from './ImportModelType'
 import IntegerPropertyType from './IntegerPropertyType'
 import ObjectPropertyType from './ObjectPropertyType'
@@ -21,7 +21,6 @@ export default {
   ConstrainablePropertyType,
   DateTimePropertyType,
   DecimalPropertyType,
-  EnumerablePropertyType,
   ImportModelType,
   IntegerPropertyType,
   ObjectPropertyType,
