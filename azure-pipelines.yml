@@ -15,7 +15,7 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   dependsOn: Test
-  condition: and(succeeded(), and(startsWith(variables['Build.SourceBranch'], 'refs/tags/')), not(contains(variables['Build.SourceBranch'], '-')))
+  condition: and(succeeded(), and(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), not(contains(variables['Build.SourceBranch'], '-')))
   steps:
   - task: NodeTool@0
     inputs:
