@@ -1,11 +1,12 @@
 {
   "name": "@gatewayapps/cradle",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.1",
   "description": "",
   "main": "./dist/index.js",
   "bin": {
     "cradle": "./dist/cli/CradleCLI.js"
   },
+  "repository": {"url": "git+https://github.com/gatewayapps/cradle.git", "type": "git"},
   "scripts": {
     "prepublishOnly": "npm test && npx tsc",
     "pretest": "tslint --project .",

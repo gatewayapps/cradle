@@ -1,5 +1,7 @@
 import constants from './constants'
-import ConstrainablePropertyType, { IConstrainablePropertyTypeOptions } from './ConstrainablePropertyType'
+import ConstrainablePropertyType, {
+  IConstrainablePropertyTypeOptions
+} from './ConstrainablePropertyType'
 
 export class IntegerAutogenerateOptions {
   public Seed: number
@@ -16,14 +18,18 @@ export interface IIntegerPropertyTypeOptions extends IConstrainablePropertyTypeO
 
 export default class IntegerPropertyType extends ConstrainablePropertyType {
   public Autogenerate?: IntegerAutogenerateOptions
-  // tslint:disable-next-line:max-line-length
+
   constructor(options: IIntegerPropertyTypeOptions) {
     super(constants.Integer, options)
     if (options.Autogenerate instanceof IntegerAutogenerateOptions) {
       this.Autogenerate = options.Autogenerate
     } else {
       if (options.Autogenerate !== undefined) {
-        throw new TypeError(`Expected auto options to be of type IntegerAutogenerateOptions, got ${options.Autogenerate}`)
+        throw new TypeError(
+          `Expected auto options to be of type IntegerAutogenerateOptions, got ${
+            options.Autogenerate
+          }`
+        )
       }
     }
   }

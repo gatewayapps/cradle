@@ -3,10 +3,8 @@ import yaml from 'js-yaml'
 import path from 'path'
 import { CradleLoaderBase } from '../CradleLoaderBase'
 import CradleSchema from '../CradleSchema'
-import { IConsole } from '../IConsole'
 import { ICradleOperation } from '../ICradleOperation'
 
-import { stringify } from 'querystring'
 import { CradleModel } from '../..'
 import ArrayPropertyType from '../PropertyTypes/ArrayPropertyType'
 import BinaryPropertyType from '../PropertyTypes/BinaryPropertyType'
@@ -14,13 +12,18 @@ import BooleanPropertyType from '../PropertyTypes/BooleanPropertyType'
 import constants from '../PropertyTypes/constants'
 import { IConstrainablePropertyTypeOptions } from '../PropertyTypes/ConstrainablePropertyType'
 import DateTimePropertyType from '../PropertyTypes/DateTimePropertyType'
-import DecimalPropertyType, { IDecimalPropertyTypeOptions } from '../PropertyTypes/DecimalPropertyType'
+import DecimalPropertyType, {
+  IDecimalPropertyTypeOptions
+} from '../PropertyTypes/DecimalPropertyType'
 import ImportModelType, { IImportModelTypeOptions } from '../PropertyTypes/ImportModelType'
-import IntegerPropertyType, { IIntegerPropertyTypeOptions } from '../PropertyTypes/IntegerPropertyType'
+import IntegerPropertyType, {
+  IIntegerPropertyTypeOptions
+} from '../PropertyTypes/IntegerPropertyType'
 import ObjectPropertyType from '../PropertyTypes/ObjectPropertyType'
 import PropertyType from '../PropertyTypes/PropertyType'
-import ReferenceModelType, { IReferenceModelTypeOptions } from '../PropertyTypes/ReferenceModelType'
+import ReferenceModelType from '../PropertyTypes/ReferenceModelType'
 import StringPropertyType from '../PropertyTypes/StringPropertyType'
+
 import UniqueIdentifierPropertyType from '../PropertyTypes/UniqueIdentifierPropertyType'
 import SpecProperty from './SpecProperty'
 import ParseProperty from './SpecPropertyTypeParser'
@@ -46,7 +49,10 @@ export default class SpecLoader extends CradleLoaderBase {
     }
   }
 
-  public async readModelOperation(modelName: string, operationName: string): Promise<ICradleOperation> {
+  public async readModelOperation(
+    modelName: string,
+    operationName: string
+  ): Promise<ICradleOperation> {
     let returnType = this.specObject![modelName].operations[operationName].returns
     if (returnType) {
       returnType = await this.getPropertyTypeFromDefinition(returnType)
@@ -57,7 +63,9 @@ export default class SpecLoader extends CradleLoaderBase {
       argNames.map(async (argName) => {
         const argValue = this.specObject![modelName].operations[operationName].arguments[argName]
         if (argValue !== null && argValue !== '?') {
-          _args[argName] = await this.getPropertyTypeFromDefinition(this.specObject![modelName].operations[operationName].arguments[argName])
+          _args[argName] = await this.getPropertyTypeFromDefinition(
+            this.specObject![modelName].operations[operationName].arguments[argName]
+          )
         } else {
           try {
             _args[argName] = await this.readModelPropertyType(modelName, argName)
@@ -65,6 +73,7 @@ export default class SpecLoader extends CradleLoaderBase {
               _args[argName].AllowNull = true
             }
           } catch (err) {
+            // tslint:disable-next-line:max-line-length
             err.message = `Error encountered when parsing ${modelName}.operations.arguments.${argName}.
 
           ${err.message}`
@@ -79,9 +88,14 @@ export default class SpecLoader extends CradleLoaderBase {
       Returns: returnType
     }
   }
-  public async readModelPropertyType(modelName: string, propertyName: string): Promise<PropertyType> {
+  public async readModelPropertyType(
+    modelName: string,
+    propertyName: string
+  ): Promise<PropertyType> {
     return await this.readPropertyDefinition(modelName, [propertyName]).catch((err) => {
-      throw new Error(`Error: '${err.message}' encountered while parsing ${modelName}.${propertyName}`)
+      throw new Error(
+        `Error: '${err.message}' encountered while parsing ${modelName}.${propertyName}`
+      )
     })
   }
 
@@ -138,7 +152,7 @@ export default class SpecLoader extends CradleLoaderBase {
   }
 
   public readModelMetadata(modelName: string): Promise<object> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       return resolve(this.specObject![modelName].meta)
     })
   }
@@ -158,13 +172,25 @@ export default class SpecLoader extends CradleLoaderBase {
           const targetModel: CradleModel | undefined = schema.GetModel(refProp.ModelName)
 
           if (!targetModel) {
-            throw new Error(`Invalid reference ${pn} on ${model.Name}.  Foreign model ${refProp.ModelName} does not exist`)
+            throw new Error(
+              `Invalid reference ${pn} on ${model.Name}.  Foreign model ${
+                refProp.ModelName
+              } does not exist`
+            )
           }
           if (!targetModel.Properties[refProp.ForeignProperty]) {
-            throw new Error(`Invalid reference ${pn} on ${model.Name}. Foreign model ${refProp.ModelName} does not contain a property named ${refProp.ForeignProperty}`)
+            throw new Error(
+              `Invalid reference ${pn} on ${model.Name}. Foreign model ${
+                refProp.ModelName
+              } does not contain a property named ${refProp.ForeignProperty}`
+            )
           }
           if (!model.Properties[refProp.LocalProperty]) {
-            throw new Error(`Invalid reference ${pn} on ${model.Name}. ${model.Name} does not contain a property named ${refProp.ForeignProperty}`)
+            throw new Error(
+              `Invalid reference ${pn} on ${model.Name}. ${
+                model.Name
+              } does not contain a property named ${refProp.ForeignProperty}`
+            )
           }
 
           schema.Models[k].Properties[pn].ModelType = targetModel
@@ -175,10 +201,21 @@ export default class SpecLoader extends CradleLoaderBase {
       operationNames.map((opName) => {
         const op = model.Operations[opName]
         if (op.Returns.TypeName === constants.ImportModel && op.Returns.ModelName) {
-          schema.Models[k].Operations[opName].Returns.ModelType = this.getModelReference(schema, op.Returns)
+          schema.Models[k].Operations[opName].Returns.ModelType = this.getModelReference(
+            schema,
+            op.Returns
+          )
         }
-        if (op.Returns.TypeName === constants.Array && op.Returns.MemberType && op.Returns.MemberType.TypeName === constants.ImportModel && op.Returns.MemberType.ModelName) {
-          schema.Models[k].Operations[opName].Returns.ModelType = this.getModelReference(schema, op.Returns.MemberType)
+        if (
+          op.Returns.TypeName === constants.Array &&
+          op.Returns.MemberType &&
+          op.Returns.MemberType.TypeName === constants.ImportModel &&
+          op.Returns.MemberType.ModelName
+        ) {
+          schema.Models[k].Operations[opName].Returns.ModelType = this.getModelReference(
+            schema,
+            op.Returns.MemberType
+          )
         }
       })
     })
@@ -187,15 +224,15 @@ export default class SpecLoader extends CradleLoaderBase {
   public getModelReference(schema: CradleSchema, ref: ImportModelType): ObjectPropertyType {
     const modelRef = schema.GetModel(ref.ModelName)
     if (modelRef) {
-      return new ObjectPropertyType({ Members: modelRef.Properties, AllowNull: ref.AllowNull, IsPrimaryKey: ref.IsPrimaryKey, DefaultValue: ref.DefaultValue })
+      return new ObjectPropertyType({
+        AllowNull: ref.AllowNull,
+        DefaultValue: ref.DefaultValue,
+        IsPrimaryKey: ref.IsPrimaryKey,
+        Members: modelRef.Properties
+      })
     } else {
       throw new Error(`Invalid model reference: ${ref.ModelName}`)
     }
-  }
-
-  private propertiesToArray(propertyObject: object): Array<{ propertyName: string; propertyType: PropertyType }> {
-    const propNames = Object.keys(propertyObject)
-    return propNames.map((pn) => ({ propertyName: pn, propertyType: propertyObject[pn] }))
   }
 
   private async getPropertyTypeFromDefinition(property: any): Promise<PropertyType> {
@@ -225,24 +262,35 @@ export default class SpecLoader extends CradleLoaderBase {
       const isArray = property.isArray
       if (property.modelRef) {
         if (isArray) {
-          return new ArrayPropertyType({ MemberType: new ImportModelType({ ModelName: property.modelRef }) })
+          return new ArrayPropertyType({
+            MemberType: new ImportModelType({ ModelName: property.modelRef })
+          })
         } else {
           return new ImportModelType({ ModelName: property.modelRef })
         }
       }
       const subProperties = Object.keys(property.properties)
 
-      const members: Array<{ propertyName: string; propertyType: PropertyType }> = []
+      const members: Array<{
+        propertyName: string
+        propertyType: PropertyType
+      }> = []
       for (const subProp of subProperties) {
         if (!!subProp) {
-          members.push({ propertyName: subProp, propertyType: await this.getPropertyTypeFromDefinition(property.properties[subProp]) })
+          members.push({
+            propertyName: subProp,
+            propertyType: await this.getPropertyTypeFromDefinition(property.properties[subProp])
+          })
         }
       }
 
       const memberMap = new Map<string, PropertyType>()
       members.forEach((m) => memberMap.set(m.propertyName, m.propertyType))
 
-      const propertyType = new ObjectPropertyType({ Members: memberMap, AllowNull: true })
+      const propertyType = new ObjectPropertyType({
+        AllowNull: true,
+        Members: memberMap
+      })
       if (isArray) {
         return new ArrayPropertyType({ MemberType: propertyType })
       } else {
@@ -251,7 +299,10 @@ export default class SpecLoader extends CradleLoaderBase {
     }
   }
 
-  private async readPropertyDefinition(modelName: string, propertyPath: string[]): Promise<PropertyType> {
+  private async readPropertyDefinition(
+    modelName: string,
+    propertyPath: string[]
+  ): Promise<PropertyType> {
     if (this.specObject) {
       const model = this.specObject[modelName]
 
@@ -283,21 +334,52 @@ export default class SpecLoader extends CradleLoaderBase {
       case constants.Boolean.toLocaleUpperCase():
         return new BooleanPropertyType(options)
       case constants.DateTime.toLocaleUpperCase():
-        return new DateTimePropertyType(Object.assign(options, { MaximumValue: spec.MaxValue, MinimumValue: spec.MinValue } as IConstrainablePropertyTypeOptions))
+        return new DateTimePropertyType(
+          Object.assign(options, {
+            MaximumValue: spec.MaxValue,
+            MinimumValue: spec.MinValue
+          } as IConstrainablePropertyTypeOptions)
+        )
       case constants.Decimal.toLocaleUpperCase():
-        return new DecimalPropertyType(Object.assign(options, { MaximumValue: spec.MaxValue, MinimumValue: spec.MinValue, Prevision: spec.Precision, Scale: spec.Scale }) as IDecimalPropertyTypeOptions)
+        return new DecimalPropertyType(Object.assign(options, {
+          MaximumValue: spec.MaxValue,
+          MinimumValue: spec.MinValue,
+          Prevision: spec.Precision,
+          Scale: spec.Scale
+        }) as IDecimalPropertyTypeOptions)
       case constants.Integer.toLocaleUpperCase():
-        return new IntegerPropertyType(Object.assign(options, { MaximumValue: spec.MaxValue, MinimumValue: spec.MinValue, Autogenerate: spec.AutogenerateOptions }) as IIntegerPropertyTypeOptions)
+        return new IntegerPropertyType(Object.assign(options, {
+          Autogenerate: spec.AutogenerateOptions,
+          MaximumValue: spec.MaxValue,
+          MinimumValue: spec.MinValue
+        }) as IIntegerPropertyTypeOptions)
       case constants.String.toLocaleUpperCase():
-        return new StringPropertyType(Object.assign(options, { AllowedValues: spec.AllowedValues, MaximumLength: spec.Length }))
+        return new StringPropertyType(
+          Object.assign(options, {
+            AllowedValues: spec.AllowedValues,
+            MaximumLength: spec.Length
+          })
+        )
       case constants.UniqueIdentifier.toLocaleUpperCase():
-        return new UniqueIdentifierPropertyType(Object.assign(options, { Autogenerate: spec.AutogenerateOptions }))
+        return new UniqueIdentifierPropertyType(
+          Object.assign(options, { Autogenerate: spec.AutogenerateOptions })
+        )
       case constants.Binary.toLocaleUpperCase():
         return new BinaryPropertyType(Object.assign(options, { MaximumLength: spec.Length }))
       case constants.ReferenceModel.toLocaleUpperCase():
-        return new ReferenceModelType(Object.assign(options, { ModelName: spec.ModelName, LocalProperty: spec.LocalProperty, ForeignProperty: spec.ForeignProperty }))
+        return new ReferenceModelType(
+          Object.assign(options, {
+            ForeignProperty: spec.ForeignProperty,
+            LocalProperty: spec.LocalProperty,
+            ModelName: spec.ModelName
+          })
+        )
       case constants.ImportModel.toLocaleUpperCase():
-        return new ImportModelType(Object.assign(options, { ModelName: spec.ModelName! } as IImportModelTypeOptions))
+        return new ImportModelType(
+          Object.assign(options, {
+            ModelName: spec.ModelName!
+          } as IImportModelTypeOptions)
+        )
       default: {
         throw new Error(`Unexpected property type: ${spec.PropertyType}`)
       }

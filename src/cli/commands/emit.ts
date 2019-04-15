@@ -27,7 +27,9 @@ export async function handler(argv) {
       const loader = await getLoader(configuration.Loader)
       const schema = await loader.loadSchema()
 
-      const emitters = argv.emit ? configuration.Emitters.filter((e) => e.name === argv.emit) : configuration.Emitters
+      const emitters = argv.emit
+        ? configuration.Emitters.filter((e) => e.name === argv.emit)
+        : configuration.Emitters
       await Promise.all(
         emitters.map(async (em) => {
           const emitter = await getEmitter(em)

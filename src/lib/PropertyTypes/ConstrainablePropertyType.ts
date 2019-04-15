@@ -1,5 +1,5 @@
 import { isNullOrUndefined } from 'util'
-import PropertyType, { IPropertyTypeOptions } from './PropertyType'
+import PropertyType from './PropertyType'
 import SecurablePropertyType, { ISecurablePropertyTypeOptions } from './SecurablePropertyType'
 
 export interface IConstrainablePropertyTypeOptions extends ISecurablePropertyTypeOptions {
@@ -14,7 +14,9 @@ export default abstract class ConstrainablePropertyType extends SecurablePropert
   constructor(typeName: string, options: IConstrainablePropertyTypeOptions) {
     if (!isNullOrUndefined(options.MinimumValue) && !isNullOrUndefined(options.MaximumValue)) {
       if (options.MinimumValue > options.MaximumValue) {
-        throw new RangeError(`minimumValue can not be greater than maximumValue for type: ${typeName}`)
+        throw new RangeError(
+          `minimumValue can not be greater than maximumValue for type: ${typeName}`
+        )
       }
     }
 

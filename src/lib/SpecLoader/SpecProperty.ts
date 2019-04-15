@@ -66,9 +66,14 @@ export default class SpecProperty {
     this.Hashed = options.hashed
     if (Array.isArray(options.autogenerateOptions)) {
       if (options.autogenerateOptions.length !== 2) {
-        throw new RangeError(`Expected 2 elements in autogenerate options, received ${options.autogenerateOptions}`)
+        throw new RangeError(
+          `Expected 2 elements in autogenerate options, received ${options.autogenerateOptions}`
+        )
       } else {
-        this.AutogenerateOptions = new IntegerAutogenerateOptions(options.autogenerateOptions[0], options.autogenerateOptions[1])
+        this.AutogenerateOptions = new IntegerAutogenerateOptions(
+          options.autogenerateOptions[0],
+          options.autogenerateOptions[1]
+        )
       }
     } else {
       this.AutogenerateOptions = options.autogenerateOptions

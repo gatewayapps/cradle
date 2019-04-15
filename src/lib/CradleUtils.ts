@@ -1,4 +1,4 @@
-import EmitterOptions, { IEmitterOptions } from './EmitterOptions'
+import { IEmitterOptions } from './EmitterOptions'
 import ICradleEmitter, { ICradleEmitterConstructable } from './ICradleEmitter'
 import ICradleLoader, { ICradleLoaderConstructable } from './ICradleLoader'
 import LoaderOptions from './LoaderOptions'
@@ -18,7 +18,9 @@ export async function getLoader(options: LoaderOptions): Promise<ICradleLoader> 
         try {
           loader = new loaderDef(options.options, options.console)
         } catch (err) {
-          return Promise.reject(`${options.module} module was found but a valid ICradleLoader is not the default export`)
+          return Promise.reject(
+            `${options.module} module was found but a valid ICradleLoader is not the default export`
+          )
         }
       } catch (err) {
         return Promise.reject(err)
@@ -38,7 +40,9 @@ export async function getEmitter(options: IEmitterOptions): Promise<ICradleEmitt
   let emitter: ICradleEmitter
 
   if (!options.module) {
-    throw new Error(`Expected an instance of IEmitterOptions, got: { ${Object.keys(options).join(', ')} }`)
+    throw new Error(
+      `Expected an instance of IEmitterOptions, got: { ${Object.keys(options).join(', ')} }`
+    )
   }
   if (typeof options.module === 'string') {
     if (!options.console) {
@@ -53,7 +57,11 @@ export async function getEmitter(options: IEmitterOptions): Promise<ICradleEmitt
         try {
           emitter = new EmitterDef(options.options, options.console!)
         } catch (err) {
-          return Promise.reject(`${options.module} module was found but a valid ICradleEmitter is not the default export `)
+          return Promise.reject(
+            `${
+              options.module
+            } module was found but a valid ICradleEmitter is not the default export `
+          )
         }
       } catch (err) {
         err.message = `Error loading ${options.module}: ${err.message}`

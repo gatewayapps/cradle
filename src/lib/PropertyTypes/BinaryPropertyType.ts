@@ -1,5 +1,5 @@
 import constants from './constants'
-import PropertyType, { IPropertyTypeOptions } from './PropertyType'
+import PropertyType from './PropertyType'
 import SecurablePropertyType, { ISecurablePropertyTypeOptions } from './SecurablePropertyType'
 
 export interface IBinaryPropertyTypeOptions extends ISecurablePropertyTypeOptions {

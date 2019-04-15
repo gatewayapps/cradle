@@ -9,11 +9,12 @@
         "semicolon": [true, "never"],
         "quotemark": [true, "single"],
         "variable-name": false,
-        "max-line-length": [false, 180],
+        "max-line-length": [true, 100],
         "trailing-comma": [false],
         "max-classes-per-file": [false, 1],
         "no-console": [false],
-        "no-var-requires": [false]
+        "no-var-requires": [false],
+        "no-unused-variable": false
     },
     "rulesDirectory": [],
     "project": "./"

@@ -1,5 +1,7 @@
 import constants from './constants'
-import ConstrainablePropertyType, { IConstrainablePropertyTypeOptions } from './ConstrainablePropertyType'
+import ConstrainablePropertyType, {
+  IConstrainablePropertyTypeOptions
+} from './ConstrainablePropertyType'
 import PropertyType from './PropertyType'
 
 export interface IDecimalPropertyTypeOptions extends IConstrainablePropertyTypeOptions {

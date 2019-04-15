@@ -44,8 +44,20 @@ export default abstract class PropertyType implements IPropertyType {
       throw new TypeError(`${typeName} is not a valid property type`)
     } else {
       this.TypeName = typeName
-      const { IsPrimaryKey = false, AllowNull = false, DefaultValue, Unique = false, Attributes } = options
-      Object.assign(this, { IsPrimaryKey, AllowNull, DefaultValue, Unique, Attributes })
+      const {
+        IsPrimaryKey = false,
+        AllowNull = false,
+        DefaultValue,
+        Unique = false,
+        Attributes
+      } = options
+      Object.assign(this, {
+        AllowNull,
+        Attributes,
+        DefaultValue,
+        IsPrimaryKey,
+        Unique
+      })
     }
   }
 
@@ -54,6 +66,13 @@ export default abstract class PropertyType implements IPropertyType {
   }
 
   public equals(other: PropertyType): boolean {
-    return this.TypeName === other.TypeName && this.IsPrimaryKey === other.IsPrimaryKey && this.AllowNull === other.AllowNull && this.DefaultValue === other.DefaultValue && this.Unique === other.Unique && this.Attributes === other.Attributes
+    return (
+      this.TypeName === other.TypeName &&
+      this.IsPrimaryKey === other.IsPrimaryKey &&
+      this.AllowNull === other.AllowNull &&
+      this.DefaultValue === other.DefaultValue &&
+      this.Unique === other.Unique &&
+      this.Attributes === other.Attributes
+    )
   }
 }

@@ -35,11 +35,15 @@ export default class SpecEmitter implements ICradleEmitter {
     if (this.tryCreateFile(this.options.outputPath.toString())) {
       writeFileSync(this.options.outputPath.toString(), safeDump(models), 'utf8')
     } else {
-      throw new Error(`Failed to write to file ${this.options.outputPath.toString()}, the file already exists`)
+      throw new Error(
+        `Failed to write to file ${this.options.outputPath.toString()}, the file already exists`
+      )
     }
   }
 
-  public generateModelSpec(model: CradleModel | ObjectPropertyType): { meta: object | undefined; properties: object; references: object } {
+  public generateModelSpec(
+    model: CradleModel | ObjectPropertyType
+  ): { meta: object | undefined; properties: object; references: object } {
     const propertiesCollection = model instanceof CradleModel ? model.Properties : model.Members
     const propertyNames = Object.keys(propertiesCollection)
     const retVal = {
@@ -57,7 +61,11 @@ export default class SpecEmitter implements ICradleEmitter {
           isArray: false,
           properties: this.generateModelSpec(propertiesCollection[pn]).properties
         }
-      } else if (propertiesCollection[pn].TypeName === constants.Array && propertiesCollection[pn].MemberType && propertiesCollection[pn].MemberType.TypeName === constants.Object) {
+      } else if (
+        propertiesCollection[pn].TypeName === constants.Array &&
+        propertiesCollection[pn].MemberType &&
+        propertiesCollection[pn].MemberType.TypeName === constants.Object
+      ) {
         retVal.properties[pn] = {
           isArray: propertiesCollection[pn].TypeName === constants.Array ? true : false,
           properties: this.generateModelSpec(propertiesCollection[pn].MemberType).properties
@@ -168,7 +176,9 @@ export default class SpecEmitter implements ICradleEmitter {
       case constants.String: {
         const str = prop as StringPropertyType
         if (str.AllowedValues != null && str.AllowedValues.length > 0) {
-          const allowedValues = str.AllowedValues.map((av) => this.coerceValueType(av, propertyName))
+          const allowedValues = str.AllowedValues.map((av) =>
+            this.coerceValueType(av, propertyName)
+          )
           parts.push(`allow(${allowedValues.join(', ')})`)
         }
       }
@@ -183,7 +193,14 @@ export default class SpecEmitter implements ICradleEmitter {
   }
 
   protected coerceValueType(value: any, propertyType: string): string | undefined {
-    if (value === undefined || value === null || propertyType === 'object' || propertyType === 'object[]' || propertyType === 'object[]?' || propertyType === 'modelreference[]') {
+    if (
+      value === undefined ||
+      value === null ||
+      propertyType === 'object' ||
+      propertyType === 'object[]' ||
+      propertyType === 'object[]?' ||
+      propertyType === 'modelreference[]'
+    ) {
       return value
     }
 
@@ -202,7 +219,9 @@ export default class SpecEmitter implements ICradleEmitter {
       case constants.UniqueIdentifier.toLowerCase():
         return value.toString()
       default: {
-        throw new Error(`Invalid data type for values: ${typeof value} cannot be converted to (${propertyType})`)
+        throw new Error(
+          `Invalid data type for values: ${typeof value} cannot be converted to (${propertyType})`
+        )
       }
     }
   }

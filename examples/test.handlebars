@@ -1,0 +1,11 @@
+export default (model, schema) => `
+export interface I${model.Name} {
+  
+  ${() =>
+    Model.Properties.forEach(
+      (prop) => `${prop.Name}: List<${prop.MemberType.ModelName}>`
+    )}
+
+}
+
+`

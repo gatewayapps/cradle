@@ -1,4 +1,4 @@
-import {IEmitterOptions} from './EmitterOptions'
+import { IEmitterOptions } from './EmitterOptions'
 import LoaderOptions from './LoaderOptions'
 
 export default class CradleConfig {

@@ -19,4 +19,7 @@ export default interface ICradleLoader {
   loadSchema: () => Promise<CradleSchema>
 }
 
-export type ICradleLoaderConstructable = new (options: { [key: string]: any }, console: IConsole) => ICradleLoader
+export type ICradleLoaderConstructable = new (
+  options: { [key: string]: any },
+  console: IConsole
+) => ICradleLoader

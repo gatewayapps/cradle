@@ -9,7 +9,12 @@ export default class CradleModel {
 
   public Operations: Map<string, ICradleOperation>
 
-  constructor(modelName: string, properties: Map<string, PropertyType>, meta: object, operations: Map<string, ICradleOperation>) {
+  constructor(
+    modelName: string,
+    properties: Map<string, PropertyType>,
+    meta: object,
+    operations: Map<string, ICradleOperation>
+  ) {
     this.Name = modelName
     this.Meta = meta
     this.Properties = properties

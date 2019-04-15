@@ -24,7 +24,11 @@ export default class StringPropertyType extends SecurablePropertyType {
     if (other instanceof StringPropertyType) {
       return other.MaximumLength === this.MaximumLength
     }
-    if (other instanceof StringPropertyType && this.AllowedValues !== null && other.AllowedValues !== null) {
+    if (
+      other instanceof StringPropertyType &&
+      this.AllowedValues !== null &&
+      other.AllowedValues !== null
+    ) {
       return this.arrayEquals(this.AllowedValues, other.AllowedValues)
     }
     return false

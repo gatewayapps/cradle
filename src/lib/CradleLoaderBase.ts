@@ -17,7 +17,10 @@ export abstract class CradleLoaderBase implements ICradleLoader {
   public readModelOperationNames?(modelName: string): Promise<string[]>
   public readModelOperation?(modelName: string, operationName: string): Promise<ICradleOperation>
 
-  public abstract readModelPropertyType(modelName: string, propertyName: string): Promise<PropertyType>
+  public abstract readModelPropertyType(
+    modelName: string,
+    propertyName: string
+  ): Promise<PropertyType>
   public abstract readModelNames(): Promise<string[]>
   public abstract readModelPropertyNames(modelName: string): Promise<string[]>
   public abstract readModelMetadata(modelName: string): Promise<object>
@@ -40,7 +43,8 @@ export abstract class CradleLoaderBase implements ICradleLoader {
           operations: {},
           properties: {}
         }
-        const operationNames = (this.readModelOperationNames && (await this.readModelOperationNames(mn))) || []
+        const operationNames =
+          (this.readModelOperationNames && (await this.readModelOperationNames(mn))) || []
 
         const propertyNames = await this.readModelPropertyNames(mn)
         await Promise.all(
@@ -63,7 +67,9 @@ export abstract class CradleLoaderBase implements ICradleLoader {
     )
 
     modelNames.map((mn) => {
-      models.push(new CradleModel(mn, schema[mn].properties, schema[mn].meta, schema[mn].operations))
+      models.push(
+        new CradleModel(mn, schema[mn].properties, schema[mn].meta, schema[mn].operations)
+      )
     })
 
     const finalSchema = new CradleSchema(models)
