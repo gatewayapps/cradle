@@ -23,7 +23,6 @@ jobs:
   - script: npm install
   - task: Npm@1
     inputs:
-        command: Custom
-        customCommand: version
+        command: publish
         publishRegistry: useExternalRegistry
         publishEndpoint: npmjs
