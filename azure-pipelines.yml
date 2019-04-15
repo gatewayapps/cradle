@@ -15,7 +15,7 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   dependsOn: Test
-  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+  condition: and(succeeded(), and(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), not(in(variables['Build.SourceBranch'], '-'))))
   steps:
   - task: NodeTool@0
     inputs:
@@ -23,7 +23,24 @@ jobs:
   - script: npm install
   - task: Npm@1
     inputs:
-        command: publish
+        command: Custom
+        customCommand: version
+        publishRegistry: useExternalRegistry
+        publishEndpoint: npmjs
+- job: PublishNext
+  pool:
+    vmImage: 'ubuntu-16.04'
+  dependsOn: Test
+  condition: and(succeeded(), and(in(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], '-')))
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '10.x'
+  - script: npm install
+  - task: Npm@1
+    inputs:
+        command: Custom
+        customCommand: publish --tag next
         publishRegistry: useExternalRegistry
         publishEndpoint: npmjs
 
