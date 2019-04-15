@@ -13,8 +13,8 @@ class MockPropertyType extends PropertyType {
   ) {
     super(typeName, {
       AllowNull: allowNull,
-      IsPrimaryKey: isPrimaryKey,
       DefaultValue: defaultValue,
+      IsPrimaryKey: isPrimaryKey,
       Unique: unique
     })
   }
@@ -30,6 +30,9 @@ describe('PropertyType', () => {
       /* tslint:disable-next-line no-unused-expression */
       expect(() => {
         const temp = new MockPropertyType('Unknown')
+        if (!temp) {
+          throw new TypeError('Invalid type')
+        }
       }).to.throw(TypeError)
     })
   })
@@ -41,7 +44,9 @@ describe('PropertyType', () => {
     })
     it('Should not return true when type names are not equal', () => {
       expect(
-        new MockPropertyType(constants.Object).equals(new MockPropertyType(constants.String))
+        new MockPropertyType(constants.Object).equals(
+          new MockPropertyType(constants.String)
+        )
       ).to.equal(false)
     })
     it('Should not return true when allowNull is not equal', () => {
@@ -67,7 +72,13 @@ describe('PropertyType', () => {
     })
     it('Should not return true when unique is not equal', () => {
       expect(
-        new MockPropertyType(constants.Object, false, false, null, false).equals(
+        new MockPropertyType(
+          constants.Object,
+          false,
+          false,
+          null,
+          false
+        ).equals(
           new MockPropertyType(constants.Object, false, false, null, true)
         )
       )

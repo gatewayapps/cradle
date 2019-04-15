@@ -62,12 +62,14 @@ export default class SpecProperty {
     this.LocalProperty = options.localProperty
     this.ForeignProperty = options.foreignProperty
     this.Attributes = options.attributes
-    this.Encrypted = options.encrypted
-    this.Hashed = options.hashed
+    this.Encrypted = options.encrypted || false
+    this.Hashed = options.hashed || false
     if (Array.isArray(options.autogenerateOptions)) {
       if (options.autogenerateOptions.length !== 2) {
         throw new RangeError(
-          `Expected 2 elements in autogenerate options, received ${options.autogenerateOptions}`
+          `Expected 2 elements in autogenerate options, received ${
+            options.autogenerateOptions
+          }`
         )
       } else {
         this.AutogenerateOptions = new IntegerAutogenerateOptions(

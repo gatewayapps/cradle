@@ -96,7 +96,9 @@ describe('SpecPropertyTypeParser', () => {
 
   describe('Integer', () => {
     it('Should parse a simple integer', () => {
-      expect(ParseProperty('integer')).to.deep.equal(new SpecProperty('integer'))
+      expect(ParseProperty('integer')).to.deep.equal(
+        new SpecProperty('integer')
+      )
     })
     it('Should parse a nullable integer', () => {
       expect(ParseProperty('integer?')).to.deep.equal(
@@ -201,7 +203,9 @@ describe('SpecPropertyTypeParser', () => {
 
   describe('Boolean', () => {
     it('Should parse a simple boolean', () => {
-      expect(ParseProperty('boolean')).to.deep.equal(new SpecProperty('boolean'))
+      expect(ParseProperty('boolean')).to.deep.equal(
+        new SpecProperty('boolean')
+      )
     })
     it('Should parse a nullable boolean', () => {
       expect(ParseProperty('boolean?')).to.deep.equal(
@@ -244,7 +248,9 @@ describe('SpecPropertyTypeParser', () => {
 
   describe('Decimal', () => {
     it('Should parse a simple decimal', () => {
-      expect(ParseProperty('decimal')).to.deep.equal(new SpecProperty('decimal'))
+      expect(ParseProperty('decimal')).to.deep.equal(
+        new SpecProperty('decimal')
+      )
     })
     it('Should parse a nullable decimal', () => {
       expect(ParseProperty('decimal?')).to.deep.equal(
@@ -404,7 +410,9 @@ describe('SpecPropertyTypeParser', () => {
     ]
 
     it('Should parse a simple datetime', () => {
-      expect(ParseProperty('datetime')).to.deep.equal(new SpecProperty('datetime'))
+      expect(ParseProperty('datetime')).to.deep.equal(
+        new SpecProperty('datetime')
+      )
     })
     it('Should parse a nullable datetime', () => {
       expect(ParseProperty('datetime?')).to.deep.equal(
@@ -455,7 +463,9 @@ describe('SpecPropertyTypeParser', () => {
     })
     it('Should parse with min and max value', () => {
       validDates.forEach((testDate) => {
-        expect(ParseProperty(`datetime min(${testDate}) max(${testDate})`)).to.deep.equal(
+        expect(
+          ParseProperty(`datetime min(${testDate}) max(${testDate})`)
+        ).to.deep.equal(
           new SpecProperty('datetime', {
             maxValue: new Date(testDate),
             minValue: new Date(testDate)
@@ -527,7 +537,9 @@ describe('SpecPropertyTypeParser', () => {
       )
     })
     it('Should parse a nullable string', () => {
-      expect(ParseProperty('string?')).to.deep.equal(new SpecProperty('string', { nullable: true }))
+      expect(ParseProperty('string?')).to.deep.equal(
+        new SpecProperty('string', { nullable: true })
+      )
     })
     it('Should parse a string with length', () => {
       expect(ParseProperty('string(100)?')).to.deep.equal(
@@ -551,20 +563,24 @@ describe('SpecPropertyTypeParser', () => {
       expect(ParseProperty('string default("")')).to.deep.equal(
         new SpecProperty('string', { defaultValue: '' })
       )
-      expect(ParseProperty("string default('Testing')")).to.deep.equal(
+      expect(ParseProperty('string default(\'Testing\')')).to.deep.equal(
         new SpecProperty('string', { defaultValue: 'Testing' })
       )
-      expect(ParseProperty("string default('')")).to.deep.equal(
+      expect(ParseProperty('string default(\'\')')).to.deep.equal(
         new SpecProperty('string', { defaultValue: '' })
       )
     })
     it('Should parse allowed values', () => {
-      expect(ParseProperty('string allow("Value 1", "Value 2", "Value 3")')).to.deep.equal(
+      expect(
+        ParseProperty('string allow("Value 1", "Value 2", "Value 3")')
+      ).to.deep.equal(
         new SpecProperty('string', {
           allowedValues: ['Value 1', 'Value 2', 'Value 3']
         })
       )
-      expect(ParseProperty("string allow('Value 1', 'Value 2', 'Value 3')")).to.deep.equal(
+      expect(
+        ParseProperty('string allow(\'Value 1\', \'Value 2\', \'Value 3\')')
+      ).to.deep.equal(
         new SpecProperty('string', {
           allowedValues: ['Value 1', 'Value 2', 'Value 3']
         })
@@ -596,7 +612,9 @@ describe('SpecPropertyTypeParser', () => {
 
   describe('UniqueIdentifier', () => {
     it('Should parse a simple uniqueidentifier', () => {
-      expect(ParseProperty('uniqueidentifier')).to.deep.equal(new SpecProperty('uniqueidentifier'))
+      expect(ParseProperty('uniqueidentifier')).to.deep.equal(
+        new SpecProperty('uniqueidentifier')
+      )
     })
     it('Should parse a nullable uniqueidentifier', () => {
       expect(ParseProperty('uniqueidentifier?')).to.deep.equal(
