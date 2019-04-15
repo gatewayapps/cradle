@@ -23,7 +23,7 @@ jobs:
   - script: npm install
   - task: Npm@1
     inputs:
-        command: Custom
+        command: custom
         customCommand: version
         publishRegistry: useExternalRegistry
         publishEndpoint: npmjs
@@ -39,7 +39,7 @@ jobs:
   - script: npm install
   - task: Npm@1
     inputs:
-        command: Custom
+        command: custom
         customCommand: publish --tag next
         publishRegistry: useExternalRegistry
         publishEndpoint: npmjs
