@@ -155,6 +155,7 @@ export default class SpecLoader extends CradleLoaderBase {
         }
         if (prop.TypeName === constants.ReferenceModel) {
           const refProp = prop as ReferenceModelType
+
           const targetModel: CradleModel | undefined = schema.GetModel(refProp.ModelName)
 
           if (!targetModel) {
@@ -166,8 +167,10 @@ export default class SpecLoader extends CradleLoaderBase {
           if (!model.Properties[refProp.LocalProperty]) {
             throw new Error(`Invalid reference ${pn} on ${model.Name}. ${model.Name} does not contain a property named ${refProp.ForeignProperty}`)
           }
-
           schema.Models[k].Properties[pn].ModelType = targetModel
+          if (!refProp.IsPrimaryKey) {
+            schema.Models[k].Properties[refProp.LocalProperty].ReferencedBy = refProp.ModelName
+          }
         }
       })
 

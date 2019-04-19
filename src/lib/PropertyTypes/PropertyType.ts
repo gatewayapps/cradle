@@ -38,6 +38,7 @@ export default abstract class PropertyType implements IPropertyType {
   public DefaultValue?: any
   public Unique!: boolean | string
   public Attributes?: { [key: string]: any }
+  public ReferencedBy?: string
 
   constructor(typeName: string, options: IPropertyTypeOptions) {
     if (!(typeName in constants)) {
