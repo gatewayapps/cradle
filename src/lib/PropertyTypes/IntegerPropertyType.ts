@@ -1,5 +1,8 @@
 import { PropertyTypes } from './constants'
-import { ConstrainablePropertyType, IConstrainablePropertyTypeOptions } from './ConstrainablePropertyType'
+import {
+  ConstrainablePropertyType,
+  IConstrainablePropertyTypeOptions
+} from './ConstrainablePropertyType'
 
 export class IntegerAutogenerateOptions {
   public Seed: number
@@ -23,7 +26,11 @@ export class IntegerPropertyType extends ConstrainablePropertyType {
       this.Autogenerate = options.Autogenerate
     } else {
       if (options.Autogenerate !== undefined) {
-        throw new TypeError(`Expected auto options to be of type IntegerAutogenerateOptions, got ${options.Autogenerate}`)
+        throw new TypeError(
+          `Expected auto options to be of type IntegerAutogenerateOptions, got ${
+            options.Autogenerate
+          }`
+        )
       }
     }
   }

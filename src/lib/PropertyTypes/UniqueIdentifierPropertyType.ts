@@ -7,7 +7,14 @@ export interface IUniqueIdentifierPropertyTypeOptions extends ISecurableProperty
 
 export class UniqueIdentifierPropertyType extends SecurablePropertyType {
   public Autogenerate: boolean
-  constructor(options: IUniqueIdentifierPropertyTypeOptions = { AllowNull: false, IsPrimaryKey: false, Autogenerate: false, Unique: false }) {
+  constructor(
+    options: IUniqueIdentifierPropertyTypeOptions = {
+      AllowNull: false,
+      IsPrimaryKey: false,
+      Autogenerate: false,
+      Unique: false
+    }
+  ) {
     super(PropertyTypes.UniqueIdentifier, options)
     this.Autogenerate = options.Autogenerate || false
   }

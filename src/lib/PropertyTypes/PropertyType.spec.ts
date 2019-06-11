@@ -5,8 +5,19 @@ import { PropertyTypes } from './constants'
 import { PropertyType } from './PropertyType'
 
 class MockPropertyType extends PropertyType {
-  constructor(typeName: string, allowNull: boolean = false, isPrimaryKey: boolean = false, defaultValue?: any, unique: boolean | string = false) {
-    super(typeName, { AllowNull: allowNull, IsPrimaryKey: isPrimaryKey, DefaultValue: defaultValue, Unique: unique })
+  constructor(
+    typeName: string,
+    allowNull: boolean = false,
+    isPrimaryKey: boolean = false,
+    defaultValue?: any,
+    unique: boolean | string = false
+  ) {
+    super(typeName, {
+      AllowNull: allowNull,
+      IsPrimaryKey: isPrimaryKey,
+      DefaultValue: defaultValue,
+      Unique: unique
+    })
   }
 }
 
@@ -30,19 +41,39 @@ describe('PropertyType', () => {
       expect(mockA.equals(mockB)).to.equal(true)
     })
     it('Should not return true when type names are not equal', () => {
-      expect(new MockPropertyType(PropertyTypes.Object).equals(new MockPropertyType(PropertyTypes.String))).to.equal(false)
+      expect(
+        new MockPropertyType(PropertyTypes.Object).equals(
+          new MockPropertyType(PropertyTypes.String)
+        )
+      ).to.equal(false)
     })
     it('Should not return true when allowNull is not equal', () => {
-      expect(new MockPropertyType(PropertyTypes.Object, false).equals(new MockPropertyType(PropertyTypes.Object, true)))
+      expect(
+        new MockPropertyType(PropertyTypes.Object, false).equals(
+          new MockPropertyType(PropertyTypes.Object, true)
+        )
+      )
     })
     it('Should not return true when isPrimaryKey is not equal', () => {
-      expect(new MockPropertyType(PropertyTypes.Object, false, false).equals(new MockPropertyType(PropertyTypes.Object, false, true)))
+      expect(
+        new MockPropertyType(PropertyTypes.Object, false, false).equals(
+          new MockPropertyType(PropertyTypes.Object, false, true)
+        )
+      )
     })
     it('Should not return true when defaultValue is not equal', () => {
-      expect(new MockPropertyType(PropertyTypes.Object, false, false, false).equals(new MockPropertyType(PropertyTypes.Object, false, false, true)))
+      expect(
+        new MockPropertyType(PropertyTypes.Object, false, false, false).equals(
+          new MockPropertyType(PropertyTypes.Object, false, false, true)
+        )
+      )
     })
     it('Should not return true when unique is not equal', () => {
-      expect(new MockPropertyType(PropertyTypes.Object, false, false, null, false).equals(new MockPropertyType(PropertyTypes.Object, false, false, null, true)))
+      expect(
+        new MockPropertyType(PropertyTypes.Object, false, false, null, false).equals(
+          new MockPropertyType(PropertyTypes.Object, false, false, null, true)
+        )
+      )
     })
   })
 })

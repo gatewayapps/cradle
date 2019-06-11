@@ -1,4 +1,6 @@
-import { IEmitterOptions } from './EmitterOptions'
+import { EmitterDefinition } from './EmitterConfiguration'
+
+import { EmitterOptionsArgs } from './EmitterOptions'
 import { ICradleEmitter, ICradleEmitterConstructable } from './ICradleEmitter'
 import { ICradleLoader, ICradleLoaderConstructable } from './ICradleLoader'
 import { ILoaderOptions } from './LoaderOptions'
@@ -27,7 +29,7 @@ export async function getLoader(options: ILoaderOptions): Promise<ICradleLoader>
   return loader
 }
 
-export async function getEmitter(options: IEmitterOptions): Promise<ICradleEmitter> {
+export async function getEmitter(options: EmitterDefinition, baseOptions: EmitterOptionsArgs = {}): Promise<ICradleEmitter> {
   let emitter: ICradleEmitter
 
   if (!options.module) {

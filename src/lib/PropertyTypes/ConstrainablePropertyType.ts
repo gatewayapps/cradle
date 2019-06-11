@@ -14,7 +14,9 @@ export abstract class ConstrainablePropertyType extends SecurablePropertyType {
   constructor(typeName: string, options: IConstrainablePropertyTypeOptions) {
     if (!isNullOrUndefined(options.MinimumValue) && !isNullOrUndefined(options.MaximumValue)) {
       if (options.MinimumValue > options.MaximumValue) {
-        throw new RangeError(`minimumValue can not be greater than maximumValue for type: ${typeName}`)
+        throw new RangeError(
+          `minimumValue can not be greater than maximumValue for type: ${typeName}`
+        )
       }
     }
 

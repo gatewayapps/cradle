@@ -1,0 +1,6 @@
+loader:
+  module: '@gatewayapps/cradle-spec-loader'
+  options:
+    source: './models/**/*.yml'
+emitters:
+  
