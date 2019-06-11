@@ -19,15 +19,12 @@ export async function handler(argv) {
   try {
     const configuration = await loadConfiguration(argv.config)
     if (configuration) {
-      console.log('Got configuration')
-
       const loader = await getLoader(configuration.Loader)
       const schema = await loader.loadSchema()
       console.log(colors.yellow(JSON.stringify(schema, null, 2)))
       console.log(colors.green(`Schema verified`))
     }
   } catch (err) {
-    console.log('FAILED HERE!')
     console.log(colors.red(err.message))
     process.exit(1)
   }

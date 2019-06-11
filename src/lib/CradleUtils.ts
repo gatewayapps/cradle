@@ -3,7 +3,6 @@ import { ICradleEmitter, ICradleEmitterConstructable } from './ICradleEmitter'
 import { ICradleLoader, ICradleLoaderConstructable } from './ICradleLoader'
 import { LoaderOptions } from './LoaderOptions'
 export async function getLoader(options: LoaderOptions): Promise<ICradleLoader> {
-  console.log('IN getLoader')
   let loader!: ICradleLoader
   if (typeof options.module === 'string') {
     // TO-DO: handle other loaders here
