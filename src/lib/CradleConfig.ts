@@ -1,11 +1,11 @@
 import { IEmitterOptions } from './EmitterOptions'
-import { LoaderOptions } from './LoaderOptions'
+import { ILoaderOptions } from './LoaderOptions'
 
 export class CradleConfig {
-  public Loader: LoaderOptions
+  public Loader: ILoaderOptions
   public Emitters: any[]
 
-  constructor(loader: LoaderOptions, emitters: IEmitterOptions[]) {
+  constructor(loader: ILoaderOptions, emitters: IEmitterOptions[]) {
     this.Loader = loader
     this.Emitters = emitters
   }

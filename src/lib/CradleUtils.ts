@@ -1,20 +1,20 @@
 import { IEmitterOptions } from './EmitterOptions'
 import { ICradleEmitter, ICradleEmitterConstructable } from './ICradleEmitter'
 import { ICradleLoader, ICradleLoaderConstructable } from './ICradleLoader'
-import { LoaderOptions } from './LoaderOptions'
-export async function getLoader(options: LoaderOptions): Promise<ICradleLoader> {
+import { ILoaderOptions } from './LoaderOptions'
+export async function getLoader(options: ILoaderOptions): Promise<ICradleLoader> {
   let loader!: ICradleLoader
   if (typeof options.module === 'string') {
     // TO-DO: handle other loaders here
     try {
-      const loaderDef: ICradleLoaderConstructable = require(options.module)
+      const loaderDefRef: any = require(options.module)
+      const loaderDef: ICradleLoaderConstructable = loaderDefRef.default ? loaderDefRef.default : loaderDefRef
       try {
-        loader = new loaderDef(options.options, options.console)
+        loader = new loaderDef(options)
       } catch (err) {
         return Promise.reject(`${options.module} module was found but a valid ICradleLoader is not the default export`)
       }
     } catch (err) {
-      options.console.error('FAILED HERE!!!')
       return Promise.reject(err)
     }
   } else {

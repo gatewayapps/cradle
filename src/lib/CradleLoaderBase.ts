@@ -3,15 +3,15 @@ import { CradleSchema } from './CradleSchema'
 import { IConsole } from './IConsole'
 import { ICradleLoader } from './ICradleLoader'
 import { ICradleOperation } from './ICradleOperation'
-
+import { ILoaderOptions, LoaderOptions } from './LoaderOptions'
 import { PropertyType } from './PropertyTypes/PropertyType'
 
-export abstract class CradleLoaderBase implements ICradleLoader {
+export abstract class CradleLoaderBase<T> implements ICradleLoader {
   protected console?: IConsole
-  protected options: any
-  constructor(options: { [key: string]: any }, console: IConsole) {
-    this.options = options
-    this.console = console
+  protected options: T
+  constructor(options: LoaderOptions) {
+    this.options = options.options
+    this.console = options.console
   }
 
   public readModelOperationNames?(modelName: string): Promise<string[]>

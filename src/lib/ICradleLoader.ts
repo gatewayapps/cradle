@@ -2,6 +2,7 @@ import { CradleSchema } from './CradleSchema'
 import { IConsole } from './IConsole'
 import { ICradleOperation } from './ICradleOperation'
 
+import { LoaderOptions } from './LoaderOptions'
 import { PropertyType } from './PropertyTypes/PropertyType'
 
 export interface ICradleLoader {
@@ -19,4 +20,4 @@ export interface ICradleLoader {
   loadSchema: () => Promise<CradleSchema>
 }
 
-export type ICradleLoaderConstructable = new (options: { [key: string]: any }, console: IConsole) => ICradleLoader
+export type ICradleLoaderConstructable = new (options: LoaderOptions) => ICradleLoader
