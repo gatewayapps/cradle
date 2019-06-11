@@ -1,6 +1,6 @@
-import { ConstrainablePropertyType, PropertyType } from '.'
 import { PropertyTypes } from './constants'
-import { IConstrainablePropertyTypeOptions } from './ConstrainablePropertyType'
+import { ConstrainablePropertyType, IConstrainablePropertyTypeOptions } from './ConstrainablePropertyType'
+import { PropertyType } from './PropertyType'
 
 export interface IDecimalPropertyTypeOptions extends IConstrainablePropertyTypeOptions {
   Precision?: number
