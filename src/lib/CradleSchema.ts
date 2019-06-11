@@ -1,6 +1,6 @@
-import CradleModel from './CradleModel'
+import { CradleModel } from './CradleModel'
 
-export default class CradleSchema {
+export class CradleSchema {
   public Models: CradleModel[] = []
 
   constructor(models: CradleModel[]) {

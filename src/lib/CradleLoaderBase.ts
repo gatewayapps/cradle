@@ -1,10 +1,10 @@
-import CradleModel from './CradleModel'
-import CradleSchema from './CradleSchema'
+import { CradleModel } from './CradleModel'
+import { CradleSchema } from './CradleSchema'
 import { IConsole } from './IConsole'
-import ICradleLoader from './ICradleLoader'
+import { ICradleLoader } from './ICradleLoader'
 import { ICradleOperation } from './ICradleOperation'
 
-import PropertyType from './PropertyTypes/PropertyType'
+import { PropertyType } from './PropertyTypes/PropertyType'
 
 export abstract class CradleLoaderBase implements ICradleLoader {
   protected console?: IConsole

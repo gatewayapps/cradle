@@ -1,12 +1,11 @@
 import { expect } from 'chai'
 import 'mocha'
-import constants from './constants'
-import DecimalPropertyType from './DecimalPropertyType'
-
+import { PropertyTypes } from './constants'
+import { DecimalPropertyType } from './DecimalPropertyType'
 describe('DecimalPropertyType', () => {
   describe('constructor', () => {
     it('Should return a PropertyType with a type name of Decimal', () => {
-      expect(new DecimalPropertyType({ Precision: 18, Scale: 2 }).TypeName).to.equal(constants.Decimal)
+      expect(new DecimalPropertyType({ Precision: 18, Scale: 2 }).TypeName).to.equal(PropertyTypes.Decimal)
     })
     it('Should correctly assign Precision and Scale', () => {
       expect(new DecimalPropertyType({ Precision: 18, Scale: 2 })).to.deep.include({ Precision: 18, Scale: 2 })

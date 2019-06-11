@@ -1,8 +1,8 @@
-import CradleSchema from './CradleSchema'
+import { CradleSchema } from './CradleSchema'
 import { IEmitterOptions } from './EmitterOptions'
 import { IConsole } from './IConsole'
 
-export default interface ICradleEmitter {
+export interface ICradleEmitter {
   prepareEmitter?()
   emitSchema(schema: CradleSchema)
 }

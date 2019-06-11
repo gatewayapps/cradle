@@ -1,6 +1,6 @@
-import CradleModel from '../CradleModel'
-import constants from './constants'
-import PropertyType, { IPropertyTypeOptions } from './PropertyType'
+import { CradleModel } from '../CradleModel'
+import { PropertyTypes } from './constants'
+import { IPropertyTypeOptions, PropertyType } from './PropertyType'
 
 export interface IReferenceModelTypeOptions extends IPropertyTypeOptions {
   ModelName: string
@@ -8,14 +8,14 @@ export interface IReferenceModelTypeOptions extends IPropertyTypeOptions {
   ForeignProperty: string | undefined
 }
 
-export default class ReferenceModelType extends PropertyType {
+export class ReferenceModelType extends PropertyType {
   public ModelName: string
   public LocalProperty: string
   public ForeignProperty: string
   public ModelType?: CradleModel
 
   constructor(options: IReferenceModelTypeOptions) {
-    super(constants.ReferenceModel, options)
+    super(PropertyTypes.ReferenceModel, options)
     this.ModelName = options.ModelName
 
     this.LocalProperty = options.LocalProperty

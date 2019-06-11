@@ -17,7 +17,7 @@ export const builder = {
 
 export async function handler(argv) {
   try {
-    const configuration = loadConfiguration(argv.config)
+    const configuration = await loadConfiguration(argv.config)
     if (configuration) {
       const loader = await getLoader(configuration.Loader)
       const schema = await loader.loadSchema()

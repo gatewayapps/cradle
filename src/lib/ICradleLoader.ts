@@ -1,10 +1,10 @@
-import CradleSchema from './CradleSchema'
+import { CradleSchema } from './CradleSchema'
 import { IConsole } from './IConsole'
 import { ICradleOperation } from './ICradleOperation'
 
-import PropertyType from './PropertyTypes/PropertyType'
+import { PropertyType } from './PropertyTypes/PropertyType'
 
-export default interface ICradleLoader {
+export interface ICradleLoader {
   /**
    * Passes a loader the options so it can do any initialization it needs to
    */

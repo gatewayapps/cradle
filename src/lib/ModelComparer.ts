@@ -1,4 +1,4 @@
-export default class ModelComparer {
+export class ModelComparer {
   private CaseSensitive: boolean
   public constructor(caseSensitive: boolean = true) {
     this.CaseSensitive = caseSensitive
@@ -16,12 +16,14 @@ export default class ModelComparer {
     return {
       additions: newKeys,
       deletions: missingKeys,
-      modifications: newValueKeys.map((nvk) => ({key: nvk, value: b[nvk]})),
+      modifications: newValueKeys.map((nvk) => ({ key: nvk, value: b[nvk] }))
     }
   }
 
   private equal(a: any, b: any) {
-    if (a === b) { return true }
+    if (a === b) {
+      return true
+    }
 
     if (a && b && typeof a === 'object' && typeof b === 'object') {
       const arrA = Array.isArray(a)
@@ -32,24 +34,38 @@ export default class ModelComparer {
 
       if (arrA && arrB) {
         length = a.length
-        if (length !== b.length) { return false }
-        for (i = length; i-- !== 0;) {
-          if (!this.equal(a[i], b[i])) { return false }
+        if (length !== b.length) {
+          return false
+        }
+        for (i = length; i-- !== 0; ) {
+          if (!this.equal(a[i], b[i])) {
+            return false
+          }
         }
         return true
       }
 
-      if (arrA !== arrB) { return false }
+      if (arrA !== arrB) {
+        return false
+      }
 
       const dateA = a instanceof Date
       const dateB = b instanceof Date
-      if (dateA !== dateB) { return false }
-      if (dateA && dateB) { return a.getTime() === b.getTime() }
+      if (dateA !== dateB) {
+        return false
+      }
+      if (dateA && dateB) {
+        return a.getTime() === b.getTime()
+      }
 
       const regexpA = a instanceof RegExp
       const regexpB = b instanceof RegExp
-      if (regexpA !== regexpB) { return false }
-      if (regexpA && regexpB) { return a.toString() === b.toString() }
+      if (regexpA !== regexpB) {
+        return false
+      }
+      if (regexpA && regexpB) {
+        return a.toString() === b.toString()
+      }
 
       const keys = Object.keys(a)
       length = keys.length
@@ -58,13 +74,17 @@ export default class ModelComparer {
         return false
       }
 
-      for (i = length; i-- !== 0;) {
-        if (!Object.prototype.hasOwnProperty.call(b, keys[i])) { return false }
+      for (i = length; i-- !== 0; ) {
+        if (!Object.prototype.hasOwnProperty.call(b, keys[i])) {
+          return false
+        }
       }
 
-      for (i = length; i-- !== 0;) {
+      for (i = length; i-- !== 0; ) {
         key = keys[i]
-        if (!this.equal(a[key], b[key])) { return false }
+        if (!this.equal(a[key], b[key])) {
+          return false
+        }
       }
 
       return true

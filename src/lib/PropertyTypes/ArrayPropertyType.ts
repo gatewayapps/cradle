@@ -1,15 +1,15 @@
-import constants from './constants'
-import PropertyType, { IPropertyTypeOptions } from './PropertyType'
+import { PropertyTypes } from './constants'
+import { IPropertyTypeOptions, PropertyType } from './PropertyType'
 
 export interface IArrayPropertyTypeOptions extends IPropertyTypeOptions {
   MemberType: PropertyType | string
 }
 
-export default class ArrayPropertyType extends PropertyType {
+export class ArrayPropertyType extends PropertyType {
   public MemberType: PropertyType | string
 
   constructor(options: IArrayPropertyTypeOptions) {
-    super(constants.Array, options)
+    super(PropertyTypes.Array, options)
     this.MemberType = options.MemberType
   }
 }

@@ -1,12 +1,12 @@
-import constants from './constants'
-import PropertyType, { IPropertyTypeOptions } from './PropertyType'
+import { PropertyTypes } from './constants'
+import { IPropertyTypeOptions, PropertyType } from './PropertyType'
 
 export interface IBooleanPropertyTypeOptions extends IPropertyTypeOptions {
   DefaultValue: boolean | number | undefined
 }
 
-export default class BooleanPropertyType extends PropertyType {
+export class BooleanPropertyType extends PropertyType {
   constructor(options: IBooleanPropertyTypeOptions) {
-    super(constants.Boolean, options)
+    super(PropertyTypes.Boolean, options)
   }
 }

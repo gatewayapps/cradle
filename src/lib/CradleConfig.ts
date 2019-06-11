@@ -1,7 +1,7 @@
-import {IEmitterOptions} from './EmitterOptions'
-import LoaderOptions from './LoaderOptions'
+import { IEmitterOptions } from './EmitterOptions'
+import { LoaderOptions } from './LoaderOptions'
 
-export default class CradleConfig {
+export class CradleConfig {
   public Loader: LoaderOptions
   public Emitters: any[]
 

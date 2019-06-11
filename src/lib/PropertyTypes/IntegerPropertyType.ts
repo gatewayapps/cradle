@@ -1,5 +1,5 @@
-import constants from './constants'
-import ConstrainablePropertyType, { IConstrainablePropertyTypeOptions } from './ConstrainablePropertyType'
+import { PropertyTypes } from './constants'
+import { ConstrainablePropertyType, IConstrainablePropertyTypeOptions } from './ConstrainablePropertyType'
 
 export class IntegerAutogenerateOptions {
   public Seed: number
@@ -14,11 +14,11 @@ export interface IIntegerPropertyTypeOptions extends IConstrainablePropertyTypeO
   Autogenerate?: IntegerAutogenerateOptions
 }
 
-export default class IntegerPropertyType extends ConstrainablePropertyType {
+export class IntegerPropertyType extends ConstrainablePropertyType {
   public Autogenerate?: IntegerAutogenerateOptions
   // tslint:disable-next-line:max-line-length
   constructor(options: IIntegerPropertyTypeOptions) {
-    super(constants.Integer, options)
+    super(PropertyTypes.Integer, options)
     if (options.Autogenerate instanceof IntegerAutogenerateOptions) {
       this.Autogenerate = options.Autogenerate
     } else {
