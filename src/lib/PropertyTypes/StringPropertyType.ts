@@ -1,18 +1,18 @@
-import constants from './constants'
-import PropertyType from './PropertyType'
-import SecurablePropertyType, { ISecurablePropertyTypeOptions } from './SecurablePropertyType'
+import { PropertyTypes } from './constants'
+import { PropertyType } from './PropertyType'
+import { ISecurablePropertyTypeOptions, SecurablePropertyType } from './SecurablePropertyType'
 
 export interface IStringPropertyTypeOptions extends ISecurablePropertyTypeOptions {
   MaximumLength?: number
   AllowedValues?: string[]
 }
 
-export default class StringPropertyType extends SecurablePropertyType {
+export class StringPropertyType extends SecurablePropertyType {
   public MaximumLength?: number
   public AllowedValues?: string[]
 
   constructor(options: IStringPropertyTypeOptions) {
-    super(constants.String, options)
+    super(PropertyTypes.String, options)
     this.MaximumLength = options.MaximumLength
     this.AllowedValues = options.AllowedValues
   }

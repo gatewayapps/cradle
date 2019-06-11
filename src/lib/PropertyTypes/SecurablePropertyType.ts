@@ -1,11 +1,11 @@
-import PropertyType, { IPropertyTypeOptions } from './PropertyType'
+import { IPropertyTypeOptions, PropertyType } from './PropertyType'
 
 export interface ISecurablePropertyTypeOptions extends IPropertyTypeOptions {
   Hashed?: boolean
   Encrypted?: boolean
 }
 
-export default abstract class SecurablePropertyType extends PropertyType {
+export abstract class SecurablePropertyType extends PropertyType {
   public Hashed: boolean
   public Encrypted: boolean
 

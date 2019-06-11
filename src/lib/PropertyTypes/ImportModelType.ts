@@ -1,18 +1,18 @@
-import constants from './constants'
+import { CradleModel } from '../CradleModel'
+import { IPropertyTypeOptions, PropertyType } from './PropertyType'
 
-import { CradleModel } from '../..'
-import PropertyType, { IPropertyTypeOptions } from './PropertyType'
+import { PropertyTypes } from './constants'
 
 export interface IImportModelTypeOptions extends IPropertyTypeOptions {
   ModelName: string
 }
 
-export default class ImportModelType extends PropertyType {
+export class ImportModelType extends PropertyType {
   public ModelName: string
   public ModelType?: CradleModel
 
   constructor(options: IImportModelTypeOptions) {
-    super(constants.ImportModel, options)
+    super(PropertyTypes.ImportModel, options)
     this.ModelName = options.ModelName
   }
 }

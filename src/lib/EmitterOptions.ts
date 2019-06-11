@@ -7,7 +7,7 @@ export interface IEmitterOptions {
   options?: any
   console?: IConsole
 }
-export default class EmitterOptions<T> implements IEmitterOptions {
+export class EmitterOptions<T> implements IEmitterOptions {
   public name: string
   public module: string | ICradleEmitter
   public console?: IConsole

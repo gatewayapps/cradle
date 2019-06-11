@@ -1,18 +1,18 @@
-import constants from './constants'
-import ConstrainablePropertyType, { IConstrainablePropertyTypeOptions } from './ConstrainablePropertyType'
-import PropertyType from './PropertyType'
+import { ConstrainablePropertyType, PropertyType } from '.'
+import { PropertyTypes } from './constants'
+import { IConstrainablePropertyTypeOptions } from './ConstrainablePropertyType'
 
 export interface IDecimalPropertyTypeOptions extends IConstrainablePropertyTypeOptions {
   Precision?: number
   Scale?: number
 }
 
-export default class DecimalPropertyType extends ConstrainablePropertyType {
+export class DecimalPropertyType extends ConstrainablePropertyType {
   public Precision?: number
   public Scale?: number
 
   constructor(options: IDecimalPropertyTypeOptions) {
-    super(constants.Decimal, options)
+    super(PropertyTypes.Decimal, options)
 
     this.Precision = options.Precision
     this.Scale = options.Scale

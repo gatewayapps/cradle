@@ -1,8 +1,8 @@
 import { ICradleOperation } from './ICradleOperation'
 
-import PropertyType from './PropertyTypes/PropertyType'
+import { PropertyType } from './PropertyTypes/PropertyType'
 
-export default class CradleModel {
+export class CradleModel {
   public Name: string
   public Meta: object
   public Properties: Map<string, PropertyType>

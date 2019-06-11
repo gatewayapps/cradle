@@ -1,16 +1,16 @@
-import constants from './constants'
-import PropertyType, { IPropertyTypeOptions } from './PropertyType'
-import SecurablePropertyType, { ISecurablePropertyTypeOptions } from './SecurablePropertyType'
+import { PropertyTypes } from './constants'
+import { PropertyType } from './PropertyType'
+import { ISecurablePropertyTypeOptions, SecurablePropertyType } from './SecurablePropertyType'
 
 export interface IBinaryPropertyTypeOptions extends ISecurablePropertyTypeOptions {
   MaximumLength?: number
 }
 
-export default class BinaryPropertyType extends SecurablePropertyType {
+export class BinaryPropertyType extends SecurablePropertyType {
   public MaximumLength?: number
 
   constructor(options: IBinaryPropertyTypeOptions) {
-    super(constants.Binary, options)
+    super(PropertyTypes.Binary, options)
     this.MaximumLength = options.MaximumLength
   }
 

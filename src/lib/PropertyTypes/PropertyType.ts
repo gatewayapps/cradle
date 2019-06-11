@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import constants from './constants'
+
+import { PropertyTypes } from './constants'
 import IPropertyType from './IPropertyType'
 
 export interface IPropertyTypeOptions {
@@ -31,7 +32,7 @@ export interface IPropertyTypeOptions {
   Attributes?: { [key: string]: any }
 }
 
-export default abstract class PropertyType implements IPropertyType {
+export abstract class PropertyType implements IPropertyType {
   public TypeName: string
   public IsPrimaryKey!: boolean
   public AllowNull!: boolean
@@ -41,7 +42,7 @@ export default abstract class PropertyType implements IPropertyType {
   public ReferencedBy?: string
 
   constructor(typeName: string, options: IPropertyTypeOptions) {
-    if (!(typeName in constants)) {
+    if (!(typeName in PropertyTypes)) {
       throw new TypeError(`${typeName} is not a valid property type`)
     } else {
       this.TypeName = typeName

@@ -1,4 +1,4 @@
-const PropertyTypes = {
+export const PropertyTypes = {
   Array: 'Array',
   Binary: 'Binary',
   Boolean: 'Boolean',
@@ -11,4 +11,3 @@ const PropertyTypes = {
   String: 'String',
   UniqueIdentifier: 'UniqueIdentifier'
 }
-export default PropertyTypes
