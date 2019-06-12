@@ -1,4 +1,0 @@
-TrainingAssignment:
-  properties:
-    trainingId: integer
-    nodeId: integer

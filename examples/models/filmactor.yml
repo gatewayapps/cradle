@@ -3,7 +3,7 @@ Film:
     createFilm:
       returns: Film
       arguments:
-        name: "?"
+        name: 
         totalBoxOffice: decimal min(0)
   properties:
     id: integer primary auto(1,1)

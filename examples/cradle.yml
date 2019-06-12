@@ -1,0 +1,11 @@
+loader:
+  module: '@gatewayapps/cradle-spec-loader'
+  options:
+    source: './models/**/*.yml'
+emitters:
+  graphql:
+    module: '@gatewayapps/cradle-apollo-emitter'
+    output: './output/schema.graphql'
+    options:
+      overwrite: true
+      formatter: 'prettier'

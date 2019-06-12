@@ -1,3 +1,3 @@
 export default interface IPropertyType {
-    toString: () => string
+  toString: () => string
 }

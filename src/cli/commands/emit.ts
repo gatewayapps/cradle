@@ -1,6 +1,8 @@
 import colors from 'colors'
 import { getEmitter, getLoader } from '../../lib/CradleUtils'
 import { loadConfiguration } from '../utils/config'
+import { EmitterDefinition } from '../../lib/EmitterConfiguration'
+import { execSync } from 'child_process'
 
 export const command = 'emit [config]'
 
@@ -9,7 +11,7 @@ export const desc = 'Loads a Cradle schema and writes it out using emitters'
 export const builder = {
   config: {
     alias: ['c'],
-    default: './cradle.config.js',
+    default: './cradle.yml',
     demandOption: false,
     describe: 'path to a cradle config file'
   },
@@ -25,13 +27,29 @@ export async function handler(argv) {
     const configuration = await loadConfiguration(argv.config)
     if (configuration) {
       const loader = await getLoader(configuration.Loader)
+
       const schema = await loader.loadSchema()
 
-      const emitters = argv.emit ? configuration.Emitters.filter((e) => e.name === argv.emit) : configuration.Emitters
+      let emitters: EmitterDefinition[] = []
+      if (argv.emit) {
+        if (configuration.Emitters[argv.emit]) {
+          emitters.push(configuration.Emitters[argv.emit])
+        }
+      } else {
+        const emitterNames = Object.keys(configuration.Emitters)
+        emitters = emitterNames.map((en) => configuration.Emitters[en])
+      }
+
       await Promise.all(
         emitters.map(async (em) => {
+          em.console = console
           const emitter = await getEmitter(em)
-          await emitter.emitSchema(schema)
+          const finalSchema = emitter.applyExclusionsToSchema(schema)
+
+          await emitter.emitSchema(finalSchema)
+          if (emitter.options.afterEmitCommand) {
+            execSync(emitter.options.afterEmitCommand, { stdio: 'inherit' })
+          }
         })
       )
     }
