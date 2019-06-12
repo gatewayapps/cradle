@@ -8,9 +8,11 @@ import { ArrayPropertyType, ImportModelType, PropertyType, PropertyTypes, Refere
 
 export abstract class CradleEmitterBase implements ICradleEmitter {
   public options: EmitterOptionsArgs
+  public output: string
   public console: IConsole
-  constructor(options: EmitterOptionsArgs, _console: IConsole) {
+  constructor(options: EmitterOptionsArgs, output: string, _console: IConsole) {
     this.options = options
+    this.output = output
     this.console = _console || console
   }
   public emitSchema(schema: CradleSchema) {

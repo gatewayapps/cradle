@@ -4,6 +4,20 @@ import { EmitterOptionsArgs } from './EmitterOptions'
 import { ICradleEmitter, ICradleEmitterConstructable } from './ICradleEmitter'
 import { ICradleLoader, ICradleLoaderConstructable } from './ICradleLoader'
 import { ILoaderOptions } from './LoaderOptions'
+
+const handler = {
+  construct() {
+    return handler
+  }
+} //Must return ANY object, so reuse one
+const isConstructor = (x) => {
+  try {
+    return !!new new Proxy(x, handler)()
+  } catch (e) {
+    return false
+  }
+}
+
 export async function getLoader(options: ILoaderOptions): Promise<ICradleLoader> {
   let loader!: ICradleLoader
   if (typeof options.module === 'string') {
@@ -41,14 +55,19 @@ export async function getEmitter(options: EmitterDefinition, baseOptions: Emitte
     }
 
     try {
-      const EmitterDef: ICradleEmitterConstructable = require(options.module)
+      let EmitterDef: ICradleEmitterConstructable | any = require(options.module)
+      if (!isConstructor(EmitterDef)) {
+        EmitterDef = EmitterDef.default
+      }
 
       try {
-        emitter = new EmitterDef(options.options, options.console!)
+        emitter = new EmitterDef(options.options, options.output, options.console!)
       } catch (err) {
+        console.error(err)
         return Promise.reject(`${options.module} module was found but a valid ICradleEmitter is not the default export `)
       }
     } catch (err) {
+      console.error(err)
       err.message = `Error loading ${options.module}: ${err.message}`
       return Promise.reject(err)
     }
@@ -58,5 +77,6 @@ export async function getEmitter(options: EmitterDefinition, baseOptions: Emitte
   if (emitter.prepareEmitter) {
     await emitter.prepareEmitter()
   }
+
   return emitter
 }

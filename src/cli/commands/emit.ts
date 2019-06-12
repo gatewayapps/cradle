@@ -27,20 +27,25 @@ export async function handler(argv) {
     const configuration = await loadConfiguration(argv.config)
     if (configuration) {
       const loader = await getLoader(configuration.Loader)
+
       const schema = await loader.loadSchema()
+
       let emitters: EmitterDefinition[] = []
       if (argv.emit) {
         if (configuration.Emitters[argv.emit]) {
           emitters.push(configuration.Emitters[argv.emit])
         }
       } else {
-        emitters = Object.values(configuration.Emitters)
+        const emitterNames = Object.keys(configuration.Emitters)
+        emitters = emitterNames.map((en) => configuration.Emitters[en])
       }
 
       await Promise.all(
         emitters.map(async (em) => {
+          em.console = console
           const emitter = await getEmitter(em)
           const finalSchema = emitter.applyExclusionsToSchema(schema)
+
           await emitter.emitSchema(finalSchema)
           if (emitter.options.afterEmitCommand) {
             execSync(emitter.options.afterEmitCommand, { stdio: 'inherit' })

@@ -9,6 +9,7 @@ export async function loadConfiguration(configFile: string): Promise<CradleConfi
   if (fs.existsSync(finalPath)) {
     try {
       const cradleConfigContents = readFileSync(finalPath, 'utf8')
+
       const cradleConfigStruct: ICradleConfig = safeLoad(cradleConfigContents)
       if (!cradleConfigStruct.loader || !cradleConfigStruct.emitters) {
         throw new Error(`Cradle config must export an instance of new CradleConfig`)
