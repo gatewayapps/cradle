@@ -5,8 +5,8 @@
   "license": "MIT",
   "dependencies": {
     "@gatewayapps/cradle": "^1.0.0-alpha.6",
-    "@gatewayapps/cradle-apollo-emitter": "^1.0.0-alpha.4",
-    "@gatewayapps/cradle-file-emitter": "^1.0.0-alpha.2",
+    "@gatewayapps/cradle-file-emitter": "^1.0.0-alpha.3",
+    "@gatewayapps/cradle-graphql-emitter": "^1.0.0-alpha.5",
     "@gatewayapps/cradle-spec-loader": "^1.1.0"
   }
 }

@@ -4,8 +4,10 @@ loader:
     source: './models/**/*.yml'
 emitters:
   graphql:
-    module: '@gatewayapps/cradle-apollo-emitter'
+    module: '@gatewayapps/cradle-graphql-emitter'
     output: './output/schema.graphql'
     options:
       overwrite: true
-      formatter: 'prettier'
+      formatting: 'prettier'
+      exclude:
+        - Actor
