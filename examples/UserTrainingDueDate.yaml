@@ -1,6 +1,0 @@
-UserTrainingDueDate:
-  properties:
-    trainingId: integer
-    userAccountId: integer
-    dueDate: datetime
-    

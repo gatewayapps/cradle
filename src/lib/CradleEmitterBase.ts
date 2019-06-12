@@ -7,8 +7,8 @@ import { ICradleOperation } from './ICradleOperation'
 import { ArrayPropertyType, ImportModelType, PropertyType, PropertyTypes, ReferenceModelType } from './PropertyTypes'
 
 export abstract class CradleEmitterBase implements ICradleEmitter {
-  protected options: EmitterOptionsArgs
-  protected console: IConsole
+  public options: EmitterOptionsArgs
+  public console: IConsole
   constructor(options: EmitterOptionsArgs, _console: IConsole) {
     this.options = options
     this.console = _console || console

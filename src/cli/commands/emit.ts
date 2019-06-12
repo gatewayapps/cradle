@@ -2,6 +2,7 @@ import colors from 'colors'
 import { getEmitter, getLoader } from '../../lib/CradleUtils'
 import { loadConfiguration } from '../utils/config'
 import { EmitterDefinition } from '../../lib/EmitterConfiguration'
+import { execSync } from 'child_process'
 
 export const command = 'emit [config]'
 
@@ -41,6 +42,9 @@ export async function handler(argv) {
           const emitter = await getEmitter(em)
           const finalSchema = emitter.applyExclusionsToSchema(schema)
           await emitter.emitSchema(finalSchema)
+          if (emitter.options.afterEmitCommand) {
+            execSync(emitter.options.afterEmitCommand, { stdio: 'inherit' })
+          }
         })
       )
     }
