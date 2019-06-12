@@ -1,5 +1,5 @@
 import colors from 'colors'
-import { getEmitter, getLoader } from '../../lib/CradleUtils'
+import { getEmitter, getLoader, applyExclusionsToSchema } from '../../lib/CradleUtils'
 import { loadConfiguration } from '../utils/config'
 import { EmitterDefinition } from '../../lib/EmitterConfiguration'
 import { execSync } from 'child_process'
@@ -44,7 +44,7 @@ export async function handler(argv) {
         emitters.map(async (em) => {
           em.console = console
           const emitter = await getEmitter(em)
-          const finalSchema = emitter.applyExclusionsToSchema(schema)
+          const finalSchema = applyExclusionsToSchema(schema, em.options)
 
           await emitter.emitSchema(finalSchema)
           if (emitter.options.afterEmitCommand) {

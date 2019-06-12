@@ -9,6 +9,5 @@ export interface ICradleEmitter {
   console: IConsole
   prepareEmitter?()
   emitSchema(schema: CradleSchema)
-  applyExclusionsToSchema(schema: CradleSchema): CradleSchema
 }
 export type ICradleEmitterConstructable = new (options: EmitterOptionsArgs, output: string, console: IConsole) => ICradleEmitter
