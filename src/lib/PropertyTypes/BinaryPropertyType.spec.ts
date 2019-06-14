@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import 'mocha'
 import { BinaryPropertyType } from './BinaryPropertyType'
-import { PropertyTypes } from './constants'
+import * as PropertyTypes from './constants'
 
 describe('BinaryPropertyType', () => {
   describe('constructor', () => {

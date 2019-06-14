@@ -1,4 +1,4 @@
-import { PropertyTypes } from './constants'
+import * as PropertyTypes from './constants'
 import {
   ConstrainablePropertyType,
   IConstrainablePropertyTypeOptions

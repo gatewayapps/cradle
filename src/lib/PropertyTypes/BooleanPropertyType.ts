@@ -1,4 +1,4 @@
-import { PropertyTypes } from './constants'
+import * as PropertyTypes from './constants'
 import { IPropertyTypeOptions, PropertyType } from './PropertyType'
 
 export interface IBooleanPropertyTypeOptions extends IPropertyTypeOptions {

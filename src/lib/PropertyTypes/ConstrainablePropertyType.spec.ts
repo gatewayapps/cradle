@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import 'mocha'
 
 import { BooleanPropertyType } from './BooleanPropertyType'
-import { PropertyTypes } from './constants'
+import * as PropertyTypes from './constants'
 import { ConstrainablePropertyType } from './ConstrainablePropertyType'
 
 class MockConstrainablePropertyType extends ConstrainablePropertyType {

@@ -3,7 +3,7 @@ Film:
     createFilm:
       returns: Film
       arguments:
-        name: 
+        name:
         totalBoxOffice: decimal min(0)
   properties:
     id: integer primary auto(1,1)
@@ -18,6 +18,6 @@ Film:
 Actor:
   properties:
     id: integer primary auto(1,1)
-    firstName: string(100)
-    lastName: string(100)
+    firstName: string(100)? default("John")
+    lastName: string(100) allow( "Gary", "Neff", "Murphy")
     dateOfBirth: datetime encrypted @sensitive

@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-import { PropertyTypes } from './constants'
+import * as PropertyTypes from './constants'
 import IPropertyType from './IPropertyType'
 
 export interface IPropertyTypeOptions {

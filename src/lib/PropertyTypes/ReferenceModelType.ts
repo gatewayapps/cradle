@@ -1,5 +1,5 @@
 import { CradleModel } from '../CradleModel'
-import { PropertyTypes } from './constants'
+import * as PropertyTypes from './constants'
 import { IPropertyTypeOptions, PropertyType } from './PropertyType'
 
 export interface IReferenceModelTypeOptions extends IPropertyTypeOptions {

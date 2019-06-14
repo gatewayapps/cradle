@@ -1,4 +1,4 @@
-import { PropertyTypes } from './constants'
+import * as PropertyTypes from './constants'
 import { PropertyType } from './PropertyType'
 import { ISecurablePropertyTypeOptions, SecurablePropertyType } from './SecurablePropertyType'
 

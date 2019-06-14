@@ -1,7 +1,8 @@
 export { ArrayPropertyType } from './ArrayPropertyType'
 export { BinaryPropertyType } from './BinaryPropertyType'
 export { BooleanPropertyType } from './BooleanPropertyType'
-export { PropertyTypes } from './constants'
+import * as PropertyTypes from './constants'
+export { PropertyTypes }
 export {
   ConstrainablePropertyType,
   IConstrainablePropertyTypeOptions
@@ -15,7 +16,7 @@ export {
   IIntegerPropertyTypeOptions,
   IntegerAutogenerateOptions
 } from './IntegerPropertyType'
-export { ObjectPropertyType, IObjectPropertyTypeOptions } from './ObjectPropertyType'
+
 export { PropertyType, IPropertyTypeOptions } from './PropertyType'
 export { StringPropertyType, IStringPropertyTypeOptions } from './StringPropertyType'
 export {

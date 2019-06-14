@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import 'mocha'
-import { PropertyTypes } from './constants'
+import * as PropertyTypes from './constants'
 import { IntegerAutogenerateOptions, IntegerPropertyType } from './IntegerPropertyType'
 
 describe('IntegerAutogenerateOptions', () => {

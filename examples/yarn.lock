@@ -11,12 +11,12 @@
     fs-extra "^8.0.1"
     prettier "^1.18.2"
 
-"@gatewayapps/cradle-graphql-emitter@^1.0.0-alpha.5":
-  version "1.0.0-alpha.5"
-  resolved "https://registry.yarnpkg.com/@gatewayapps/cradle-graphql-emitter/-/cradle-graphql-emitter-1.0.0-alpha.5.tgz#cd4e151dd48552069e0f4ef8e509a610ad7efbea"
-  integrity sha512-XBSSnRh2Mi4i93o/U48l9ZcTM24IX6cQN+tpuylw/8qHo/YIGAZglTQHq3xOhwnlCGnK8nf1WDk8Lj+EiCmMsg==
+"@gatewayapps/cradle-graphql-emitter@^1.0.0-alpha.6":
+  version "1.0.0-alpha.6"
+  resolved "https://registry.yarnpkg.com/@gatewayapps/cradle-graphql-emitter/-/cradle-graphql-emitter-1.0.0-alpha.6.tgz#11bca22600eed0472b1b0ad7168dc895a1980646"
+  integrity sha512-OqbkAP63dnykF96TUabUBl7gy8wbIkyB02lXFDiuHN6sT/zgPCmz4auK3mXXBFe/qrG22af8xJrZvSsIY65iLw==
   dependencies:
-    "@gatewayapps/cradle" "^1.0.0-alpha.7"
+    "@gatewayapps/cradle" "^1.0.0-alpha.8"
     "@gatewayapps/cradle-file-emitter" "^1.0.0-alpha.3"
     colors "^1.3.2"
     fs-extra "^7.0.0"
@@ -33,6 +33,13 @@
     glob "^7.1.4"
     js-yaml "^3.13.1"
 
+"@gatewayapps/cradle-type-mappings@^1.0.0-alpha.1":
+  version "1.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@gatewayapps/cradle-type-mappings/-/cradle-type-mappings-1.0.0-alpha.1.tgz#94be78482624585b294b7ea631db433f25eebcfd"
+  integrity sha512-VD0NvUCWua+tism9feVFh/snR4jVWWLgx4m/qXTrMLsQyiDn3nJMYz0knyA9nCuo5pAlXX/WvA3YwXWO9vls+Q==
+  dependencies:
+    "@gatewayapps/cradle" "^1.0.0-alpha.8"
+
 "@gatewayapps/cradle@^1.0.0-alpha.4":
   version "1.0.0-alpha.4"
   resolved "https://registry.yarnpkg.com/@gatewayapps/cradle/-/cradle-1.0.0-alpha.4.tgz#a4ba9161c814bfba580496d627cc8424dc136042"
@@ -43,20 +50,20 @@
     js-yaml "^3.12.0"
     yargs "^12.0.2"
 
-"@gatewayapps/cradle@^1.0.0-alpha.6":
-  version "1.0.0-alpha.6"
-  resolved "https://registry.yarnpkg.com/@gatewayapps/cradle/-/cradle-1.0.0-alpha.6.tgz#15909d4c52472bfb009e4c6fa21e08c2117479f9"
-  integrity sha512-KjuTZMNr5VeNgKvW5KBz0pBEoU/7n1l1EDZkKn8c8coQ4oyFuBUqFuwPplvk0W4ZVisVfqT/0x7MGCmKO4wjVQ==
+"@gatewayapps/cradle@^1.0.0-alpha.7":
+  version "1.0.0-alpha.7"
+  resolved "https://registry.yarnpkg.com/@gatewayapps/cradle/-/cradle-1.0.0-alpha.7.tgz#5a6ba08e8f9b76e4c6ea8c8a51d83819ab6cfefa"
+  integrity sha512-IbTjdkE3m9CzcAMK+SPtPjZ6papDhqRCTE47lIpkpLV+uMTfpCeovbKVTWc2/zbapaxXd6ycCvNf4T4b2jOsAA==
   dependencies:
     chevrotain "^3.7.4"
     colors "^1.3.2"
     js-yaml "^3.12.0"
     yargs "^12.0.2"
 
-"@gatewayapps/cradle@^1.0.0-alpha.7":
-  version "1.0.0-alpha.7"
-  resolved "https://registry.yarnpkg.com/@gatewayapps/cradle/-/cradle-1.0.0-alpha.7.tgz#5a6ba08e8f9b76e4c6ea8c8a51d83819ab6cfefa"
-  integrity sha512-IbTjdkE3m9CzcAMK+SPtPjZ6papDhqRCTE47lIpkpLV+uMTfpCeovbKVTWc2/zbapaxXd6ycCvNf4T4b2jOsAA==
+"@gatewayapps/cradle@^1.0.0-alpha.8":
+  version "1.0.0-alpha.8"
+  resolved "https://registry.yarnpkg.com/@gatewayapps/cradle/-/cradle-1.0.0-alpha.8.tgz#208e835a3df52cf9c69c0b5a69c29d29878d5499"
+  integrity sha512-yilJxsYs183s/aQXZkytAUr8Ifg9ntj/wzDrOVCCaVxGbnhj5/xoFeg6gvMEjuXyCgeG7VkqXFX+4oL9L9XMMw==
   dependencies:
     chevrotain "^3.7.4"
     colors "^1.3.2"

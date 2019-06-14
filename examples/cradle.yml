@@ -5,9 +5,17 @@ loader:
 emitters:
   graphql:
     module: '@gatewayapps/cradle-graphql-emitter'
-    output: './output/schema.graphql'
+    output: './output/{{Name}}.graphql'
+    options:
+      overwrite: true
+      afterEmitCommand: yarn prettier --write ./output/**.*
+      formatting: 'none'
+  typescript:
+    module: '@gatewayapps/cradle-typescript-emitter'
+    output: './output/types.ts'
     options:
       overwrite: true
       formatting: 'prettier'
-      exclude:
-        - Actor
+      prettierConfig:
+        semi: false
+        singleQuote: true

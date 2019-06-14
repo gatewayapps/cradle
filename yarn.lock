@@ -2,6 +2,23 @@
 # yarn lockfile v1
 
 
+"@gatewayapps/cradle-type-mappings@^1.0.0-alpha.1":
+  version "1.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@gatewayapps/cradle-type-mappings/-/cradle-type-mappings-1.0.0-alpha.1.tgz#94be78482624585b294b7ea631db433f25eebcfd"
+  integrity sha512-VD0NvUCWua+tism9feVFh/snR4jVWWLgx4m/qXTrMLsQyiDn3nJMYz0knyA9nCuo5pAlXX/WvA3YwXWO9vls+Q==
+  dependencies:
+    "@gatewayapps/cradle" "^1.0.0-alpha.8"
+
+"@gatewayapps/cradle@^1.0.0-alpha.8":
+  version "1.0.0-alpha.8"
+  resolved "https://registry.yarnpkg.com/@gatewayapps/cradle/-/cradle-1.0.0-alpha.8.tgz#208e835a3df52cf9c69c0b5a69c29d29878d5499"
+  integrity sha512-yilJxsYs183s/aQXZkytAUr8Ifg9ntj/wzDrOVCCaVxGbnhj5/xoFeg6gvMEjuXyCgeG7VkqXFX+4oL9L9XMMw==
+  dependencies:
+    chevrotain "^3.7.4"
+    colors "^1.3.2"
+    js-yaml "^3.12.0"
+    yargs "^12.0.2"
+
 "@types/chai@^4.1.4":
   version "4.1.7"
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.1.7.tgz#1b8e33b61a8c09cbe1f85133071baa0dbf9fa71a"

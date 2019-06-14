@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import 'mocha'
-import { PropertyTypes } from './constants'
+import * as PropertyTypes from './constants'
 import { DateTimePropertyType } from './DateTimePropertyType'
 
 describe('DateTimePropertyType', () => {
