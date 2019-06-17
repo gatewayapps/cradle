@@ -14,7 +14,12 @@ export async function loadConfiguration(configFile: string): Promise<CradleConfi
       if (!cradleConfigStruct.loader || !cradleConfigStruct.emitters) {
         throw new Error(`Cradle config must export an instance of new CradleConfig`)
       } else {
-        const cradleConfig = new CradleConfig(cradleConfigStruct.loader, cradleConfigStruct.emitters, cradleConfigStruct.defaultOptions)
+        const cradleConfig = new CradleConfig(
+          cradleConfigStruct.loader,
+          cradleConfigStruct.emitters,
+          cradleConfigStruct.defaultOptions,
+          cradleConfigStruct.typeMappings
+        )
         return cradleConfig
       }
     } catch (err) {

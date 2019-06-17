@@ -43,7 +43,7 @@ export async function handler(argv) {
       await Promise.all(
         emitters.map(async (em) => {
           em.console = console
-          const emitter = await getEmitter(em)
+          const emitter = await getEmitter(em, configuration)
           const finalSchema = applyExclusionsToSchema(schema, em.options)
 
           await emitter.emitSchema(finalSchema)
