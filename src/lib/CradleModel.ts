@@ -6,7 +6,6 @@ export class CradleModel {
   public Name: string
   public Meta: object
   public Properties: Map<string, PropertyType>
-
   public Operations: Map<string, ICradleOperation>
 
   constructor(
