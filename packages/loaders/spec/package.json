@@ -1,0 +1,30 @@
+{
+  "name": "@gatewayapps/cradle-spec-loader",
+  "version": "1.1.1",
+  "main": "dist/index.js",
+  "repository": "https://github.com/gatewayapps/cradle-spec-loader",
+  "author": "Daniel Gary <daniel@gatewayapps.com>",
+  "license": "ISC",
+  "private": false,
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/glob": "^7.1.1",
+    "@types/js-yaml": "^3.12.1",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.0.7",
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4",
+    "prettier": "^1.18.2",
+    "typescript": "^3.5.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "next"
+  },
+  "dependencies": {
+    "@gatewayapps/cradle": "^1.0.0-alpha.10",
+    "chevrotain": "3.7.4",
+    "glob": "^7.1.4",
+    "js-yaml": "^3.13.1"
+  }
+}

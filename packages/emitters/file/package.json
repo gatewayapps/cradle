@@ -1,0 +1,34 @@
+{
+  "name": "@gatewayapps/cradle-file-emitter",
+  "version": "1.0.0-alpha.6",
+  "description": "Base Cradle File Emitter.",
+  "main": "./dist/index.js",
+  "scripts": {
+    "prepublishOnly": "yarn tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gatewayapps/cradle-file-emitter.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gatewayapps/cradle-file-emitter/issues"
+  },
+  "homepage": "https://github.com/gatewayapps/cradle-file-emitter#readme",
+  "devDependencies": {
+    "@types/fs-extra": "^7.0.0",
+    "@types/node": "^12.0.8",
+    "@types/prettier": "^1.16.4",
+    "typescript": "^3.5.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "next"
+  },
+  "dependencies": {
+    "@gatewayapps/cradle": "^1.0.0-alpha.9",
+    "fs-extra": "^8.0.1",
+    "prettier": "^1.18.2"
+  }
+}
