@@ -7,8 +7,9 @@
     "cradle": "./dist/cli/CradleCLI.js"
   },
   "scripts": {
-    "prepublishOnly": "npm test && npx tsc",
-    "test": "npx mocha -r ts-node/register \"src/**/*.spec.ts\""
+    "prepublishOnly": "yarn test && yarn compile",
+    "compile": "yarn tsc",
+    "test": "yarn mocha -r ts-node/register \"src/**/*.spec.ts\""
   },
   "files": [
     "dist/**/*"

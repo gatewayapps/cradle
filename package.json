@@ -1,22 +1,31 @@
 {
   "devDependencies": {
-    "@types/chai": "^4.1.4",
+    "@types/chai": "^4.1.7",
     "@types/colors": "^1.2.1",
-    "@types/js-yaml": "^3.11.2",
-    "@types/lodash": "^4.14.123",
-    "@types/mocha": "^5.2.5",
-    "@types/node": "^10.5.4",
+    "@types/fs-extra": "^5.0.4",
+    "@types/glob": "^7.1.1",
+    "@types/js-yaml": "^3.12.1",
+    "@types/lodash": "^4.14.117",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.0.7",
+    "@types/prettier": "^1.16.4",
     "@types/yargs": "^11.1.1",
-    "chai": "^4.1.2",
+    "chai": "^4.2.0",
     "lerna": "^3.15.0",
     "lodash": "^4.17.11",
-    "mocha": "^5.2.0",
+    "mocha": "^6.1.4",
     "prettier": "^1.18.2",
+    "prettier-tslint": "^0.4.0",
     "ts-node": "^7.0.1",
-    "typescript": "^3.0.1"
+    "tslint": "^5.11.0",
+    "typescript": "^3.5.1"
   },
   "name": "cradle",
   "dependencies": {
-    "@gatewayapps/cradle": "file:packages\\core"
+    "@gatewayapps/cradle": "file:packages\\core",
+    "@gatewayapps/cradle-file-emitter": "file:packages\\emitters\\file",
+    "@gatewayapps/cradle-graphql-emitter": "file:packages\\emitters\\graphql",
+    "@gatewayapps/cradle-spec-loader": "file:packages\\loaders\\spec",
+    "@gatewayapps/cradle-typescript-emitter": "file:packages\\emitters\\typescript"
   }
 }
