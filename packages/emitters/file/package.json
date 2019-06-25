@@ -1,11 +1,10 @@
 {
   "name": "@gatewayapps/cradle-file-emitter",
-  "version": "1.0.0-alpha.6",
+  "version": "1.1.0-alpha.2",
   "description": "Base Cradle File Emitter.",
   "main": "./dist/index.js",
   "scripts": {
-    "prepublishOnly": "yarn tsc",
-    "compile": "yarn tsc"
+    "prepare": "tsc"
   },
   "repository": {
     "type": "git",
@@ -22,7 +21,7 @@
     "tag": "next"
   },
   "dependencies": {
-    "@gatewayapps/cradle": "^1.1.0-alpha.1",
+    "@gatewayapps/cradle": "^1.1.0-alpha.2",
     "fs-extra": "^8.0.1",
     "prettier": "^1.18.2"
   }

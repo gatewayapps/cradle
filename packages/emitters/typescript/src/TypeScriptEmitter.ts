@@ -138,9 +138,9 @@ export class TypeScriptEmitter extends FileEmitter {
         const referenceType = propertyType as ReferenceModelType
         return `I${referenceType.ModelName}`
       }
-      case PropertyTypes.Object: {
-        return 'object'
-      }
+      // case PropertyTypes.Object: {
+      //   return 'object'
+      // }
       default: {
         return 'any'
       }
