@@ -36,7 +36,6 @@ export default class SpecLoader extends CradleLoaderBase<SpecLoaderOptions> {
 
   constructor(options: LoaderOptions) {
     super(options)
-    console.log('GOT OPTIONS', options)
   }
 
   public readModelOperationNames(modelName: string): Promise<string[]> {
@@ -160,7 +159,6 @@ export default class SpecLoader extends CradleLoaderBase<SpecLoaderOptions> {
   }
 
   public async prepareLoader(): Promise<void> {
-    console.log('IN PREPARE LOADER')
     if (this.options.source && this.options.source.includes('**')) {
       //glob pattern
       this.loadModelsFromGlob(this.options.source)
