@@ -98,48 +98,6 @@
     unique-filename "^1.1.1"
     which "^1.3.1"
 
-"@gatewayapps/cradle-file-emitter@file:packages/emitters/file":
-  version "1.0.0-alpha.6"
-  dependencies:
-    "@gatewayapps/cradle" "file:C:/Users/danie/AppData/Local/Yarn/Cache/v4/npm-@gatewayapps-cradle-file-emitter-1.0.0-alpha.6-23a247db-fa04-4728-91ba-a98878c2ee20-1561498333981/node_modules/core"
-    fs-extra "^8.0.1"
-    prettier "^1.18.2"
-
-"@gatewayapps/cradle-graphql-emitter@file:packages/emitters/graphql":
-  version "1.0.0-alpha.7"
-  dependencies:
-    "@gatewayapps/cradle" "file:C:/Users/danie/AppData/Local/Yarn/Cache/v4/npm-@gatewayapps-cradle-graphql-emitter-1.0.0-alpha.7-3db6eadd-2371-4c76-8ff0-426af69158c1-1561498334062/node_modules/core"
-    "@gatewayapps/cradle-file-emitter" "file:C:/Users/danie/AppData/Local/Yarn/Cache/v4/npm-@gatewayapps-cradle-graphql-emitter-1.0.0-alpha.7-3db6eadd-2371-4c76-8ff0-426af69158c1-1561498334062/node_modules/@gatewayapps/file"
-    colors "^1.3.2"
-    fs-extra "^7.0.0"
-    lodash "^4.17.11"
-    pluralize "^7.0.0"
-
-"@gatewayapps/cradle-spec-loader@file:packages/loaders/spec":
-  version "1.1.1"
-  dependencies:
-    "@gatewayapps/cradle" "file:C:/Users/danie/AppData/Local/Yarn/Cache/v4/npm-@gatewayapps-cradle-spec-loader-1.1.1-577d8359-6a38-4da2-885c-70aa87316f9e-1561498334128/node_modules/core"
-    chevrotain "3.7.4"
-    glob "^7.1.4"
-    js-yaml "^3.13.1"
-
-"@gatewayapps/cradle-typescript-emitter@file:packages/emitters/typescript":
-  version "1.0.2"
-  dependencies:
-    "@gatewayapps/cradle" "file:C:/Users/danie/AppData/Local/Yarn/Cache/v4/npm-@gatewayapps-cradle-typescript-emitter-1.0.2-f266df16-3ab4-4056-a354-6772c18ae1b2-1561498334373/node_modules/core"
-    "@gatewayapps/cradle-file-emitter" "file:C:/Users/danie/AppData/Local/Yarn/Cache/v4/npm-@gatewayapps-cradle-typescript-emitter-1.0.2-f266df16-3ab4-4056-a354-6772c18ae1b2-1561498334373/node_modules/@gatewayapps/file"
-    "@types/node" "^12.0.8"
-    ts-morph "^2.3.0"
-    typescript "^3.5.2"
-
-"@gatewayapps/cradle@file:packages/core":
-  version "1.1.0-alpha.1"
-  dependencies:
-    chevrotain "^3.7.4"
-    colors "^1.3.2"
-    js-yaml "^3.12.0"
-    yargs "^12.0.2"
-
 "@lerna/add@3.15.0":
   version "3.15.0"
   resolved "https://registry.yarnpkg.com/@lerna/add/-/add-3.15.0.tgz#10be562f43cde59b60f299083d54ac39520ec60a"

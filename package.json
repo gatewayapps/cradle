@@ -20,12 +20,11 @@
     "tslint": "^5.11.0",
     "typescript": "^3.5.1"
   },
+  "workspaces": [
+    "packages/*",
+    "packages/loaders/*",
+    "packages/emitters/*"
+  ],
   "name": "cradle",
-  "dependencies": {
-    "@gatewayapps/cradle": "file:packages\\core",
-    "@gatewayapps/cradle-file-emitter": "file:packages\\emitters\\file",
-    "@gatewayapps/cradle-graphql-emitter": "file:packages\\emitters\\graphql",
-    "@gatewayapps/cradle-spec-loader": "file:packages\\loaders\\spec",
-    "@gatewayapps/cradle-typescript-emitter": "file:packages\\emitters\\typescript"
-  }
+  "private": true
 }
