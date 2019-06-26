@@ -1,7 +1,7 @@
 import chevrotain, { IToken, Lexer, Parser, TokenType } from 'chevrotain'
 
 import SpecProperty from './SpecProperty'
-import { PropertyTypes } from '@gatewayapps/cradle'
+import { PropertyTypes } from '@cradlejs/core'
 const createToken = chevrotain.createToken
 
 const PropertyType = createToken({

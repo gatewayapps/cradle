@@ -1,17 +1,17 @@
 loader:
-  module: '@gatewayapps/cradle-spec-loader'
+  module: '@cradlejs/spec-loader'
   options:
     source: './models/**/*.yml'
 emitters:
   graphql:
-    module: '@gatewayapps/cradle-graphql-emitter'
+    module: '@cradlejs/graphql-emitter'
     output: './output/{{Name}}.graphql'
     options:
       overwrite: true
       afterEmitCommand: yarn prettier --write ./output/**.*
       formatting: 'none'
   typescript:
-    module: '@gatewayapps/cradle-typescript-emitter'
+    module: '@cradlejs/typescript-emitter'
     output: './output/types.ts'
     options:
       overwrite: true

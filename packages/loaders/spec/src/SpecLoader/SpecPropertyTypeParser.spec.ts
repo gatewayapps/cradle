@@ -3,7 +3,7 @@ import 'mocha'
 
 import SpecProperty from './SpecProperty'
 import ParseProperty from './SpecPropertyTypeParser'
-import { PropertyTypes, IntegerAutogenerateOptions } from '@gatewayapps/cradle'
+import { PropertyTypes, IntegerAutogenerateOptions } from '@cradlejs/core'
 
 describe('SpecPropertyTypeParser', () => {
   it('Should throw a SyntaxError if called without a value', () => {

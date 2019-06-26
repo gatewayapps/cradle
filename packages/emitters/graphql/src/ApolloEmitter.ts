@@ -7,8 +7,8 @@ import {
   ImportModelType,
   PropertyType,
   ReferenceModelType
-} from '@gatewayapps/cradle'
-import { FileEmitter, FileEmitterOptionsArgs } from '@gatewayapps/cradle-file-emitter'
+} from '@cradlejs/core'
+import { FileEmitter, FileEmitterOptionsArgs } from '@cradlejs/file-emitter'
 
 import _ from 'lodash'
 
@@ -116,7 +116,9 @@ ${generalOutput.join('\n')}
 
     operationNames.forEach((opName) => {
       const operationArgs = this.getArgsTypeNameForOperation(opName)
-      const returnType = this.getGraphqlTypeFromPropertyType(model.Operations[opName]!.Returns).replace('!', '')
+      const returnType = this.getGraphqlTypeFromPropertyType(
+        model.Operations[opName]!.Returns
+      ).replace('!', '')
       mutationDefs.push(`\t${opName}(data: ${operationArgs}!): ${returnType}`)
     })
 
@@ -175,7 +177,10 @@ ${localFields.join('\n')}
     if (model.Operations) {
       const operationNames = Object.keys(model.Operations)
       operationNames.forEach((opName) => {
-        const operationArgsTypeDef = this.getSchemaForOperationArgs(opName, model.Operations[opName])
+        const operationArgsTypeDef = this.getSchemaForOperationArgs(
+          opName,
+          model.Operations[opName]
+        )
         typeDefs.push(operationArgsTypeDef)
       })
     }
@@ -198,7 +203,10 @@ ${localFields.join('\n')}
 }`
   }
 
-  public getGraphqlTypeFromPropertyType(propertyType: PropertyType | string, forInput: boolean = false) {
+  public getGraphqlTypeFromPropertyType(
+    propertyType: PropertyType | string,
+    forInput: boolean = false
+  ) {
     let requiredToken = ''
     if (typeof propertyType === 'object' && !propertyType.AllowNull) {
       requiredToken = '!'
@@ -291,7 +299,13 @@ ${resultParts.join('\n')}
     const propertyNames = Object.keys(model.Properties)
     propertyNames.forEach((pn) => {
       const prop: PropertyType = model.Properties[pn]
-      if (prop && prop.TypeName && ['DateTime', 'Decimal', 'Integer', 'String', 'Boolean', 'UniqueIdentifier'].includes(prop.TypeName)) {
+      if (
+        prop &&
+        prop.TypeName &&
+        ['DateTime', 'Decimal', 'Integer', 'String', 'Boolean', 'UniqueIdentifier'].includes(
+          prop.TypeName
+        )
+      ) {
         const gqlType = this.getGraphqlTypeFromPropertyType(prop.TypeName).replace('!', '')
 
         switch (prop.TypeName) {
@@ -353,7 +367,11 @@ ${resultParts.join('\n')}
     const propNames = Object.keys(model.Properties)
     return propNames.filter((propName) => {
       const field = model.Properties[propName]
-      return field && (field.IsPrimaryKey || field.Unique || field.TypeName === 'UniqueIdentifier') && !field.AllowNull
+      return (
+        field &&
+        (field.IsPrimaryKey || field.Unique || field.TypeName === 'UniqueIdentifier') &&
+        !field.AllowNull
+      )
     })
   }
 

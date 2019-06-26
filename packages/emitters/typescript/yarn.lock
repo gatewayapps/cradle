@@ -10,14 +10,14 @@
     is-absolute "^1.0.0"
     is-negated-glob "^1.0.0"
 
-"@gatewayapps/cradle-file-emitter@file:../file":
+"@cradlejs/file-emitter@file:../file":
   version "1.0.0-alpha.6"
   dependencies:
-    "@gatewayapps/cradle" "file:C:/Users/danie/AppData/Local/Yarn/Cache/v4/npm-@gatewayapps-cradle-file-emitter-1.0.0-alpha.6-08bc49dd-a045-425f-aaf6-169354b99f16-1561498135532/node_modules/core"
+    "@cradlejs/core" "file:C:/Users/danie/AppData/Local/Yarn/Cache/v4/npm-@gatewayapps-cradle-file-emitter-1.0.0-alpha.6-08bc49dd-a045-425f-aaf6-169354b99f16-1561498135532/node_modules/core"
     fs-extra "^8.0.1"
     prettier "^1.18.2"
 
-"@gatewayapps/cradle@file:../../core":
+"@cradlejs/core@file:../../core":
   version "1.1.0-alpha.1"
   dependencies:
     chevrotain "^3.7.4"

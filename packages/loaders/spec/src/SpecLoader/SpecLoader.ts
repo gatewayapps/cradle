@@ -24,7 +24,7 @@ import {
   PropertyTypes,
   ReferenceModelType,
   LoaderOptions
-} from '@gatewayapps/cradle'
+} from '@cradlejs/core'
 import { dirname, resolve, join } from 'path'
 import { existsSync, readFileSync, statSync } from 'fs'
 

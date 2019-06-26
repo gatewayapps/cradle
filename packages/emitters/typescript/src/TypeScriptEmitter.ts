@@ -8,7 +8,7 @@ import {
   SourceFile,
   InterfaceDeclaration
 } from 'ts-morph'
-import { FileEmitter, FileEmitterOptionsArgs } from '@gatewayapps/cradle-file-emitter'
+import { FileEmitter, FileEmitterOptionsArgs } from '@cradlejs/file-emitter'
 import {
   CradleModel,
   IConsole,
@@ -19,7 +19,7 @@ import {
   ReferenceModelType,
   CradleSchema,
   StringPropertyType
-} from '@gatewayapps/cradle'
+} from '@cradlejs/core'
 import { parse } from 'path'
 
 export class TypeScriptEmitter extends FileEmitter {

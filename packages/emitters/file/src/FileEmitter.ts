@@ -1,4 +1,4 @@
-import { CradleEmitterBase, IConsole, CradleSchema, CradleModel } from '@gatewayapps/cradle'
+import { CradleEmitterBase, IConsole, CradleSchema, CradleModel } from '@cradlejs/core'
 import { FileEmitterOptionsArgs } from './FileEmitterOptions'
 import path, { join, isAbsolute, normalize } from 'path'
 import { existsSync, writeFileSync, unlinkSync } from 'fs'

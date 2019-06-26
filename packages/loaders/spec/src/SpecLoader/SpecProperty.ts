@@ -1,4 +1,4 @@
-import {IntegerAutogenerateOptions} from '@gatewayapps/cradle'
+import {IntegerAutogenerateOptions} from '@cradlejs/core'
 
 export interface ISpecPropertyOptions {
   allowedValues?: any
