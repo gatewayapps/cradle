@@ -4,6 +4,7 @@
   "description": "Base Cradle File Emitter.",
   "main": "./dist/index.js",
   "scripts": {
+    "clean": "rm -r ./dist",
     "prepare": "tsc"
   },
   "repository": {

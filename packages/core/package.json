@@ -7,7 +7,7 @@
     "cradle": "./dist/cli/CradleCLI.js"
   },
   "scripts": {
-    "prepublishOnly": "yarn test && yarn compile",
+    "clean": "rm -r ./dist",
     "prepare": "tsc",
     "test": "yarn mocha -r ts-node/register \"src/**/*.spec.ts\""
   },
