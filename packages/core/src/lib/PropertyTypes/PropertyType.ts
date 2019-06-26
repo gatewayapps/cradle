@@ -32,6 +32,7 @@ export interface IPropertyTypeOptions {
   Attributes?: { [key: string]: any }
 }
 
+/** The abstract base property type */
 export abstract class PropertyType implements IPropertyType {
   public TypeName: string
   public IsPrimaryKey!: boolean

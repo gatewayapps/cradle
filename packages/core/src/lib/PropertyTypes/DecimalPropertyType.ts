@@ -10,6 +10,9 @@ export interface IDecimalPropertyTypeOptions extends IConstrainablePropertyTypeO
   Scale?: number
 }
 
+/**
+ * A property type that represents a non-whole number
+ */
 export class DecimalPropertyType extends ConstrainablePropertyType {
   public Precision?: number
   public Scale?: number

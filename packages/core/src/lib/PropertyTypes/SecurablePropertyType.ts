@@ -5,6 +5,9 @@ export interface ISecurablePropertyTypeOptions extends IPropertyTypeOptions {
   Encrypted?: boolean
 }
 
+/**
+ * A property type that represents secure data
+ */
 export abstract class SecurablePropertyType extends PropertyType {
   public Hashed: boolean
   public Encrypted: boolean

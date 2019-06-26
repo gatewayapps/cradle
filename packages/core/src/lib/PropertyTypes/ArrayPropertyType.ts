@@ -5,6 +5,9 @@ export interface IArrayPropertyTypeOptions extends IPropertyTypeOptions {
   MemberType: PropertyType | string
 }
 
+/**
+ * A PropertyType that represents an array of MemberTypes
+ */
 export class ArrayPropertyType extends PropertyType {
   public MemberType: PropertyType | string
 

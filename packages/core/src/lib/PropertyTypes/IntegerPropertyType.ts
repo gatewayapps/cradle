@@ -17,6 +17,9 @@ export interface IIntegerPropertyTypeOptions extends IConstrainablePropertyTypeO
   Autogenerate?: IntegerAutogenerateOptions
 }
 
+/**
+ * A property type that represents a whole number
+ */
 export class IntegerPropertyType extends ConstrainablePropertyType {
   public Autogenerate?: IntegerAutogenerateOptions
   // tslint:disable-next-line:max-line-length

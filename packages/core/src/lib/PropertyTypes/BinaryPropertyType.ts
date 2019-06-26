@@ -6,6 +6,9 @@ export interface IBinaryPropertyTypeOptions extends ISecurablePropertyTypeOption
   MaximumLength?: number
 }
 
+/**
+ * A property type that represents binary data such as a buffer or byte array
+ */
 export class BinaryPropertyType extends SecurablePropertyType {
   public MaximumLength?: number
 

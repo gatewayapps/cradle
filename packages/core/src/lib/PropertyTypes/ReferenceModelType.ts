@@ -8,6 +8,7 @@ export interface IReferenceModelTypeOptions extends IPropertyTypeOptions {
   ForeignProperty: string | undefined
 }
 
+/** A property type that represents a reference to another model */
 export class ReferenceModelType extends PropertyType {
   public ModelName: string
   public LocalProperty: string

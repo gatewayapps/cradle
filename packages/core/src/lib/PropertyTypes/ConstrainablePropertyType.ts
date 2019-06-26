@@ -7,6 +7,9 @@ export interface IConstrainablePropertyTypeOptions extends ISecurablePropertyTyp
   MaximumValue?: number | Date | undefined
 }
 
+/**
+ * An abstract property type that represents a value that can be constrained by a minimum and/or a maximum value
+ */
 export abstract class ConstrainablePropertyType extends SecurablePropertyType {
   public MinimumValue?: number | Date
   public MaximumValue?: number | Date

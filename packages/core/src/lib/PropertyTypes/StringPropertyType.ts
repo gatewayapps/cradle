@@ -7,6 +7,9 @@ export interface IStringPropertyTypeOptions extends ISecurablePropertyTypeOption
   AllowedValues?: string[]
 }
 
+/**
+ * A property type that represents text data
+ */
 export class StringPropertyType extends SecurablePropertyType {
   public MaximumLength?: number
   public AllowedValues?: string[]
