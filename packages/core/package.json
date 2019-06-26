@@ -9,7 +9,8 @@
   "scripts": {
     "clean": "rm -r ./dist",
     "prepare": "tsc",
-    "test": "yarn mocha -r ts-node/register \"src/**/*.spec.ts\""
+    "test": "yarn mocha -r ts-node/register \"src/**/*.spec.ts\"",
+    "docs": "typedoc --theme markdown --out ./docs ./src"
   },
   "files": [
     "dist/**/*"
@@ -24,5 +25,9 @@
   },
   "publishConfig": {
     "tag": "next"
+  },
+  "devDependencies": {
+    "typedoc": "^0.14.2",
+    "typedoc-plugin-markdown": "^2.0.6"
   }
 }

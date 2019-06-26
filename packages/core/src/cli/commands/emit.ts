@@ -4,36 +4,24 @@ import { loadConfiguration } from '../utils/config'
 import { EmitterDefinition } from '../../lib/EmitterConfiguration'
 import { execSync } from 'child_process'
 
-export const command = 'emit [config]'
-
-export const desc = 'Loads a Cradle schema and writes it out using emitters'
-
-export const builder = {
-  config: {
-    alias: ['c'],
-    default: './cradle.yml',
-    demandOption: false,
-    describe: 'path to a cradle config file'
-  },
-  emit: {
-    alias: ['e'],
-    demandOption: false,
-    describe: 'emitter configuration name or * for all'
-  }
-}
-
-export async function handler(argv) {
+/**
+ * Loads a schema using the specified loader, then invokes the specified emitter, or all emitters
+ * if none are specified.
+ * @param configFilePath Path to cradle configuration.
+ * @param emitterName Emitter to invoke.  If not provided, all emitters will be invoked.
+ */
+async function emit(configFilePath: string, emitterName?: string) {
   try {
-    const configuration = await loadConfiguration(argv.config)
+    const configuration = await loadConfiguration(configFilePath)
     if (configuration) {
       const loader = await getLoader(configuration.Loader)
 
       const schema = await loader.loadSchema()
 
       let emitters: EmitterDefinition[] = []
-      if (argv.emit) {
-        if (configuration.Emitters[argv.emit]) {
-          emitters.push(configuration.Emitters[argv.emit])
+      if (emitterName) {
+        if (configuration.Emitters[emitterName]) {
+          emitters.push(configuration.Emitters[emitterName])
         }
       } else {
         const emitterNames = Object.keys(configuration.Emitters)
@@ -57,5 +45,39 @@ export async function handler(argv) {
     console.log(colors.red(err.message))
     console.log(colors.yellow(err.stack))
     process.exit(1)
+  }
+}
+
+/**
+ * @ignore
+ */
+export async function handler(argv) {
+  return emit(argv.config, argv.emit)
+}
+
+/**
+ * @ignore
+ */
+export const command = 'emit [config]'
+
+/**
+ * @ignore
+ */
+export const desc = 'Loads a Cradle schema and writes it out using emitters'
+
+/**
+ * @ignore
+ */
+export const builder = {
+  config: {
+    alias: ['c'],
+    default: './cradle.yml',
+    demandOption: false,
+    describe: 'path to a cradle config file'
+  },
+  emit: {
+    alias: ['e'],
+    demandOption: false,
+    describe: 'emitter configuration name or * for all'
   }
 }

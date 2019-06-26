@@ -25,5 +25,9 @@
     "@cradlejs/core": "^0.1.0",
     "fs-extra": "^8.0.1",
     "prettier": "^1.18.2"
+  },
+  "devDependencies": {
+    "typedoc": "^0.14.2",
+    "typedoc-plugin-markdown": "^2.0.6"
   }
 }

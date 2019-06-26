@@ -13,7 +13,11 @@ export class CradleConfig {
   public Emitters: { [key: string]: EmitterDefinition }
   public defaultOptions?: EmitterOptionsArgs
 
-  constructor(loader: ILoaderOptions, emitters: { [key: string]: EmitterDefinition }, defaultOptions: EmitterOptionsArgs = {}) {
+  constructor(
+    loader: ILoaderOptions,
+    emitters: { [key: string]: EmitterDefinition },
+    defaultOptions: EmitterOptionsArgs = {}
+  ) {
     this.Loader = loader
     this.Emitters = emitters
     this.defaultOptions = defaultOptions

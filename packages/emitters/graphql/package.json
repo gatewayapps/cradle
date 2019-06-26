@@ -28,5 +28,9 @@
   "publishConfig": {
     "access": "public",
     "tag": "next"
+  },
+  "devDependencies": {
+    "typedoc": "^0.14.2",
+    "typedoc-plugin-markdown": "^2.0.6"
   }
 }

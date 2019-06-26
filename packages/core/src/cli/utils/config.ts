@@ -3,6 +3,7 @@ import path from 'path'
 import { CradleConfig, ICradleConfig } from '../../lib/CradleConfig'
 import { safeLoad } from 'js-yaml'
 
+/**@hidden */
 export async function loadConfiguration(configFile: string): Promise<CradleConfig> {
   configFile = configFile || './cradle.yml'
   const finalPath = path.join(process.cwd(), configFile)
@@ -11,11 +12,15 @@ export async function loadConfiguration(configFile: string): Promise<CradleConfi
       const cradleConfigContents = readFileSync(finalPath, 'utf8')
 
       const cradleConfigStruct: ICradleConfig = safeLoad(cradleConfigContents)
-      if (!cradleConfigStruct.loader || !cradleConfigStruct.emitters) {
-        throw new Error(`Cradle config must export an instance of new CradleConfig`)
+      if (!isConfigurationValid) {
+        //TODO: let's add a link to cradle documentation here, pointing to a valid config file
+        throw new Error(`A cradle configuration must define a loader and at least one emitter`)
       } else {
-        const cradleConfig = new CradleConfig(cradleConfigStruct.loader, cradleConfigStruct.emitters, cradleConfigStruct.defaultOptions)
-        return cradleConfig
+        return new CradleConfig(
+          cradleConfigStruct.loader,
+          cradleConfigStruct.emitters,
+          cradleConfigStruct.defaultOptions
+        )
       }
     } catch (err) {
       console.log(err)
@@ -24,4 +29,8 @@ export async function loadConfiguration(configFile: string): Promise<CradleConfi
   } else {
     throw new Error('Cradle config file not found')
   }
+}
+
+function isConfigurationValid(config: any): Boolean {
+  return config.loader && config.emitters && config.emitters.length > 0
 }
