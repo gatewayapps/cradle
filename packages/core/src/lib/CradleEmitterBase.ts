@@ -1,10 +1,7 @@
-import { CradleModel } from './CradleModel'
 import { CradleSchema } from './CradleSchema'
 import { EmitterOptionsArgs } from './EmitterOptions'
 import { IConsole } from './IConsole'
 import { ICradleEmitter } from './ICradleEmitter'
-import { ICradleOperation } from './ICradleOperation'
-import { ArrayPropertyType, ImportModelType, PropertyType, PropertyTypes, ReferenceModelType } from './PropertyTypes'
 
 export abstract class CradleEmitterBase implements ICradleEmitter {
   public options: EmitterOptionsArgs

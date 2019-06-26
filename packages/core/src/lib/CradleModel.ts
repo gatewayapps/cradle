@@ -2,6 +2,9 @@ import { ICradleOperation } from './ICradleOperation'
 
 import { PropertyType } from './PropertyTypes/PropertyType'
 
+/**
+ * The Cradle Model is a collection of Properties, Operations, and Metadata
+ */
 export class CradleModel {
   public Name: string
   public Meta: object

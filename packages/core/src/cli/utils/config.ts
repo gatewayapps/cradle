@@ -3,9 +3,13 @@ import path from 'path'
 import { CradleConfig, ICradleConfig } from '../../lib/CradleConfig'
 import { safeLoad } from 'js-yaml'
 
-/**@hidden */
-export async function loadConfiguration(configFile: string): Promise<CradleConfig> {
-  configFile = configFile || './cradle.yml'
+/**
+ * Loads a cradle configuration from the given path
+ * @param configFile Path to a cradle.yml file. Defaults to *./cradle.yml*
+ */
+export async function loadConfiguration(
+  configFile: string = './cradle.yml'
+): Promise<CradleConfig> {
   const finalPath = path.join(process.cwd(), configFile)
   if (fs.existsSync(finalPath)) {
     try {

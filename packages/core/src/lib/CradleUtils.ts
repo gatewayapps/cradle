@@ -4,13 +4,26 @@ import { EmitterOptionsArgs } from './EmitterOptions'
 import { ICradleEmitter, ICradleEmitterConstructable } from './ICradleEmitter'
 import { ICradleLoader, ICradleLoaderConstructable } from './ICradleLoader'
 import { ILoaderOptions } from './LoaderOptions'
-import { CradleSchema, CradleModel, PropertyType, PropertyTypes, ArrayPropertyType, ReferenceModelType, ImportModelType, ICradleOperation } from '..'
+import {
+  CradleSchema,
+  CradleModel,
+  PropertyType,
+  PropertyTypes,
+  ArrayPropertyType,
+  ReferenceModelType,
+  ImportModelType,
+  ICradleOperation
+} from '..'
 
 const handler = {
   construct() {
     return handler
   }
-} //Must return ANY object, so reuse one
+}
+
+/**
+ * Returns true if a method is a constructor
+ */
 const isConstructor = (x) => {
   try {
     return !!new new Proxy(x, handler)()
@@ -19,17 +32,25 @@ const isConstructor = (x) => {
   }
 }
 
+/**
+ * Loads the specified loader from node_modules.  Once the loader module is found
+ * and loaded, prepareLoader will be called on it.
+ * @param options Options to specify the loader to use
+ */
 export async function getLoader(options: ILoaderOptions): Promise<ICradleLoader> {
   let loader!: ICradleLoader
   if (typeof options.module === 'string') {
-    // TO-DO: handle other loaders here
     try {
       const loaderDefRef: any = require(options.module)
-      const loaderDef: ICradleLoaderConstructable = loaderDefRef.default ? loaderDefRef.default : loaderDefRef
+      const loaderDef: ICradleLoaderConstructable = loaderDefRef.default
+        ? loaderDefRef.default
+        : loaderDefRef
       try {
         loader = new loaderDef(options)
       } catch (err) {
-        return Promise.reject(`${options.module} module was found but a valid ICradleLoader is not the default export`)
+        return Promise.reject(
+          `${options.module} module was found but a valid ICradleLoader is not the default export`
+        )
       }
     } catch (err) {
       return Promise.reject(err)
@@ -44,11 +65,22 @@ export async function getLoader(options: ILoaderOptions): Promise<ICradleLoader>
   return loader
 }
 
-export async function getEmitter(options: EmitterDefinition, baseOptions: EmitterOptionsArgs = {}): Promise<ICradleEmitter> {
+/**
+ * Loads the specified emitter from node_modules.  Once the emitter module is found
+ * and loaded, prepareEmitter will be called on it.
+ * @param options Options specific to this emitter
+ * @param baseOptions Global options to that will be merged with local options
+ */
+export async function getEmitter(
+  options: EmitterDefinition,
+  baseOptions: EmitterOptionsArgs = {}
+): Promise<ICradleEmitter> {
   let emitter: ICradleEmitter
 
   if (!options.module) {
-    throw new Error(`Expected an instance of IEmitterOptions, got: { ${Object.keys(options).join(', ')} }`)
+    throw new Error(
+      `Expected an instance of IEmitterOptions, got: { ${Object.keys(options).join(', ')} }`
+    )
   }
   if (typeof options.module === 'string') {
     if (!options.console) {
@@ -65,7 +97,9 @@ export async function getEmitter(options: EmitterDefinition, baseOptions: Emitte
         emitter = new EmitterDef(options.options, options.output, options.console!)
       } catch (err) {
         console.error(err)
-        return Promise.reject(`${options.module} module was found but a valid ICradleEmitter is not the default export `)
+        return Promise.reject(
+          `${options.module} module was found but a valid ICradleEmitter is not the default export `
+        )
       }
     } catch (err) {
       console.error(err)
@@ -82,7 +116,16 @@ export async function getEmitter(options: EmitterDefinition, baseOptions: Emitte
   return emitter
 }
 
-export function applyExclusionsToSchema(schema: CradleSchema, options: EmitterOptionsArgs): CradleSchema {
+/**
+ * Removes all records of any excluded Models, Operations, or Properties.  This allows
+ * emitters to not worry about exclusions.
+ * @param schema - The cradle schema loaded from the provided cradle configuration
+ * @param options
+ */
+export function applyExclusionsToSchema(
+  schema: CradleSchema,
+  options: EmitterOptionsArgs
+): CradleSchema {
   let newSchema: CradleSchema = Object.assign(Object.create(Object.getPrototypeOf(schema)), schema)
   const excludes = options.exclude || []
   excludes.forEach((exclude) => {
@@ -161,7 +204,11 @@ function removeModelReferencesFromSchema(schema: CradleSchema, model: CradleMode
   return schema
 }
 
-function removePropertyReferencesFromSchema(schema: CradleSchema, model: CradleModel, propertyName: string) {
+function removePropertyReferencesFromSchema(
+  schema: CradleSchema,
+  model: CradleModel,
+  propertyName: string
+) {
   schema.Models.forEach((modelRef, modelIndex) => {
     const propertyNames = Object.keys(modelRef.Properties)
     propertyNames.forEach((propName, propIndex) => {
@@ -179,7 +226,11 @@ function removePropertyReferencesFromSchema(schema: CradleSchema, model: CradleM
   return schema
 }
 
-function removeOperationFromSchema(schema: CradleSchema, model: CradleModel, operationName: string) {
+function removeOperationFromSchema(
+  schema: CradleSchema,
+  model: CradleModel,
+  operationName: string
+) {
   schema.Models.forEach((modelRef, modelIndex) => {
     if (modelRef.Name === model.Name) {
       delete schema.Models[modelIndex].Operations[operationName]
@@ -188,7 +239,11 @@ function removeOperationFromSchema(schema: CradleSchema, model: CradleModel, ope
   return schema
 }
 
-function doesPropertyReferenceProperty(propRef: PropertyType, otherModel: CradleModel, otherPropertyName: string) {
+function doesPropertyReferenceProperty(
+  propRef: PropertyType,
+  otherModel: CradleModel,
+  otherPropertyName: string
+) {
   if (propRef.TypeName === PropertyTypes.Array) {
     const propInstance = propRef as ArrayPropertyType
     if (typeof propInstance.MemberType === 'object') {
@@ -198,7 +253,10 @@ function doesPropertyReferenceProperty(propRef: PropertyType, otherModel: Cradle
 
   if (propRef.TypeName === PropertyTypes.ReferenceModel) {
     const propInstance = propRef as ReferenceModelType
-    if (propInstance.ModelName === otherModel.Name && propInstance.ForeignProperty === otherPropertyName) {
+    if (
+      propInstance.ModelName === otherModel.Name &&
+      propInstance.ForeignProperty === otherPropertyName
+    ) {
       return true
     }
   }
@@ -228,5 +286,8 @@ function doesPropertyReferenceModel(propRef: PropertyType, model: CradleModel) {
 
 function doesOperationReferenceModel(opRef: ICradleOperation, model: CradleModel) {
   const opArgs: PropertyType[] = Object.values(opRef.Arguments)
-  return opArgs.some((propRef) => doesPropertyReferenceModel(propRef, model)) || doesPropertyReferenceModel(opRef.Returns, model)
+  return (
+    opArgs.some((propRef) => doesPropertyReferenceModel(propRef, model)) ||
+    doesPropertyReferenceModel(opRef.Returns, model)
+  )
 }
